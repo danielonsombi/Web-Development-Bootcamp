@@ -344,3 +344,196 @@ HTML:
     - Absolute Positioning - Position relative to the nearest positioned ancestor or top left corner of webpage i.e., If the ancestor does not have a position property, then the positioning will be relative to the top left corner of your web page.
       - Z-index - for instance with the absolute position, the box by default sits on top of other divs / elements on the browser. The Z-index comes in when you do not want it to sit on top of other elements. by default the z-index is set to 0. Vhanging it to negative will perfom the trick for you.
     - Fixed Positioning - Is relative to the top left corner of yourbrowser window. It is somehow similar to the absolute until you start scrolling. On scrolling the position remains static and does not change while absolute moves with the page.
+
+SECTION 8: ADVANCED CSS
+24. CSS Display - By default, when an element is added to a webpage, it covers the entire width. However, in some instances one may wish to have them side by side. or style some word within a p tag. Consider:
+    <h2>Harry</h>
+    <h2>Potter</h>
+
+This will be shown as two lines. This is because by default the display property is set to block. 
+    h2 {
+        display:block;
+    }
+
+To have them on one line, this property must be set to inline:
+    h2 {
+        display: inline;
+    }
+
+To change the styling of a word(s) in between a p tag, we use the <span></span> tag. It can be used in between any elements.
+
+There are three types of display values:
+   1. Block - display: block takes the entire width, if you have another element it will go below it.
+   2. Inline - display: inline takes multiple elements until it can no longer fit in the width of the webpage then go to the next line. You can't set the width and height of the inline it will adjust to the length of the word.
+   3. inline-block - is a blend of the two and it allows set the height and width and the inline bit allows add elements go to the same line. Changing the block will help change the layout of our website.
+   4. None - display: none - This makes the element disappear. Useful when you have a button or checkoff an element on the todo list and want it to disappear.
+
+Allows for responsiveness- Very key.
+
+25. CSS Float - wrapping text using float and clear.
+    If we want our text to wrap around another element we will require the float property.
+    Assuming you have an <img> tag followed by a <p> tag, if one of the float: left property is added to the <img> tag, then part of the text in the <p> tag will be added to the right of the image then the rest go under it. No value to be set on the <p> tag.
+
+    <img/>
+    <p>text.......</p>
+
+    style.css:
+    img {
+        float: right
+    }
+
+    text will be formatted as:
+
+    <img>...................................
+    ........................................
+    ........................................
+
+    The opposite applies if the value was set to right.
+
+    In a case where you have a footer, it may look weird if it was to float next to the rest of the text. Convention dictates that it should be below the rest of the content. We therefore need to clear the floating effect for the footed tag as:
+
+    footer {
+        cleare: left;
+    }
+
+    This will clear anything that is floating.
+
+    In modern development we do not use the float feature to achieve the various designs. We can instead make use of Flex, Grid, bootstrap and lots of other things better than float. Only use float when wrapping text around an image but not on everything else.
+
+26. How to Create Responsive Websites: 
+    This days there are different screensizes so it can respond to changes on the screen size. There are various ways to do this, including:
+    - Media Queries
+    - CSS Grid
+    - CSS Flexbox
+    - External Frameworks e.g. Bootstrap
+    
+    1. Media Queries
+        This is used as a selector. e.g.,
+            @media (max-width: 600px) {
+                /*CSS for screens below or equal to 600px */
+            }
+
+        This says look into the braces and apply the css when displaying on a screen equal to or less than 600px.
+
+    2. CSS Grid:
+        Divs can be used to create a grid with different containers and in different formarts. The end result/layout dictates the number of divs to be created. where each can be given the same class say card but each receives a different style. They are then all wrapped withing a parent css that has the property display set to grid. e.g:
+
+        <div class="grid-container">
+            <div class="first card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+
+        And the css set to:
+
+        .grid-container {
+            display: none;
+            grid-template-columns: 1fr 1fr //defines that we will have two columns both 1 fraction. equal in size
+            grid-template-rows: 100px 200px 200px // top row height 100px while the rest are 200px 
+            gap:30px //There should be a gap of 30px btn each row and column.
+        }
+
+        .first {
+            grid-column: span 2; //Change the first div so the column can span two columns. Achieves full width
+        }
+
+        .card {
+            background-color: blue
+        }
+
+    3. CSS Flexbox
+        If grid is something that applies to 2D layauts, where you have columns and rows, flexbox allows create 1D layouts where you either want things laid out in horizontally or vertically as boxes then you are likely to use flexbox. e.g:
+
+        <div class="flex-container">
+            <div class="first card"></div>
+            <div class="second card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+
+        .flex-container {
+            display: none;
+        }
+
+        .card {
+            background: blue;
+            border: 30px solid white;
+            height: 100px;
+            flex: 1;
+        }
+
+        .first {
+            flex: 2;
+        }
+
+        .second {
+            flex: 0.5;
+        }
+
+        This is about dividing the width and height by some ratio you specify. And because everything is a ratio and a percentage then it will always be responsive. Works the size by getting a percentage of the total width.
+
+
+    4. Bootstrap Framework
+        It is a framework because it is external to css. They have written extensive CSS code with predefined styling. Bootstrap is built on top of flex boxes and divide you webpage into 12 division system. e.g:
+
+        <div class="container>
+            <div class="row">
+                <div class="card col-6"> //Picks the first half of your page - 6 of the 13 sections
+                    Card
+                </div>
+                <div class="card col-2"> //Takes 2 of the columns
+                    Card
+                </div>
+                <div class="card col-4"> //Takes 4 of the remaining columns
+                    Card
+                </div>
+            </div>
+        </div>
+
+        This adjusts accordingly when working with smaller devices.
+
+27. Media Queries
+    Used to set the styling for different screen sizes. Can set use to set the max-width or min-width:
+
+    1. Max-width 
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 25px
+            }
+        }
+
+        The above code will apply on a screen size less than or equal to 600px whereas the code below will target bigger screens with this minimum width.
+
+    2. min-width
+        @media (min-width: 600px) {
+            h1 {
+                font-size: 25px
+            }
+        }
+
+        Can also target a specific size as:
+
+    3. Combined
+        @media (min-width: 600px) and (max-width: 900px) {
+            /* Styles for screens between 600px and 900px */
+        }
+
+        The two can still be flipped as:
+
+        @media (max-width: 600px) and (min-width: 900px) {
+            /* Styles for screens between 600px and 900px */
+        }
+
+        This will apply similar styling to anything less than or equal to 600px and above 900px.
+
+     4.  Device
+        Might use screen to mean all screens whose alternative is print. Used when printing your screen. Not recommended to have this in your code. It takes the format:
+
+            @media screen(orientation: landscape) {
+                /* Styles for landscape orientation */
+            }
+
+    This are the most used.
