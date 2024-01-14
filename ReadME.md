@@ -192,3 +192,155 @@ HTML:
     For p tags by default the element has a margin of 1em. If no margin is needed, always good practice to set the margin to zero for all <p></p>
 
     if not sure how any of the elements works, if you hover on it, VS code has a way of redirecting you to the MDN Docs where you can learn more about the element.
+    
+21. The cascading aspect of CSS comes out when you have multiple conflicting rules targetting the same element we must determine which one is way up on the hirarchy. The most important is usually the one the user sees on the screen. There are 4 types to consider when it comes to importance and within each there are different levels of importance as can be seen in "./Snips/CSS Order of Importance.png"
+    1. Position - Here we check whether a rule is at a higher position or lower position in the css relative to the other rules: Consider:
+        li {
+            color: red;
+            color: blue;
+        }
+    The blue will be the one seen in the screen since the lowest is the most important.
+
+    2. Specificity - on specificity there is some sort of hirarchy when it comes to the various available option. At the very top and least important is:
+        - Element say <li>
+        - Class say .first-class
+        - Attribute say li[draggable]
+        - id say #first-id
+    The id will take presidence over the rest and is considered the most important. The element basically applys to all <li>s while the class will apply to any element assigned the class name. The Attribute will check any whose attribute is set to draggble but since in a page convention dictates you should have only each element with a specific id, then it is the least identifier and hence the most specific and important.
+    3. Type - This refers to the type of css. Below is their order from the least to the most important:
+        - External css
+        - Internal css
+        - Inline css
+    The inline css will override the rest of the css types
+    4. Importance - a property can be assigned a value with the important keyward assigned to it. Consider:
+    li {
+        color: red;
+        color: green !important;
+    }
+
+    the color of the <li> will be set to green since marked as so.
+
+    Of the four, position is the least important type while the Importance is the most important and will tramp the rest of the types if set al together.
+
+22. Combining CSS Selectors to target specifc elements to style - in some instances, you might be reqquired to assign a  different color to some elements in your code. Consider:
+    
+    <div class="box">
+        <p>Yellow</p>
+        <div class="inner-box">
+            <h1>Yellow</h1>
+            <p> white </p>
+        </div>
+        <p>Yellow</p>
+    </div>
+    
+    The above can be styled using the css below:
+    p {
+        color: yellow;
+    }
+    .inner-box {
+        Bankground-color: red;
+    }
+
+    .white-text {
+        color: whhite
+    }
+
+    them add the class to any <p> to be that should be  white in color.
+
+    However, so your code doesn't get cluttered with so many classes you can compine various selectors and still achieve the same goal. The above can instead be written as:
+
+    p {
+        color: yellow;
+    }
+    .inner-box {
+        Bankground-color: red;
+    }
+    
+    .inner-box p {
+        color: whhite
+    }
+    
+    Combiners:
+    1. Coma <,>
+    If multiple other elements are to be formatted similar to this element then you can add them separated by a coma. as:
+    
+    selector, selector, ... {
+
+    }
+
+    .inner-box p, h1 {
+        color: white;
+    }
+
+    2. Right angle bracket '>' 
+    Can be used to select the child to the element. On this you first specify the parent followed by the angle bracket then the child. The styling/relationship is one generation deep as:
+    
+    selector > selector {
+
+    }
+
+    e.g.,
+    .box > p {
+        color: firebrick;
+    }
+
+    3. Descendant combination <" ">
+    Apply to a descendant of left side i.e.,
+
+    selector selector {
+
+    }
+
+    e.g.,
+    .box li {
+        color: blue;
+    }
+
+    4. Chaining Selectors
+    Apply where all selectors are true
+
+    selectorselector {
+
+    }
+
+    For instance if you have several h1s in your code styled as below:
+    <h1 id-"title" class="big heading">Hello world</h1>
+
+    then to be very specific to such h1s you can use the chaining selector e.g.,
+
+    h1#title.big.heading {
+
+    }
+
+    when using chaining, always start with the element. Starting with a class or an id selector might treat the chained styling as a class or id due to the . and # at the begining. There should be no spaces in between.
+
+    5. combining combiners
+    Imagine you wanted to select something that has an ancestor but then use chaining method woith a specifc selector in the format:
+
+    selector selectorselector {
+
+    }
+
+    e.g.,
+    
+    ul p.done{
+        font-size: 0.5rem;
+    }
+
+23. CSS Position (Relative, Absolute, Fixed and Static Positioning)
+    - Static position - Is usually the default positioning of an element on a browser. Adding the left and top properties to the css with position set to static does not change anything. It is positioned right below whichever element that came before it. set as:
+        div {
+            position: static
+        }
+    - Relative Positioning - This is the positioning of an element relative to its default position on the browser. Set as:
+        div {
+            position: relative;
+            left: 50px;
+            top: 50 px
+        }
+
+    This is not set relative to any other element by relative to its default position. The above will be 50px from the left and shifted down by 50px.
+
+    - Absolute Positioning - Position relative to the nearest positioned ancestor or top left corner of webpage i.e., If the ancestor does not have a position property, then the positioning will be relative to the top left corner of your web page.
+      - Z-index - for instance with the absolute position, the box by default sits on top of other divs / elements on the browser. The Z-index comes in when you do not want it to sit on top of other elements. by default the z-index is set to 0. Vhanging it to negative will perfom the trick for you.
+    - Fixed Positioning - Is relative to the top left corner of yourbrowser window. It is somehow similar to the absolute until you start scrolling. On scrolling the position remains static and does not change while absolute moves with the page.

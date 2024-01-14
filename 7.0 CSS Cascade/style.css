@@ -1,0 +1,26 @@
+/* Don't change the existing CSS. 
+  Since all the classes share teh class box, there is no need to add the 10px padding to the outer and inner bopxes.
+*/
+
+#outer-box  {
+  background-color: purple;
+}
+
+.box {
+  background-color: blue;
+  padding: 10px;
+}
+
+.inner-box {
+  background-color: red;
+}
+
+p {
+  color: yellow;
+  margin: 0;
+  padding: 0;
+}
+
+.white-text {
+  color:  white;
+}
