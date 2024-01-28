@@ -670,4 +670,151 @@ SECTION 9: FLEX BOX
     flex: 1 1 0; - Where the first is grow, shrink and the last is the flex basis. Can be simplified to 
     flex: 1. With such an approach you can create some sort of a ratio of how our elements will respond responsively. can have the 1st to 1 the second to 2 and the third 3. This will be the ratio to all.
 
+SERCTION 10: GRID
+32. Display: Grid
+    With flexbox you can create various layouts. However, it may not be best placed to create complex layout that seem to have different hight while still on the horizontal axis for instance. This saw to introduction of the grid system.
+
+    The difference is as below:
+    A flexbox can be thought of as a tool that allows allign content in a one dimentional line whereas Grid can be used to lay contnent in a two dimentional grid.
+
+    The two tools have their strenghts and weeknesses and most a times developers will use this tool along other tools depending on the need. Can use a grid and still use flexboxes within the grid element. Can have a flexbox inside a grid and a grid inside the flex box.
+
+    With Grid, everything lines up with each other on a row and column basis. The gaps between each element match up with each other which is not the case on flex box. see:
+
+    https://appbrewery.github.io/grid-vs-flexbox/
+
+    The syntax is as below:
+
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+    }
+
+    The grid-template-columns specifies the ratio on the size of columns to be created. The above example will create two columns with the first column half the size of the second column.
+    The grid-template-rows - specify the ratio on the rows. The above will basically have the two rows set to an equal size regardless of the content it holds.
+
+33. Grid Sizing:
+    It is common to see the grid-template rows and columns set to rem, or px. The challenge with using this approach is that the page/the layout won't be responsive. 
+
+    1. Fixed Size.
+    May also come accross: grid-template 100px 200px / 400px 800px which basically are the row values and column values written in short hand. Preferred that if in the learning stage, use the row and columns separately for ease in debugging.
+
+    2. Auto Size:
+    grid-template-rows: 100px auto - Will set the first row to 100px and the second will try to fit whatever content is in the second row.
+    grid-template-columns: 200px auto - Will set the first column to 200px then the second column will take the remaining portio of the screen to make it 100% of the veiw port. See:
+
+    https://appbrewery.github.io/grid-sizing/
+
+    3. Fractional Size:
+    
+    grid-template-rows: 1fr 2fr
+    grid-template-columns: 1fr 2fr
+
+    uses fractions for sizes. e.g first row to be half of the second and same to the columns. This is responsive. If the content of the second is huge then if it expands, the first row will also expand so to maintain the ratios. It content in the first row or any other in that matter doesn't matter.
+
+    
+    4. MinMax Size
+    
+    grid-template-rows: 200px 400px;
+    grid-template-columns: 200px minmax(400px, 800px)
+
+    Can define the minimum width and maximum width we want our columns to be. That is when we have enough space, we can have the second column's width up to 800px and while shrinking it can reduce to upto 400px. e.g. if working with an image.
+
+    5. Repeat:
+    
+    grid-template-rows: repeat(2, 200px); /*Similar to 200px 200px*/
+    grid-template-columns: repeat(2, 100px);
+
+    Instead of repeating the number of columns multiple times, one can use the repeat keyword as above. By specifying the number of times you want the size which is the second parameter to be repeated.
+
+    depending on the number of items, the gris starts from the top left then doubles back and continues along the second row if having a 2 * 3 i.e, 2 rows and 3 columns to which you want to fit 4 elements, then the first row will have 3 of the items and the last one will go to row 2 column 1. The other two columns of the 2nd row will remain empty.
+
+    If you have more items than what you've defined your grid to be say a 2 * 2 grid and yet you have 5 items, all the other elements that get added will be added based on their contnent size and will try match the existing column width. If you contnet is to grow over time, you can use the grid-auto-rows and grid-auto-columns to automatically add in new rows and columns to your grid e.g.,
+
+    .grid-container {
+        display: grid
+        grid-template-rows: 200px 200px;
+        grid-template-columns: 200px 200px;
+        grid-auto-rows: 300px;
+    }
+
+    Dev Tools:
+    We can use it to see what is happening. From the developer tool, one can easily tell whether the kind of layout in use. By clicking the developer tools, and on elements, if using grid, then this will be shown as with the keyword: grid. Under layout, you can also change the values to see the show lines to extend the grid or even the color of the grid labling.
+
+34. Grid Placement:
+    Terms;
+    1. Grid Container - Contains all the items.
+    2. Grid Items - All items placed inside the grid.
+    3. Tracks - These are the resulting rows and columns in the grid i.e row tracks and column tracks.
+    4. Grid-Cells - the smallest units in the grid. Sit between columns and rows. Can use multiple cells to create a grid item. Each two columns to create one grid items.
+    5. Grid lines - Lines that separate the tracks. Both the horizontal and vertical lines. Can only controll the grid lines using the gap property to specify its height or width.
+
+    By default, if the height of the page is not specified, then the grid takes up as much space as is the size of the content. To have it utiliza the screen size, specify the height as
+
+    height: 100vh where vh is the viewport height.
+
+    To have the items span various columns and rows on the grid, the grid-column property is used for columns. For instance to have it take two columns you set it as:
+
+    grid-column: span 2. 
+
+    The above is short hand for two grid properties:
+
+    grid-column-start: span 2;
+    grid-column-end: auto;
+
+    Other than using the span 2 value, one can also use the line numbers to specify the start and end column. Since the columns are named from 1,2,3,4... then any of the number can be set.
+
+    The columns are also named using -ve numbers from right to left. The -ve numbers can also be used as values.
+
+    But is is not recommended to use the -ve numbers. The positive numbers are better to use. Only use the -ve when necessary e.g targeting the very last column in a long or dynamic grid.
+
+    Grid-column: Span 2 - tells the cell to start where it is supposed to start and span by the number of columns we specify.
+
+    In some instances the divs to be placed in the grid might not be following each other in html to how you want them to appear in the grid. And similar to flexbox, all the items have an order of zero. To have one promoted or appear after the rest, set its order to 1. This makes it the left most on the grid.
+
+    Other than promoting the item, you can still use the grid column and row lines to place it at a specific position. e.g., 
+
+    .astoronaut {
+        background-color: #03989E;
+        grid-column-start: 1;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+    }
+
+    This gives it the exact coordinate of where to have it positioned. The short hand for the above is:
+
+    .astoronaut {
+        background-color: #03989E;
+        grid-area: 2 / 1 / 3 / 3; /*The order starts with the grid row start, grid column start, grid row end and the last grid column end.*/
+    }
+
+    One of the other difference btw Grid and Flexbox is that grid allows you overlay items. This can be done by positioning them as below:
+
+    .cowboy {
+        background-color: #00B9FF;
+        grid-area: 1 / 1 / 2 / 3;
+    }
+
+    .astronaut {
+        background-color: #03989E;
+        grid-area: 2 / 1 / 3 / 3;
+    }
+
+    .book {
+        background-color: #E5833180;
+        grid-area: 1 / 2 / 3 / 4;
+    }
+
+    NOTE: When using hex code for colors, the first 6 characters represent the color while the last one is for transparency. hence #E5833180; i.e., R G B and alpha.
+
+    grid-column can also be written as: grid-column 4 / 6 implying the columns start at line 4 and spans to two columns. grid-column: 4 / span 2 works the same way as the earlier.
+
+
+
+    
+
+
     

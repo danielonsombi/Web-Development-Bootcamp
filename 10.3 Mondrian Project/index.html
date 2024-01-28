@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mondrian Project</title>
+  <style>
+    /* 
+    Write your CSS here 
+    Gap Colour: #000
+    White: #F0F1EC
+    Red: #E72F24
+    Black: #232629
+    Blue: #004592
+    Yellow: #F9D01E
+
+    For dimensions, see dimensions.png image.
+    HINT: Remember you can't change the properties of grid lines.
+    But grid lines are transparent!
+    */
+
+    body {
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      height: 748px;
+      width: 748px;
+      display: grid;
+      grid-template-rows: 414px 130px 155px 22px;
+      grid-template-columns: 320px 198px 153px 50px;
+      gap: 9px;
+      background: black;
+    }
+
+    .red {
+      background-color: #E72F24;
+    }
+
+    .Whiterow1 {
+      background-color: #F0F1EC;
+      grid-column: span 3;
+    }
+
+    .Whiterow2Column1 {
+      background-color: #F0F1EC;
+      grid-row: span 2;
+    }
+
+    .Whiterow2Column2 {
+      background-color: #F0F1EC;
+      grid-row: span 2;
+      grid-column: span 2;
+    }
+
+    .Whiterow2Column3 {
+      background-color: #F0F1EC;
+      grid-row: span 2;
+    }
+
+    .Blue {
+      background-color: #004592;
+      width: 50px;
+      border-bottom: 10px solid black;
+    }
+
+    .Whiterow3 {
+      background-color: #F0F1EC;
+      order: 1;
+    }
+
+    .Yellow {
+      background-color: #F9D01E;
+      order: 1;
+    }
+
+    .Black {
+      background-color: #232629;
+      order: 1;
+    }
+
+    /* It is better when you have the default background-color set to #F0F1EC on a different class then adding it to the divs. This helps avoid duplication.  See solution*/
+
+  </style>
+</head>
+
+<body>
+  <!-- Write your HTML here -->
+  <div class="container">
+    <div class="red"></div>
+    <div class="Whiterow1"></div>
+    <div class="Whiterow2Column1"></div>
+    <div class="Whiterow2Column2"></div>
+    <div class="Blue"></div>
+    <div class="Whiterow2Column3"></div>
+    <div class="Whiterow3"></div>
+    <div class="Yellow"></div>
+    <div class="Black"></div>
+  </div>
+</body>
+
+</html>
