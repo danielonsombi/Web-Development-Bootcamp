@@ -537,3 +537,137 @@ Allows for responsiveness- Very key.
             }
 
     This are the most used.
+
+SECTION 9: FLEX BOX
+28. Display Flex
+    In earlier years a 3 column layout could be created using html tables and css defining the width for each of the columns as:
+
+    1. Table for layout
+    <table>
+        <tr>
+            <td class = "col1">...</td>
+            <td class = "col2">...</td>
+            <td class = "col3">...</td>
+        </tr>
+    </table>
+
+    CSS:
+    .col1 {
+        width: 25%
+    }
+    .col2 {
+        width: 25%
+    }
+    .col3 {
+        width: 25%
+    }
+
+    This created a 3 column layout on the browser. The table is very much in use today but when basically displaying data as opposed to layout design.
+
+    2. Display: inline, block
+    After the tables, the display property was introduced. And would be set to inline, block and inline-block which would stack the divs next to each other as long as there was space on the screen. However this could not allign content properly on the  screen. Depending on the length of the content some divs could be larger than others and need positioning to place them correctly.
+
+    3. Float - Most relied on between 2005 and 2010. Used to float images and text by having them float left so they are stucked next to each other. Has several hacks that can be used to accomplish various layouts. But no longer the best tool to use. Only use it when floating images to the right or left of text.
+    
+    4. Instead of the crazy hacks that come with the three above to achieve a complex layout various tools exist that heldp simplify this. Using Flexbox. Grid and bootstraps perfom the magic in a simplified manner.
+
+    All you need to do is wrap your text inside a container and then target the container to the css and set the display to flex as:
+
+    <div class = "container">
+        <div class="one">...</div>
+        <div class="Two">...</div>
+        <div class="Three">...</div>
+    </div>
+
+    style.css:
+
+    .container {
+        display: flex
+        gap: 10px
+    }
+
+    When you set the display to flex, it must be thought of a different entity from the default display: inline and block.
+
+    Different elements have different default display values. A div and p tags are full length block, Span and img are inline displays by default. When you have them all within the flex system, the previous default display formating will be ignored and they will all be laid out by flex box. The width inside the flex box will be based on the content size. You could use the gap property to separate the elements/content.
+
+    A flex box is by default 100% width and behaves similar to a block. If you do not want it to take the entire block, you can use the inline-flex to allow it take as much space as it needs and allow more elements to be added to the right.
+
+29. Flex Direction 
+    The default html flow is from left to right and top to bottom. When using flex value on display the elements will be laid in row format from left to right. This is because by default the direction is set to row. The row is the main axis from left to right till there is no more space then added to the bottom. Therefore the cross axis is from top to bottom.
+
+    If set the flex-direction to column, all items in the flexable container will be from top to bottom because this changes Main axis to top to bottom. The cross axis now changes to left to right. The cross axis matters when we want to continue configuring the flex prtoperty.
+
+    It is key to remember the direction for this affects the other flex properties e.g flex-basis. If set to 100px, for row it will increase the width of the element while for the column it will adjust the height. The properties will flex along the main axis.
+
+    Note: The Flex-basis property only works of assigned to the child of the container element. Therefore to cover only the required space, you use the inline-flex and to have it flow from top to bottom, set the flex-direction to column. The two are to be set on the container class / parent. Then use a separate class to add in the flex-basis of 100px.
+
+30. Flex Layout: (Align, Justify and wrap)
+    The focus will be on, what is the default behaviour of flex box, and what can you change to make it what you want it to be?
+    Is the property going to be in the child i.e the flex item or to the parent i.e the container?
+
+    If you set a property that should go to the parent in the child it will not work. 
+
+    Properties:
+    - Order: If you want to reorder the divs then you can easily use the order property to position the div in a specific position e.g., order: 9. The default is set to order: 0.
+    - flex-wrap: Used when you run out of space in the main axis. The default behaviour does automatically move content to the next like so something might be pushed off the page. This is because the default value is set to nowrap. This makes the layout not so responsive and some content may not be visible Changing the value to wrap will work the magic. e.g.,
+
+        flex-wrap: wrap.
+    
+    - Justify-content: is set on the parent container.Sets the distribution of main items across the main axis. The values can:
+        flex-start - aligns the text from left to right
+        flex-end - the text floats to the right
+        center - position the content in the center of your web page
+        dspace-between - Equally distributes the content on the webpage.
+    - Align-items - Sets the distribution across the cross axis as opposed to justify that distributes along the main axis. For align item then the height must be set as:
+  
+        height: 70vh where vh is the Viewport height which is the height of the window.
+
+    The values can be set to:
+        flex-start - pushes the content to the very top of the view port
+        flex-end - pushes the content to the very bottom of the view port
+        center - places it at the center
+
+    This only works when wrap is value is left as default or set to nowrap.
+
+    If you want to align one of the many items in the container, then you can use the align-self: flex-start value to manipulate a particular item. This will make the item separate from the group and stand out.
+    For options :
+
+    https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
+    - Align-content - Simialr to align-items but works when the flex-wrap is set to wrap.
+
+    One can also set the flow of the flexbox using the flex-flow property. This property can combine two values one for the direction and the other for the kind of wrap e.g., 
+
+        flex-flow: column wrap;
+
+31. Flex Sizng:
+    When the display is set to flex, it automatically sets the various elements next to each other up until the entire view port is used up. Sometimes you may want to customize how each item within the flexbox is sized. The sizing is done on a priority basis in the order below:
+    1. min-width/max-width
+    2. Flex-basis which also depend on the direction, whether row or column
+    3. Width if the main axis is set to default/row. It will consider the height if the flex direction is set to column.
+    4. Content width - Content width is the width that allows a word to be lined next to each other. If minimized, then the contnet width is the maximum length of the longest word in the page.
+    
+    If an item in the flex box has several elements alligned next to each other,  if you minimize the screen and the value is not set to inline-flex, each element will be minimized to the size of its longest word. This is the content width. It will shrink until the maximum width is reached then the content will be pushed off the screen as you shrink the page further. 
+    The max-width looks at the longest possible line of the  text while the min-width looks at the longests word.
+
+    Width - if set to say 100px, while shrinking the page, it will try to conform to this setting and so if 4 items 100px, then the container has to be 400px. This will observe the minimum side but if shrinking further it will ignore the width and dynamically shrink till it gets to the min-width. If the screen ios bigger than 400px, then it will conform to the width of 100px for each.
+    
+    Flex-basis - Effectively deternes the width of each item. If you have both width and flex-basis, the width will be ignored and each will be set to 200px. On reducing it, it will shrink to the minimum basis. If have the flex-basis, there is no need to add the width.
+
+    Min-width / max-width - There is a default min-width and max-width as explained above. However you can also manually set the max-width and min-width. If you have a flex-basis and then set the max-width, the max-width takes presidency over flex-basis. If max < flex-basis then the max-width takes the day but if flex-basis is smaller, then the width will be set to the flex-basis.
+    If you set the min-width to 300px, then the width will be set to the minimum width. If min-width is larger than flex-basis, the it picks the min-width.
+
+    The properties can be set to zero by setting it as:
+    flex-basis: 100px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    
+    If you set the flex-grow to 1 and there is plenty of space to grow, then it will grow each item till the entire width of the conteiner is filled. But when shrinking, it can only shrink upto 100px then the items will go off the screen. The opposite happens with flex-shrink: 1. If both are on then the flex-basis will be ignored.
+
+    The default for flex-basis is auto which looks at the amount of content in the items and give more width to those will large content and smaller to that with smaller content. If you want it set to equal, then set it as flex-basis: 0.
+
+    A short hand way to write the above is:
+    flex: 1 1 0; - Where the first is grow, shrink and the last is the flex basis. Can be simplified to 
+    flex: 1. With such an approach you can create some sort of a ratio of how our elements will respond responsively. can have the 1st to 1 the second to 2 and the third 3. This will be the ratio to all.
+
+    
