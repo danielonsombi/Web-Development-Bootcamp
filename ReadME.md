@@ -812,8 +812,268 @@ SERCTION 10: GRID
 
     grid-column can also be written as: grid-column 4 / 6 implying the columns start at line 4 and spans to two columns. grid-column: 4 / span 2 works the same way as the earlier.
 
+SECTION 11: BOOTSTRAP
+35. What is Bootstrap
+    It is one of the many external CSS layout systems. It is a framework created in 2010 by two twitter developers. Can be added into your project to use the prebuild classes.
+    One of the reasons it took off is the use of the 12 column layout system built on the flexbox system that helps make the page very responsive.
+
+    By adding the classes to HTML we don't have to worry about having to write the css but just to know the kind of classes to use. 
+
+    Because bootstrap is open source, its code is available on github Can view the predefined css.
+
+    The most common CSS frameworks are:
+    - Bootstrap
+    - foundation
+  
+    Howeever, there are many others like:
+      -  tailwind 
+      -  MUI
+      -  etc
+  
+    But bootstrap takes upto 79% in terms of its usability compared to the rest of them.
+
+    As much as it is highly used, 75.9% of websites still use vanilla CSS.
+
+    For quick development, we can use the frameworks so we don't have to spend lots of time in design.
+
+    Pros:
+    1. Easy and first to use with the ton of prebuilt components
+    2. Consistent styling across your system
+    3. Browser compatibilty since they've been pretested
+    
+    Cons:
+    1. Class blow - HTML should be for structure and CSS for style. Using external CSS, we have to add the external classes to the divs and you end up with alot of styling going into the actual html file which looks alot less clean than approaching it using grid and flex boxes.
+    2. Customization - Won't have control over all the pixel and layout.
+    
+    When to use bootstraP:
+    - When developing a mobile first website that should be delivered on quickly.
+    
+    When not to use it:
+    - When doing a complex custom website on which you want full control over each element and layout, it is not a good idea to use bootstrap.
+  
+    How to use it:
+    By using CDN. i.e., use the link tag in the header section of your website. Pulls the bootstrap from the closest server that has the called bootstrap framework.
+
+36. Bootstrap Layout: 12 Column System
+    It is made up of three components"
+    - Div Container
+    - Div row
+    - Items laid out using the column system as:
+
+    <div class="container">
+        <div class="row">
+            <div class="col">Hello</div>
+        </div>
+    </div>
+
+    With multiple columns, bootstrap give them equal spacing across the entire width.
+
+    a. Bootstrap container:
+    The bootstrap container is responsive. A div with class container can be set to respond to various screen sizes i.e.:
+      1. Extra Small <576px - Covers 100% of the view port width
+      2. Small >= 576px - Covers 540px 0f view port width
+      3. Medium >= 768px - Covers 720px 0f view port width
+      4. Large >= 992px - Covers 960px 0f view port width
+      5. X-Large >= 1200px - Covers 1140px 0f view port width
+      6. XX-Large >= 1400px - Covers 1320px 0f view port width
+    
+    This can be adjusted depending on the specified container class. The classes can be:
+      1. .Container - is the default
+      2. .Container-sm - similar to the default - (mobile phones)
+      3. .Container-md - Takes 100% of with on the Extra small and Small screen sizes (ipad)
+      4. .Container-lg - Takes 100% width on the Extra small, small and medium screen sizes (laptop)
+      5. .Container-xl - Takes 100% width for all except x-large and xx-large screen sizes (desktop)
+      6. .Container-xxl - Takes 100% of width except for the XX-Large screen sizes (TV)
+      7. .Container-fluid - Takes 100% on all screen sizes
+    
+    Can checkout the Bootstrap Container snip for more details.
+    In most cases, the container and container-fluid are most used.
+
+    b. Sized Columns:
+    Used to specify how many of the columns you want to use for each div on a percentage basis. Could be set to:
+    - col-2 - which is 2 out of 12 of the width
+    - col-4 - Which is 4 out of the 12 columns
+    - col-6 - which is 6 out of the 12 columns
+  
+    In Code:
+    <div class=container>
+        <div class="row">
+            <div class="col-2">Hello</div>
+            <div class="col-4">Hello</div>
+            <div class="col-6">Hello</div>
+        </div>
+    </div>
+    
+    c. Bootstrap Breakpoints:
+    Can be categorized as:
+        Breakpoint                  Class infix     Dimensions           Can apply to
+      1. Extra Small                  None            <576px    Screens with length longer that width
+      2. Small                        sm              >=576px       Mobile devises e.g phones
+      3. Medium                       md              >=768px             Ipad
+      4. Large                        lg              >=992px             Laptop
+      5. Extra Large                  xl              >=1200px            Desktop
+      6. Extra extra large            xxl             >=1400px       TV or larger devices.
+    
+    We can use the class infix to specify the target devices. For cols can use:
+    col-sm, col-lg, col-xl etc.
+
+    With breakpoints, we do not need media queries since the breakpoints will allow the webpage to adjust to fit into the current screen size. 
+
+    Consider:
+
+    <div class=container>
+        <div class="row">
+            <div class="col-sm-2">Hello</div>
+            <div class="col-sm-4">Hello</div>
+            <div class="col-sm-6">Hello</div>
+        </div>
+    </div>
+
+    WHat the above code means is that for a small screen and above, assign the ratio of 2:4:6 on the viewport width. For a screen size less than a mobile device, then the system automatically defaults to 100% width for each of the divs i.e., defaults to the col class which has 100% width.
+
+    if no number is defined, the divs will automatically distribute equally. I.e eaach will be assigned a number 4.
+
+    d. Multiple Breakpoints
+    One can define a div to take up different sizes on different screens. This can be e.g.,
+    
+    <div class="col-sm-12 col-md-8 col-lg-4"></div>
+
+    With such, the div will take 4 columns in a large screen, 8 columns in a medium screen and 12 columns in a small screened device.
+
+    e. Mix & Match
+    If it was to be set as below:
+
+    <div class=container>
+        <div class="row">
+            <div class="col-2">Hello</div>
+            <div class="col-4">Hello</div>
+            <div class="col">Hello</div>
+        </div>
+    </div>
+
+    It will take up 2/12, 4/12, and the last will automatically adjust to fill up the remaining space.
+
+    When applying the screensizes, always consider the point at which the trransfromation is to happen. An example from the exercise site: 
+
+        https://appbrewery.github.io/bootstrap-layout/
+
+    <!-- Modify the HTML below to make the indigo boxes behave like the blue ones. -->
+      <div class="row">
+        <div class="col-md-6 col-lg-4 col-xl-2 col-xxl-1">Column 1</div>
+        <div class="col-md-6 col-lg-8 col-xl-10 col-xxl-11">Column 2</div>
+      </div>
+
+    You must not define the default 12 column layout. It is effected by default.
+
+37. Bootstrap Components:
+    1. Buttons
+    Uses the following classes:
+    - btn btn-primary
+    - btn btn-secondary
+    - btn btn-success
+    - btn btn-danger
+    - btn btn-warning
+    - btn btn-info
+    - btn btn-light
+    - btn btn-dark
+    - btn btn-link
+  
+  Each has a different color and by calling them together with the btn class automatically styles your button.
+  To read through the components checkout the link below:
+  https://getbootstrap.com/docs/5.3/components/buttons/
+
+  2. Card:
+   Can be copied from the components page in bootstrap. On the card you can replace some of the parts so it can fit your need.
+   A sample is as below:
+
+   <div class="card" style="width: 18rem;">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+   </div>
+
+   3. Navs
+   Yet another common component.
+   Bootstrap has defioned various Navbars that you can checkout and use on a need basis. Checkout the link:
+   https://getbootstrap.com/docs/5.3/components/navbar/
+
+   Can checkout more samples in the examples section of the documentation under headers:
+   https://getbootstrap.com/docs/5.3/examples/headers/
+
+   When starting out, copy and pasting the bootstrap code, it may seem broken. The main reason could be that the two CDN links (CSS for styling and Javascript for functionality purposes) that must be added to the header section and at the very end of the body section respectively, have not been added. Therefore there is need to always ensure this is done prior to adding the bootstrap components.
+
+   Icons:
+   Bootstrap also includes a set of Icons that one can checkout and use in their websites. You can find them under the icons section:
+   https://icons.getbootstrap.com/
+
+   Can also search through them then copy the SVG  to your code or download the icon into your code then add the img to your code.
+
+   Copying code from bootstrap examples section:
+   1. Navigate to the examples section then find the kind of design you'd like to use in your code. 
+   2. Inspect elements then hover on the code till the entire area of interest is highlighted.
+   3. Right click on the outermost div, right click on it then copy then copy element.
+
+  Sometimes the copied code might be rednered differently from where it has been copied. This is because the source or the bootstrap example could be having some custom css. which you can view under the elements section and paste to your custom css.
+
+  4. Carousel:
+   Can read more on this under the components section.
+   https://getbootstrap.com/docs/5.3/components/carousel/
+
+   Can then choose one from teh available examples that fits your need.
+
+ 5. Snippets:
+   They are really handy because they allow pick a style and add it to your website.   
+
+ 6. Spacing:
+   In addition to the layout classes in bootstrap, bootstrap also has utility classes and one of the important ones:
+        They are named using the format: {property}{sides}-{size} e.g
+
+        mt-5 = Margin top 5.
+        mb-2 => Margin bottom set to size 2.
+
+        To set top and bottom you use the y axis while for the left right we use the x axis.
+
+        e.g: my-3 - Margin for y axis is to set it to three.
+
+        Read more
+        https://getbootstrap.com/docs/5.3/utilities/spacing/
+
+ 7. Dark Mode:
+   You can add the dark mode to your website by one property to the html tag. Check the bootstrap docs > Customize > Color modes. 
+   https://getbootstrap.com/docs/5.3/customize/color-modes/
+   
+   Achieved by:
+
+   <html lang="en" data-bs-theme="dark">
+
+   With bootstrap, we can get various themes that we can utilize in our design and implementations. You can pay for any theme and use it in oall your developments. Some of the available templates can be accessed in the links below:
+
+   1. https://www.w3schools.com/bootstrap/bootstrap_templates.asp - Simple to use
+   2. https://themes.getbootstrap.com/ -  Paid for themes.
+   3. Can also google for free bootstrap themes.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+    
     
 
 
