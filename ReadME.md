@@ -1056,6 +1056,91 @@ SECTION 11: BOOTSTRAP
    3. Can also google for free bootstrap themes.
 
 
+SECTION 12: WEB DESIGN SCHOOL - CREATE A WEBSITE THAT PEOPLE LOVE
+38. Introduction to web design:
+   Design can alway provide a three times improvement on the value of your product especially if the design is elavating.
+   Web design principles are key at this stage. We are to cover:
+   - Color theory
+   - typography
+   - User Interface design
+   - User Experience Design.
+  This are the 4 pilars of web design.
+
+
+39. Understanding Color Theory:
+    Imagine of a scenario where you have a  brown FLOWERS logo and a pink PAINTBALL. They both look ugly and might not be easy to tell the mesage being passed along. But if the two are flipped then it would make sense.
+    You should be aware of the mood of your color palletes. The predominant color tells a story to the users.
+    - Red - Love. Energy. Intensity. (e.g., red cars on a red background).
+    - Yellow - Joy. Intellect. Attention. (It is attension grapping. Cannot miss an advert in yellow). If to be looked at for alot longer, might not be the best color to go buy.
+    - Green - Freshness. Safetey. Growth. (E.g., grocery companies, that this product is edible etc)
+    - Blue - Stability. Trust. Serenity. (E.g., companies that need to potray they are trust worthy and that they won't run away with your money e.g., Paypal etc)
+    - Purple - Royalty. Wealth. Femininity. 
+  
+    Should consider the message you are passing to the user before choosing the color to go by.
+    1. Analogous Colours - Designers would rely on scientific ways of combining color. e.g., two colors next to each other in a color wheel (See snips > Color wheel image). They always work well together. The color pallete is always good on the navigation bar and body. Not good when you want your website to standout.
+    2. Complementary colours - You are better of taking two colors opposite to each other on the color wheel if you want the site to stand out. This creates the pop due to the crashing pallete. E.g green and red in a meet stand. For complementary colors, you should not use complementary/clashing colors on text. Instead use it on logos and icones
+    3. Triadic - Using an equilateral triangle. Can also draw a perfect square on the wheel.
+    
+    You can try out the various color combinations on the website:
+
+    https://color.adobe.com/create/color-wheel
+
+    Can drag it on the wheel to get the combination that fits the mood of your project then pick the hexcode.
+
+    Can also use the Colorhunt.co site to get the colors:
+
+    https://colorhunt.co/
+
+
+40. Typography
+    Fonts do matter and need to learn how to combine them to make the project/website stand out.
+    Of all fonts, you need to know:
+    - Serif - which has little feet at the end of their central beams. The design with this looks authoritative or serious also alittle bit older. Can be used for letter head for a legal country or for architecture company. Cna id the oldest and modern by looking at the difference btn the thickest and thinnest parts of the letter. It gets more and more exaggerated as you get to the morden serif fonts. 
+    - San-Serif - has no feet. They are right angled. It makes it more approachable, novel and conteporary. A highly readable. Mostly used on the body to make it easy to read.
+    
+    Different fonts communicate different moods:
+    - Serif - Traditional, stable, respectable
+    - Sans-serif - Sensible, simple, straightforward
+    - Script - Personal, Creative, Elegant
+    - Display - Firendly, Loud, Amusing
+    - Modern - Stylish, Chic, Smart.
+  
+    Once in a while you come across sites where people use 10 font types. It is recommended to:
+    1. Stick two fonts in one designs. 
+    2. Go for fonts with similar moods and time era
+    3. Contrast - If heading is serif then body a san serif. Creates more interest.
+    4. Weights - To create contrast in you design.
+
+41. Manage ATTENTION with effective User Interface (UI) Design
+    We are always drown to bigger, bolder, squerer things. With this knowledge we can define hirarchy. If you mix the weighting, then it will make the important information get conveyed over first. E.g whose birthday when it is and where.
+    1. Color - Use different colors, mute some and let the main content standout e.g the green Add To Cart is a way of attracting the user to complete the transaction.
+
+    2. Size - Also Coinbase:
+        Seems to communicate:
+            You can buy and sell cryptocurrency
+            Can capture your email and get started.
+
+    3. Layout - Think of the layout of your website by mixing your site with pictures, different highrachy etc this makes your website standout. The content should not be too long or too short, it should be JUST RIGHT to make it interesting to read to get more.
+    4. Alignment - If the alignement of the the title and body is set right, then the sites looks way better. If you can reduce the number of the lines on all things on the design and id a line that goes through the beggining of all lines, it makes the design more coherrent and looks more professional. see Alignement snips > Alignment. Even without considering other design aspects, by just doing the allignment right, the site looks way better than one that ain't.
+    5. White Space - The empty space around text or elements. By injecting white space, it makes everything suddenly look more expensive.Just by the white space, it makes the design minimalized and elevated.
+    6. Audience - It depends on your auduence. Like a children advert: snips > Children design. Should be made exiting. Always design it for the audience. Have flexibility so not to create one style all the time. Different design for teenagers and medical staff.
+    
+ 42. User Experience (UX) Design:
+    Design is usually what we think looks good where as the user experience is invisible. Makes everything easy and effortless.
+    Think of:
+    1. Simplicity - Reduce the links, chop up content, some bit of video and different layouts. Make it simple.
+    2. Consistency - Keep the design and functionality of your product consistent. e.g the search bars if not consistent, then the users will have to relearn the navigation and this leads to bad UX. Good practice to use the same design.
+    3. Reading pattern - Common practice to read left to right, top to bottom. Ensure the eye is accomodated. Think of how people naturally use the website and accomodate them.
+    4. All Platform design - think of mobile. A website mobile responsive is really key. Website should re-render itself by size. Reduce the banners and don't scale it up massively before the user can access content. Run lots of tests to get feedback.
+    5. Don't use you powers for evil - Patterns that make the user perfom an action you don't really want. E.g on Amazon, the proceed to checkout with Express Delivery stands out from the normal delivery ooption. Good design is about helping people do what they want to do and giving them a good experience while they are at it.
+    
+43. Web Design in Practice:
+    We can design and put into practive the 4 principles of design i.e, color, typology UI, UX into practice by using available tools e.g., canva.com an online graphics editing program.
+    Try design a hotel website:
+
+  
+
+
 
 
 

@@ -1,0 +1,32 @@
+.hero {
+    background-image: url('../image/Background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 50vh;
+    color: #FFA3FD;
+    position: relative;
+}
+
+.heroname-margin {
+    padding-top: 10rem;
+    font-family: 'Sofia';
+    font-size: 52px;
+}
+
+.profile-image {
+    height: 200px;
+    border-radius: 50%;
+    width: 200px;
+}
+
+.heading-color {
+    color: #FFA3FD;
+}
+
+.feature-divider {
+    margin-top: 5rem;
+}
+
+.footer {
+    background-color: #2C4B82ff;
+}
