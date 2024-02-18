@@ -1,14 +1,15 @@
 .hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-image: url('../image/Background.png');
     background-repeat: no-repeat;
     background-size: cover;
-    height: 50vh;
     color: #FFA3FD;
-    position: relative;
+    height: 50vh;
 }
 
 .heroname-margin {
-    padding-top: 10rem;
     font-family: 'Sofia';
     font-size: 52px;
 }

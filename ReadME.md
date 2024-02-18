@@ -1138,16 +1138,968 @@ SECTION 12: WEB DESIGN SCHOOL - CREATE A WEBSITE THAT PEOPLE LOVE
     We can design and put into practive the 4 principles of design i.e, color, typology UI, UX into practice by using available tools e.g., canva.com an online graphics editing program.
     Try design a hotel website:
 
-  
+
+44. SECTION 14: INTRODUCTION TO JAVASCRIPT ES6
+    Before chrome, safari, firefox, etc, there was Mosaic by Marc Andreessen who afterwards worked on netscape which at somepoint had 80% of market share back in the days.
+    Netscape envisioned a future where the web was dynamic so the computer didn't have to send the requests to the server to perfom calculations then send back the reply.
+    These necessitated the development of a scripting language to allow such computations. Netscape then hired Brendan Eich who then developed the scripting language in 10 days.
+
+    The world has become so used to Javascript that if Javascript was disabled under settings > Site Settings > Javascript some applications like Youtube and netflix won't even load. The good side of it is that you get an ads free experience while browsing.
+
+    Javascript was initially called LiveScript then microsft tried to reengineer it and came up with a JScript. The Europeans tried to standardize it hence the ECMA(European Computer Manufacturers Association) Script. More often you see different versions of Javascript referred to as ES6, 7 etc. The ES is from the ECMA Script.
+
+    Just as scripts in plays, the Scripting languages does the same things. By writting the script, we tell the world what to do.
+
+    What is the relationship between Java and JavaScript - JS was called JS because Java was common in the 90s as is Blockchain today.
+    JavaScript is an interpretted PL in the same category as Python and Ruby - Were seen less serious and executed instructions line by line.
+    Java is a compiled PL in the same category as C/C++, Swift - Considered serious and faster.
+
+    JS was traditionally a frontend language but recently it is used on both back end and frontend and everything in between.
+    It is the language that is supported by all the browsers.
+
+    What is the best PL?
+    Depends on what you want to develop. If IOS then learn SWIFT, if Android then Java, if Web then learn JS.
+
+45. JavaScript Alerts - Adding behaviour to websites.
+    One can use the console developer tool to add behavior to a website. However, one cannot add multiple lines to the console. One pressing enter, the first line is executed instead of allowing the user to add more lines of code. To add more lines you use the shift + enter.
+
+    You can add Javascript in chrome using the Sources section of the developer tool. Under the section, click >> and select the Snippets section. Here you can create a new snippet and have it executed. Once done writting your code in the new snippet, click the Ctrl + Enter button at the bottom right to execute the code.
+    
+    The difference implies the console is majorly set for testing purposes and not for writing code.
+    JS just like any other language has specific keyword that can be used. This can be accessed on the MDN web docs documentation by selecting JavaScript under technologies/References:
+
+    https://developer.mozilla.org/en-US/docs/Web/JavaScript
+
+    Here you can for instance search for: Alert
+
+    Will show:
+
+    Window.alert("Hello world");
+
+    The above is the full version. In most cases, most people will go with the shorter version which is:
+
+    alert("Hello World!");
+
+    See the components of this code: Snips > JS Function Components. 
+
+    1. It is best practice to not leave spaces in between the key words and brackets and the content.
+    2. When working with quotes, preferred to use double quotes.
+    3. Also not best practice to write the code in word document then copy it into the your IDE. This is because the double quotes may be differently formatted on the word document and this might be different from what the IDE expects.
+
+    For best practices you can check out the site below. Shows the principles of writing consistent, Idiomatic JavaScript:
+
+    https://github.com/rwaldron/idiomatic.js
+
+    More of like the Elements of Style guide book, the above is a live document that has been contributed to by many in the Javascript world. Consider going through it more often.
+ 
+46. Data Types:
+    alert("Hello") - The parts within the quotes is interpretted as string. Classifies the data to tell the computer how it is to interpret the data. String because it is a string of characters. Text that should not be interpretted as code.
+    Numbers - No need for special characters.
+    Boolean - Describes the true or false kind of data.
 
 
+    typeof("Daniel") - Is another keyword that allows tell you the data type of the content within the bracket.
+
+47. Javascript Variables:
+    Allows commit some content or information to memory.
+    This can be achieved using the prompt key word. Similar to the alert only that it allows the user to submit some feedback.
+    The information won't be remembered unless attached to a specific variable.
+    
+    e.g.,
+
+    prompt ("What is your name");
+
+    If written in console and the user types in the name then press enter, the name cannot be retrieved. To allow one to access it, you can use a variable as below:
+
+    var myName = "Daniel";
+
+    The above creates a data container - myName which is equal to a value - Daniel.
+
+    Everytime the computer encounters the var, the computer knows it has to create a new container called by myName and to that container a value Daniel is assigned and then with the semicolon the container is sealed/closed.
+
+    Var stands for variable meaning you can vary the data in that container.
+
+    Say:
+        myName = "Onsombi"
+
+    The computer will find the myName variable, takeout the name Daniel and replace it with Onsombi.
+
+    The second time, you don't have to use the var keyword. Only used when declaring the variable for the first time.
+
+    In some Interviews, enterviewers may want to test the candidate's thinking process. This is done by giving out an exercise and specific rules that users must abide to in their resolution.
+
+    Example:
+    var a = "3"
+    var b = "8"
+
+    rewrite the code so that the variable a holds the value "8".
+    And variable b holds the value "3"
+
+    Rules:
+    Do NOT change any of the exisiting code.
+    You are NOT allowed to type any number.
+    You should NOT declare the variables a & b.
+
+    Solution:
+    var c = a;
+    a = b;
+    b = c;
+
+48. Naming and Naming Conventions for Javascript Variables:
+    If you clear the console, the activity does not clear the cache. One must hard reload the browser so to clear the cache, you must click the refresh icon on the top left side of the browser.
+
+    You can use any variable name in JS. Just because JS does not care the name doesn't mean we don't care. Our variable should be easy to understand and need to make it understandable to other people that might interact with our code.
+    1. Give the variable meaningful names.
+    2. Cannot call a variable var i.e cannot use the keywords as variable names.
+    3. Your variable name cannot begin with a number.
+    4. Variables should not have a space.
+    5. The names should only contain letters, numbers, dolar sign and an underscore.
+    6. Name all variables using camelcasing. This helps avoid situations like www.therapistfinder.com which one may read as "the rapist finder" instead of "therapist finder".
+    
+ 49. String Concatenation:
+    
+    "a" + " " + "b" = "a b";
+
+50. String Lengths and Retrieving the Number of Characters:
+    Can get the number of characters by using the length property:
+
+    word.length
+
+    e.g.,
+
+    var name = "Daniel";
+
+    name.length gives the number of characters in the name variable which will be 6 characters.
+
+51. Slicing and Extracting Parts of a String:
+    Say you wanted to add a feature that allows you to type in a specific number of characters. You should be able to do the count and slice off the other characters beyond the specified maximum number. Slicers help achieve this kind of functionality.
+
+    var name = "Daniel";
+    name.slice(0,1);
+
+    This picks the first character in the string. The slicer counts from a zero and not from one.
+
+    To get "Dan", then use you need 3 characters from position zero:
+
+    name.slice(0,3);
+
+    The synax is:
+    variable.slice(Initial position, number of characters);
+
+    Code can also be simplified. Consider:
+
+    var enteredCharacters = prompt("Type your Tweet below:");
+    enteredCharacters = enteredCharacters.slice(0,140);
+    aleart(enteredCharacters);
+
+    can be simplified as:
+    alert(prompt("Type your Tweet below:").slice(0,140));
+
+51. Challenge: Changing Casing in Text:
+    ToUpperCase();
+    
+    Can change the string to uppercase using the format:
+    word.ToUpperCase();
+
+    can also change to lowercase:
+    word.toLowerCase();
+
+    One can therefor combine the various lessons learnt to change the first letter of the string to uppercase and the rest in lowercase.
+
+52. Basic Arithmetic and the Modulo Operator in JavaScript:
+    Working with numbers in JS is pretty straighforward especially with multiplication, division, subtraction and additions.
+    The only operator alittle bit weird is the Modulo operator:
+
+    var e = 9 % 6 = 3.
+
+    The Modulo function gives the remainer of 9 divided by 6 gives since 6 goes to 9 once and the remainder is 3.
+
+    E.g if want to check if a number is even or not, you can use the modulo example.
+
+    If you have an experesion:
+
+    var cost = 3 + 5 * 2
+
+    Could be ambiguous but due to the presidence in programming, then the result will be 5 * 2 + 3 which equals to 13.
+
+    If you intend to get a result equal to 16 then brackets should be introduced as:
+
+    (3 + 5) * 2.
+
+    Brackets make it abundantly clear what is expected.
+
+53. Increment and Decrement Expressions:
+    The above expressions exisit both in Math and in programing. However, the increment and decrement expressions only exist in programing.
+
+    var x = 5 ;
+    x = x + 1;
+
+    The above can be changed to 
+    Var x = 5;
+    x++;
+
+    The above is a increment expression while the x-- is the decrement.
+
+    To increase by more than one then can use x += 2.
+
+    The above works with +=, -=, *=, /=.
+
+54. Functions Part 1: Creating and Calling Functions:
+    Consider a robot working in your house. For it to perform its functions, all you have to do is give it instructions via code e.g., 
+
+    alert("leavehouse");
+    alert("moveRight");
+    alert("moveRight");
+
+    etc to move it back to the store. Lots of such functions need to be written everyday to instruct the robot.
+    
+    Instead of having to write the instructions daily, you can create a series of instructions package it and execute it everytime the robot should be instructed.
+
+    You first start with the keyword function, give it a name, then within curly braces write the instructions.
+
+    Functions are similar to the variable which creates a container, gives it a name to identify it, then put in all the instructions that should be caried out. When we want it executed each line of code is then executed.
+
+    When calling the function, all you need to do is call the name of the function with some parenthesis and end it with a semicolon. This is a command.
+    The rules and naming conventions of variables also apply here.
+
+    It is good practice to indent any code within curly braces.
+    No semicolon should be added after the closing curlybraces.
+
+    Difference between console.log and alert is that the console.log is meant for the developer for debugging purposes while the alert is targeting the user.
+    Sample code:
+
+    function getMilk() {   
+        console.log("leaveHouse");
+        console.log("moveRight");
+        console.log("moveRight");
+        console.log("moveUp");
+        console.log("moveUp");
+        console.log("moveUp");
+        console.log("moveUp");
+        console.log("moveRight");
+        console.log("moveRight");
+        console.log("moveLeft");
+        console.log("moveLeft");
+        console.log("moveDown");
+        console.log("moveDown");
+        console.log("moveDown");
+        console.log("moveDown");
+        console.log("moveLeft");
+        console.log("moveLeft");
+        console.log("enterHouse");
+        }
+
+    getMilk();
+
+55. Functions Part 2: Parameters and Arguments:
+    The earlier explained is the simplest version of the JS function. 
+    What if you not only want to just get milk but also specify the number of bottles to be bought by the robot. You can pass the number of bottles as an argument when calling the function which expects one parameters. so when the buy milk section is executed, it will utilize the input to specify the number of bottles within the function. Say:
+
+    function getMilk (bottles) {
+        var cost = bottles * 1.5;
+        //Do something with cost.
+    }
+
+    when working with such expressions, various methods are necessary for rounding down or up the results say after a division. To round down then you can use the Math.Floor() method.
+
+56. Functions Part 3: Outputs & Return Values:
+    Take the previous example where we could take in money and return an output. We use the return key word.
+    For instance to return the remainer of the money spent, we can use the Modulo operator to return the remainder.
+
+    The function can be assigned to a variable say change which is to hold the returned value:
+
+    function getMilk (money) {
+        return money % 1.5;
+    }
+
+    var change = getMilk(4); 
+
+    An example is as below:
+
+        function getMilk(Amount) {              
+            console.log("leaveHouse");
+            console.log("moveRight");
+            console.log("moveRight");
+            console.log("moveUp");
+            console.log("moveUp");
+            console.log("moveUp");
+            console.log("moveUp");
+            console.log("moveRight");
+            console.log("moveRight");
+            console.log("moveLeft");
+            console.log("buy " + calcBottles(Amount, 1.5) + " bottles of milk");
+            console.log("moveLeft");
+            console.log("moveDown");
+            console.log("moveDown");
+            console.log("moveDown");
+            console.log("moveDown");
+            console.log("moveLeft");
+            console.log("moveLeft");
+            console.log("enterHouse");
+
+            return Amount % 1.5; //Remainder of this division
+        }
+
+        function calcBottles(startingMoney, costPerBottle) {
+        var numberOfBottles = Math.floor(startingMoney / costPerBottle);
+        return numberOfBottles;
+        }
+
+        var change = getMilk(5);
+
+        console.log(change);
+
+        Instead of writing all code within the same function, multiple functions can be creared to handle various scenarios that return the output to the parent function.
+
+SECTION 15: INTERMEDIATE JAVASCRIPT:
+57. Random Number Generation in JavaScript: Building a Love Calculator:
+    JS has a way to generate random numbers. Can use the Math.random() method.
+    The number generate is between 0 to 0.9999 (to 16 decimal places). Igt never gets to 1.
+
+    If wanted to roll a die, there are 6 posibilities. That is 1 to 6. We can achieve this by:
+
+    var n = Math.random();
+    n = n * 6; 
+
+    Math.floor(n) // This will give numbers between 0 and 5.
+
+    Since a die has numbers between 1 to 6, we can change the code to:
+
+    n = (n * 6) + 1;
+
+    The above is a pseudo random number generator. A computer is made of several switches of 0 and 1s. Depending on whether the switch is on or off, the computer does its work. It is difficult though to get randomness in a computer.
+
+    There is a difference between Pseudo and random numbers. Can view:
+
+    https://www.youtube.com/watch?v=GtOt7EBNEwQ
+
+    For a die, since we need it as between 1 and 6, The Math.Random generates numbers between 0 to 0.5999999.
+    The Math.Floor then converts the number to the nearest whole number on the lower end by rounding it down. Adding 1 ensures we have numbers 1 to 6 and not 0 to 5.
+
+    Example:
+
+    var crusher = prompt('Hello Lover, Enter your name:');
+    var crushie = prompt("Enter the crushie name: ");
+
+    var propMapenzi = Math.floor((Math.random() * 100)) + 1;
+
+    alert("You Mapenzi probability is " + propMapenzi + "%.");
+
+58. Control STatements: Using If-Else Conditionals & Logic:
+    We might want to execute different block of code depending on the score of the above computation. We can do this using conditionals.
+    This is by using IF - checks if the first condition is met. Else - gives an alternative since the first condition was not met. e.g.,
+
+    if (track === "clear") {
+        goStraight();
+    } else {
+        turnRight();
+    }
+
+    example:
+
+    if (propMapenzi > 70) {
+        alert("You Mapenzi probability is " + propMapenzi + "%. You love each other like crazy");
+    } else {
+        alert("You Mapenzi probability is " + propMapenzi + "%.");
+    }
+
+59. Comparators and Equality:
+    Symbols, >, <, ===, etc are known as comparators.
+    === Is equal to
+    !== Is not equal to
+    >   Is greater than
+    <   Is less than
+    >=  Is greater or equal to
+    <=  Is less than or equal to
+
+    These comparators give our conditionals alot of flexibility.
+
+    "==" is different from "===" since the first does not check the datatype to confirm whether a value is equal. Just checks the value whereas the later checks equivalence on both equality and data types.
+    Consider:
+
+        var a = 1;
+        var b = "1";
+
+        if (a == b) {
+            console.log("Yes")
+        } else {
+            console.log("no")
+        }
+
+    The above will return Yes.
+
+        if (a === b) {
+            console.log("Yes")
+        } else {
+            console.log("no")
+        }
+
+    This returns no, because typeof(a) is not equal to typeof(b).
+    
+60. Combining Comparators:
+    To compare, we use:
+    
+    && - AND
+    || - OR
+    !  - NOT.
+
+    var probMapenzi = Math.floor((Math.random() * 100)) + 1;
+
+    if (probMapenzi > 70) {
+        alert("You Mapenzi probability is " + probMapenzi + "%. You love each other like crazy");
+    } else if (probMapenzi > 30 && probMapenzi <= 70){
+    
+    } else {
+        alert("You Mapenzi probability is " + probMapenzi + "%. Just give up simp!");
+    }
+
+    example 2: BMI Calculator:
+
+    function bmiCalculator (weight, height) {
+        var BMI = weight/(height * height);
+        var interpretation = "";
+        
+        if (BMI < 18.5) {
+        interpretation = "Your BMI is "+ BMI +", so you are underweight."; 
+        } else if (BMI >= 18.5 && BMI <= 24.9) {
+            interpretation = "Your BMI is "+ BMI +", so you have a normal weight."
+        } else {
+            interpretation = "Your BMI is "+ BMI +", so you are overweight."
+        }
+        return interpretation;
+    }
+
+    Example 3: Leap Year calculator:
+
+    function isLeap(year) {
+        var leapyear = Boolean;
+
+        if ((year % 4) === 0) {
+            leapyear = true;
+            
+            if (leapyear) {
+                if ((year % 100) === 0) {
+                    if ((year % 400) === 0) {
+                        return "Leap year."
+                    } else 
+                        return ("Not leap year.");
+                } else {
+                    return "Leap year."
+                }
+            }
+        } else 
+            return ("Not leap year.");
+
+    }
+
+61. Collections: Working with Javascript Arrays 
+    With variables you can store different datatypes. You can also store collections of related items in the same variable by use of an array as:
+
+    var myArray = array[];
+
+    Array count usually start counting at position zero.
+    We can use the array.length to get the count of items in the collection.
+
+    Example:
+
+    var guestList = ["Angela", "Jack", "Pam", "James", "Lara", "Jason"]
+
+    can print out the content to console:
+
+    console.log(guestList);
+
+    Retrieve the item:
+
+    guestList[0] returns Angela.
 
 
+    Can use the function:
+    includes() to check whether the item in brackets exists in your array.
+
+62. Adding Elements and Intermediate Array Technique:
+    The FizzBuzz quiz.
+
+    Also read through:
+
+    https://blog.codinghorror.com/why-cant-programmers-program/
+
+    If you have numbers between 1 to 100, and while counting, if a number is divisible by 3 then shout fizz instead of the number, if divisible by 5 then buzz and if divisible by both then FizzBuzz.
+
+    You can use the push method to add items to an array and the pop to remove an item in an array.
+    array.push(1);
+    array.pop(1);
+
+    Instead of pushing an poping, we can create a function to push items into the array.
+
+    var number = 1;
+
+    function fizzBuzz()
+    {
+        var output = [];
+        
+        if (output.length =  0) {
+            output.push(number);
+        } else {
+            number = output[output.length] + 1;
+            output.push(number)
+        }
+    }
+
+    Can print it using the approach below:
+    //FizzBuzz Challenge:
+    var number = 1;
+    var output = [];
+
+    function fizzBuzz()
+    {   
+        var div3 = Boolean;
+        var div5 = Boolean;
+        
+        if (number < 1 || number > 100) {
+            alert("number must be between 1 and 100");
+        } else {
+            div3 = false;
+            div5 = false;
+            
+            if ((number % 3) === 0) {
+                div3 = true;
+            }
+            if ((number % 5) === 0) {
+                div5 = true;
+            }
+        
+            if (div3 && div5) {
+                output.push("FizzBuzz");
+            } else if (div3) {
+                output.push("Fizz")
+            } else if (div5) {
+                output.push("Buzz")
+            }  else
+                output.push(number);
+        }
+
+        number++;
+        console.log(output);
+    }
+
+    Who is paying for lunch challenge:
+    function whosPaying(names) {
+        //Get the length of the array
+        var numberOfPeople = names.length;
+
+        //using Math.Random, get random numbers with the length of the array;
+        var randomPersonPosition = Math.floor(Math.random() * len);
+
+        //With the selected random number call the array
+        var randomPerson = names[random];
+
+        return randomPerson + " is going to buy lunch today!";
+    }
 
 
+63. Control Statements: While Loops:
+    On the FizzBuzz challenges,earlier one had to call the function multiple times to return the desired output. If for 100 entires, the computer can run it by itself using while loops. While the statement is true, the code in the curly braces will run multiple times.
+
+    Example:
+    While (i < 2) {
+        console.log(i);
+        i++;
+    }
+
+    The FizzBuzz challenge can therefore be re-written as:
+
+    var output = [];
+    var number = 1;
+
+    function fizBuzz() {
+        while(number <= 100) {
+            if (number % 3 === 0 && number % 5 === 0)
+            {
+                output.push("FizzBuzz");
+            } else if (number % 3 === 0) {
+                output.push("Fizz");
+            } else if (number % 5 === 0) {
+                output.push("Buzz");
+            } else {
+                output.push(number);
+            }
+           number++; 
+        }
+    }
 
 
+    The challenge with the while loop is that it is error prone. It will continue running infinitely till the statement returns false. So one should be very careful when working with the while loop to ensure proper scoping and that the code has a definite end.
 
+    var bottles = 99;
+    var bottleWord = " "
+
+    function beer()
+    {
+        while (bottles > 0) {
+            if (bottles > 1) { 
+                bottleWord = " bottles";
+            } else {
+                bottleWord = " bottle"
+            }
+            
+            console.log(bottles + bottleWord+" of beer on the wall, "+ bottles + bottleWord+" of beer.");
+            bottles--;
+
+            console.log("Take one down and pass it around, "+ bottles + bottleWord+" of beer on the wall.");
+        }
+
+        console.log("No more bottles of beer on the wall, no more bottles of beer.\nGo to the store and buy some more, 99 bottles of beer on the wall.");
+    }
+
+64. Control Statements: For Loops:
+    For (i=0; i<2; i++){
+        console.log(i);
+    }
+
+    It is a reshuffle of the while loop items to achieve the same end goal.
+
+    The for loop sweetens the syntax and makes it easier for the devs to use.
+
+    It executes the lines from left to right. Creates a variable i checks if less than 2, executes the code within the curly braces then executes the i++.
+
+    The fizzBuzz function can therefore be re-written as:
+
+    var output = [];
+
+    function fizzBuzz() {
+        for(var number = 1; number <= 100; number++) {
+            if (number % 3 === 0 && number % 5 === 0)
+            {
+                output.push("FizzBuzz");
+            } else if (number % 3 === 0) {
+                output.push("Fizz");
+            } else if (number % 5 === 0) {
+                output.push("Buzz");
+            } else {
+                output.push(number);
+            }
+        
+        }
+        console.log(output);
+    }
+
+The for loop is more preferred compared to the while loop in such a use case.
+
+In which case should one use the While loop over the for loop and vice versa?
+    While Loop - checks that the condition is true. Run a program while something is in a specific state.
+
+    For Loop - When you want to iterate, or run a piece of code many many times.
+    
+    Fibonacci Series:
+
+
+    Trial:
+
+    var prevNo = 0;
+    var output = [];
+    var NewVal = 0;
+
+    function fibonacciGenerator(n)
+    {       
+        if (n === 1) {
+           output = [0]; 
+        } else if (n === 2) {
+           output = [0, 1]; 
+        } else {
+            for(var i = 0; i<= n; i++) {
+                if (output.length === 0) {
+                    output.push(i);
+                    prevNo = i;
+                } else if (output.length === 1){
+                    NewVal = prevNo + i;
+                    output.push(NewVal);
+                    prevNo = NewVal;
+                } else {
+                    NewVal = prevNo + output[output.length-2];
+                    output.push(NewVal);
+                    prevNo = NewVal;
+                }
+            }
+        }
+        console.log (output);
+        return output;
+    }
+
+
+    Final:
+    var prevNo = 0;
+    var output = [];
+
+    function fibonacciGenerator(n)
+    {   
+        if (n === 1) {
+           output = [0]; 
+        } else if (n === 2) {
+           output = [0, 1]; 
+        } else {
+            output = [0, 1]; 
+            for(var i = 2; i<n; i++) {
+                output.push(output[output.length - 2] + output[output.length - 1]);
+            }
+        }
+        return output;
+    }
+
+SECTION 16: The Document Object Model (DOM):
+65. Adding JavaScript to websites
+    Similar to CSS where you can inject the css to your wwebsite, inline, internal and external css, Javascript also works in a similar manner:
+
+    - Inline - By adding an attribute to the html tag e.g:
+        <body onload="alert("Hello")">   
+
+    This can be abit confussing because the JS will be in quotations and the string in double quotes, we therefore have to downgrade one to single quotes as:
+        <body onload="alert('Hello')">
+
+    Inline has all the downsides of the inline css, difficult to maintain, debug, not modular and not best practice.
+
+    - Internal:
+        <body>
+        <script type="text/javascript">
+            alert("Hello");
+        </script>
+        </body>
+
+    This behaves similar to the inline js.
+
+    - External File - Instead of adding the js within the body, you can add a link to the file containing the JS code:
+        <body>
+        <script src="index.js" charset="utf-8"></script>        
+        </body>
+
+    The position where we position our html code matters a great deal. Our CSS must be in the head section so it is loaded before the content. If the code is at the bottom, the code will execute from top to bottom and will have the css as a default black h1 then much later will change the color to any other that was assigned the red color. This should not be the case.
+
+    JS however should be the opposite, this is because if at the top and it is trying to manupulate an element that has not been loaded yet, the code will break. This will throw an error on the console.
+
+    The script should be before the closing body tag. The added benefit being if you have alot of JS code, then lots of the content would have been loaded and the rest of the code can be executed later. The Website therefore tends to load faster.
+
+
+66. Introduction to the Document Object Model (DOM):
+    If we want our website to be interactive then we need to be able to change parts of the website onthe fly without the user clicking then having the website reloaded. The DOM solves this problem by catalogies the site to individual sections that we can manipulate.
+
+    The conversion of the websites into a DOM is done by the browser which changes the site into a tree format and the objects can be manipulated. All elements are converted into objects and thir relationships mapped. Some as parents and others as sibblings. All the elements are within the documents. See Snips > The DOM.
+
+    In code, a sample is such as below:
+
+    <!DOCTYPE html>
+    <html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>My Website</title>
+        <link rel="stylesheet" href="styles.css">
+
+    </head>
+    <body>
+
+        <h1 id="title">Hello</h1>
+
+        <input type="checkbox">
+
+        <button class="btn">Click Me</button>
+
+        <ul id="list">
+        <li class="item">
+            <a href="https://www.google.com">Google</a>
+        </li>
+        <li class="item">Second</li>
+        <li class="item">Third</li>
+        </ul>
+    </body>
+
+    <footer>
+        <script src="index.js" charset="utf-8"></script>
+    </footer>
+    </html>
+
+    To visualize the tree, install the chrome HTML Tree generator extension. When visualizing, the entire tee is contained in a document.
+
+    At the very top:
+
+    HTML which has two children, HEAD and BODY.
+
+    Inside the body are 5 children: H1, INPUT, BUTTON, UL, SCRIPT.
+
+    The UL has three children of type LI and one of the LIs has one child A.
+
+    See Snips > Sample DOM.
+
+    Now we can tap into the DOM using JS and navigate through the tree. If in the chrome console you write document; and enter, it will pull the entire html.
+
+    One can navigate through the document using the inbuilt methods e.g:
+
+    1. document.firstElementChild; - returns the Entire html code since the first child is html.
+
+    2. document.firstElementChild.firstElementChild; - return the HEAD part and its children;
+
+    3. document.firstElementChild.lastElementChild; - returns the BODY part and all its children.
+    
+    You can access the H1 element by:
+    document.firstElementChild.lastElementChild.firstElementChild; - returns <h1>Hello</h1>
+
+
+    Once selected, you can manipulate this object say:
+
+    var heading = document.firstElementChild.lastElementChild.firstElementChild;
+
+    - heading.innerHTML = "Good Bye";
+
+    This changes the Hello string to Good Bye.
+    
+
+    One can also change the color of the element by:
+
+    - heading.style.color = "red" - This will change the color of the selected object.
+    - document.querySelector("input").click() - Selects the input tag and makes it do things in this case, it will check the box automatically. This will simulate a mouse click.
+
+    Our objects inside the DOM can have:
+    Properties - describes something about the object, e.g color, number of seats, doors if it was a car
+    Methods - Things objects can do, e.g brak, drive, park if the object was a car.
+
+    We can get the properties of the object, for a red car, we can do car.getColor which returns red.
+
+    We can also set the properties of a car e.g., car.numberOfDoors = 0; will remove all doors from the car.
+
+    Car.drive() - Calling the drive method makes the car to drive. A method is something that an object can do. Drive is a method since associated with the car object though a times used interchangeably with function.
+
+    Methods are usually called in a similar way to methods. However, the methods have parenthesis as the end when called.
+
+    The methods for a button can include:   
+        click();
+        appendChild();
+        setAttribute(); - Say change the href.
+
+67. Selecting HTML Elements with JavaScript:
+    There are multiple other ways of selecting elements in JS:
+
+    1. document.getElementsByTagName("li") - Looks through the pages ans searches for any element with a specifc tag, in this case the list items within the un ordered list. Returns an array of all the items with this tag. Elements is plural and therefore fetches all that have this tag element. And since an array is returns, the code below will throw an error:
+    
+    document.getElementsByTagName("li").style.color = "red";
+
+    since you can not assign this property to an array instead select the item you want to select then assign the value:
+
+    document.getElementsByTagName("li")[2].style.color = "red";
+
+    All array properties can be used on the returned array e.g.,
+
+    document.getElementsByTagName("li").length;
+
+    2. document.getElementsByClassName("btn) - Has plural elements meaning we will return an array. It doesn't matter whether only one item has that class. To select ensure to use the square brackets.
+    3. document.getElementById("") - is singular and returns only one item since you should have one id for each item in a site. e.g.,
+    document.getElementById("title")
+
+    Can use it to manipulate the item as: 
+    document.getElementById("title").innerHTML = "Good Bye"
+
+    Another method that can select a single element is the query selector since it only returns a single item at a time. It works differently cause the string within the parenthesis is a selector. The selector is the tag, or class which starts with a dot(.) or an id denoted by using the pound sign (#).
+
+    document.querySelector("");
+
+    It can take a class, and ID or even an element e.g:
+    document.querySelector("h1");
+    document.querySelector("#title");
+    document.querySelector(".btn");
+
+    One can also combine selectors and query for something more specific. Foe example, to pull the list with a link in the code earlier:
+
+    document.querySelector("li a");
+
+    Can also combine items for a class within li as:
+    document.querySelector("li.item");
+
+    The same can also be used on IDs as:
+    document.querySelector("#list a") - This is a hierarchical selector because of the space in between the id and the element. This therefore returns an anchor tag within something with an id of type list.
+
+    What if the selector matches more than one object?
+    document.querySelector("li.item"); - This returns the forst item that matches that selector.
+
+    To get all, then you should use:
+    document.querySelectorAll("li.item");
+
+    And to manipulate the list then you must use the index so to manipulate its items.
+
+    QuerySelector and querySelectorAll allows for more complex queries cause we are able to select ID, tags, elements, classes whereas the getElement methods are more broad and it is difficult to target specific elements and hence the querySelector and querySelectorAll are more used.
+
+68. Manipulating and Changing Styles of HTML Elements with Javascript:
+    When changing properties in CSS, the properties with two words are usually written as: font-size. However, in JS, the properties are formatted differently. Font size is instead written in camel case as fontSize hence:
+
+    document.querySelector("h1").style.fontSize = "10rem";
+
+    for more see:
+
+    https://www.w3schools.com/jsref/dom_obj_style.asp
+
+    which will show what the properties change to when working with the DOM.
+
+    Opposed to CSS' approach, the values of the properties must be specified as a string. Even if it is a number.
+
+    document.querySelector("h1").style.visibility = "hidden";
+
+
+69. The Separation of Concerns: Structure vs Style vs Behaviour:
+    To keep our code tidy, we must keep in mind the separation of concerns, HTML for content, CSS for styling and JS for behaviour.
+
+    It is not good practice to change the style using JS. We instead need to have style in CSS. However, we need to ensure as much as this is done, we can be able to change the formating on the fly using JS.
+
+    ClassList:
+    We can utilize the classList property to highlight a list of classes in a specific element. e.g., 
+    
+    1. document.querySelector("button").classList.
+
+    You can use the add method to add classes to the current class list on an object:
+
+    2. document.quesrySelector("button").add("invisible");
+
+    if you enter and check the elements, then the invisible class will be part of the button properties.
+
+    With this we can keep all our styling in CSS and activate and deactivate them using JS. To remove the class then
+
+    3. document.quesrySelector("button").remove("invisible");
+
+    So if the class .invisible is added to styles.css and the above code is executed then the button will be invisible. This way all style can be in CSS but turn it on and off with JS.
+
+    4. document.quesrySelector("button").toggle("invisible");
+    If the invisible class is on then turn it off and vice versa.
+
+    This approach makes the code easier to debug.
+
+70. Text Manipulation and the Text Content property:
+    document.getElementById("title").innerHTL = "Good Bye"
+    document.getElementById("title").textContent = "Hello"
+
+    Both propertie can change the text of whichever element that we select. However, they are slighly different:
+
+    innerHTML - Gives you the content that is in between the selected tag. including any other tags that might be there. 
+
+    whereas
+
+    textContent - Gives only the text content in between the tag excluding any other tags:
+
+    Example:
+    <h1 id="title"><strong>Hello</strong></h1>
+
+    innerHTML returns: "<strong>Hello</strong>"
+
+    textContent returns: "Hello".
+
+    Therefore, using innerHTML means you can add any other HTML code on the fly. For example if we want to change the code in between to be italizised we can do it as:
+
+    document.querySelector("h1").innerHTML = "<em>Good Bye</em>"
+
+    If the above is done using the textContent, the tags will be considered as part of the text and therefore will be visble to the end users.
+
+
+71. Manipulating HTML Element Attributes:
+    Attributes can include, class, href, src etc depending on the element you are looking at, anything that goes into a tag other than the tag name itself.
+
+    1. document.querySelector("a").attributes will give you a list of all attributes currently attached to the selected html element.
+
+    We can retrieve the current value by:
+    2. document.querySelector("a").attributes.getAttribute("href") - The vale of getAttribute must be one of the results from the earlier returned attributes.
+    3. We can set the attributes using: document.querySelector("a").attributes.setAttribute("href", "https://www.bing.com");
 
 
 
