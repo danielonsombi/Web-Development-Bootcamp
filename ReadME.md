@@ -2051,7 +2051,7 @@ SECTION 16: The Document Object Model (DOM):
 
     You can use the add method to add classes to the current class list on an object:
 
-    2. document.quesrySelector("button").add("invisible");
+    2. document.quesrySelector("button").classList.add("invisible");
 
     if you enter and check the elements, then the invisible class will be part of the button properties.
 
@@ -2100,6 +2100,486 @@ SECTION 16: The Document Object Model (DOM):
     We can retrieve the current value by:
     2. document.querySelector("a").attributes.getAttribute("href") - The vale of getAttribute must be one of the results from the earlier returned attributes.
     3. We can set the attributes using: document.querySelector("a").attributes.setAttribute("href", "https://www.bing.com");
+    
+SECTION 18: ADVANCED JAVASCRIPT AND DOM MANIPULATION:
+72. What We'll Make: Drum Kit:
+    Inorder to register button clicks, you must add event listeners to it. A function that say handles a click can be maintained in the index.js file. e.g.,
+
+    function handleClick()
+    {
+        alert("I got clicked!");
+    }
+
+    We want a button to trigger this function when it receives a click. We therefore have to select a button inside HTML and add an eventlistener that listens to when it is clicked, then call the handleClick() button.
+
+    Select the button using:
+
+    document.querySelector("button");
+
+    Then to it use the addEventListener() method to specify the the type, listener, and any other options that will be passed in as arguments.
+
+    The code is as below:
+
+    document.querySelector("button").addEventListener("click",handleClick)
+
+    function handleClick() {
+        alert("I got clicked");
+    }
+
+    Remember the type and lister parameters are case sensitive.
+
+    We usually call our functions with a set of parenthesis. However, while using the addEventListener, this is not the case. This is because, adding the parenthesis makes the function a straight up function call. It will be executed immediately the JS file is loaded. This is should not be the case because the function should only be triggered by an event and in this case clicking the button.
+
+
+    The above code can be written in different other ways e.g., using anonymous functions (function without a name) as:
+
+    document.querySelector("button").addEventListener("click", function() {
+        alert("Mehn, I got Clicked!");
+    })
+
+    The code above will only be executed for the very first button.
+
+    To execute for multiple button in the 17.0 Drum Kit Starting Files > Index.js we will use a for loop as below:
+
+
+    For the forloop, we use the query selector method and instead of using "button" which is an element that might be used in several other sections, we instead use .drum class which is specific to this set of buttons.
+
+73. High Order Functions & Passing Functions as Arguments:
+    Note that if you inspect elements say on the JavaScript wikipedia, If you select a specific element, a $0 value is assigned to it. This value can be used to access its content on the console window.
+    Can use it to make changes such as:
+
+    $0.innerHTML = "Dan Onsombi".
+
+    This will change the headiung from Javascript to Dan Onsombi. However the changes are lost when the page is refreshed.
+
+    If you click on the JavaScript, nothing happens since it is not bound to any listener. We can however make it clickable by:
+
+    $0.addEventListener("click", function() {
+        console.log("I got clicked!");
+    });
+
+    This will make the h1 clickable and will log the number of clicks as it is being clicked.
+
+    The above ustilizes an anonymous function which can be re-written as earlier described.
+
+    In this case, we pass in to inputs to the function: 
+    1. The type of event
+    2. The listener (function to be executed when the event is triggered).
+    
+
+    Consider a calculator:
+    1. Using functions:
+    To add, one can create different calculator functions every time they want to add or multiply two numbers:
+        //To add:
+        function calculator(num1, num2)
+        {
+            return (num1 + num2)
+        }
+
+        //To Multiply:
+        function calculator(num1, num2)
+        {
+            return (num1 * num2)
+        }
+
+    However, this will be tedious having to create different calculators depending on the calculator. A better option would be to add a function as the third parametor to the calculator function which will call the respective add or multiplication methods already predefined:
+
+        function add(num1, num2) {
+            return num1 + num2;
+        }
+
+        function multiply(num1, num2) {
+            return num1 * num2;
+        }
+
+        function calculator(num1, num2, operator) {
+            return operator(num1, num2);
+        }
+
+
+    With the aboive call, to add:
+        calculator(4, 5, add);
+
+        On execution the function becomes:
+
+        function calculator(4, 5, add) {
+            return add(num1, num2);
+        }
+
+    To multiply:
+        calculator(4, 5, multiply);
+
+        The function becomes:
+        function calculator(4, 5, multiply) {
+            return multiply(num1, num2);
+        }
+
+    Debugger:
+    Chrome developer tool is rich with functionalities. This includes an inbuilt debugger that can be loaded from the developer console. To load the developer tool:
+    1. Type the debugger key word.
+    2. Below it, call the function you want to rdebug.
+    
+    e.g.,
+    debugger;
+    calculator(3,5,multiply); //We'd written the function in the console.
+
+    This will help find what is happening instead of playing computer.
+
+    This type of functions that can take other functions as inputs are called High Order Functions.
+
+    HIGH ORDER FUNCTIONS:
+    Are functions that can take other functions as inputs.
+
+    This is available in many programming languages and relied on heavinly on JS.
+
+    An example is using the calculator below:
+
+    function add(num1, num2) {
+        return num1 + num2;
+    }
+    
+    function subtract(num1, num2) {
+        return num1 - num2;
+    }
+    
+    function multiply(num1, num2) {
+        return num1 * num2;
+    }
+    
+    function divide(num1, num2) {
+        return num1 / num2;
+    }
+    
+    function calculator(num1, num2, operator) {
+        return operator(num1, num2);
+    }
+
+
+74. How to Play Sounds on a website:
+    Note that if you have no idea how to go around this, you can easily search it on the browser and get the way around.
+
+    We can try this out using the recommendations on: 
+        https://stackoverflow.com/questions/9419263/how-to-play-audio
+
+    var audio = new Audio('audio_file.mp3');
+    audio.play();
+
+    One can also read through the MDN Docs on the Audio Element and its properties:
+        https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement
+
+    It has different properties:
+    Can check whether it has been played or paused.
+    Can set when you want it played etc.
+
+    It also has several methods like play() that can be used.
+
+    In our drum kit project, we have multiple buttons and the goal is to have each one of them play a different sound when the button is clicked. Therefore the event listener is to be used by several buttons. To track the specific button, we use the "this" keyword.
+
+    Can console log it to see its value:
+    console.log(this)
+
+    The "this" keyword grabs the object that initiated the event and with the obejct we can use the various available properties and methods in different ways. E.g., to get the text, we can use 
+    
+    this.innerHTML;
+
+    Can also style the content of the clicked button, say the color as:
+
+    this.style.color="white";
+
+    Our code then becomes:
+
+    var numberOfDrumButtons = document.querySelectorAll(".drum").length;
+    for (var i = 0; i <= numberOfDrumButtons; i++)
+    {
+        document.querySelectorAll(".drum")[i].addEventListener("click", function() {
+            this.style.color="white";
+        })
+    }
+
+75. How to use Switch Statements in JavaScript:
+    In some instances, you may want to run conditional checks through several items. It may not be easy to use the if statement. A SWITCH statement will be more reasonable.
+
+    The syntax is as below:
+
+    switch (key) {
+        case value:
+            
+            break;
+
+        default:
+            break;
+    }
+
+    Where Switch is similar to the IF, the default is similar to the else at the end of an if statement.
+    A break marks the end of a case statement.
+
+76. A Deeper Understanding of JavaScript objects:
+    We can use objects with different properties. For instance a person, has a name, age, nationality as properties to the person object. A variable can be created to hold this data as:
+
+    var bellBoy1 = {
+        name: "Timmy",
+        age: 19,
+        hasWorkPermit: true,
+        languages: ["French", "English"]
+    }
+
+    With such an object, we can print out the name of bellBoy1 as:
+
+    bellBoy1.name;
+
+    A house keeper object may be similar to:
+
+    var houseKeeper1 = {
+        yearsOfExperience: 12,
+        name: "Daniel",
+        cleaningRepertoire: ["bathroom", "lobby", "bedroom"]
+    }
+
+
+    If we need more bell boys, we do not have to type in the object over and over again everytime we need a new bell boy. We can instead create a function named bellBoy, usually refered to a CONSTRUCTOR FUNCTION.
+    For Constructors, the function name has to be capitalized as:
+
+    function BellBoy (name, age, hasWorkPermit, language) {
+        this.name = name;
+        this.age = age;
+        this.hasWorkPermit = hasWorkPermit;
+        this.languages = languages;
+    }
+
+    Note the first letter in "BellBoy" is also capitalized indicating this is a constructor function.
+        
+    Look at a constructor as a factory that pumps out bell boys for this case. The constructor will take in inputs which will then be assigned to the bell boy properties.
+
+    Now to create a new bell boy all you need to do is call the function as:
+
+    var bellBoy1 = new BellBoy("Onsombi", 29, true, ["English", "Kiswahili"]);
+    var bellBoy1 = new BellBoy("Daniel", 29, true, ["English", "Ekegusii"]);
+
+77. Objects, their Methods and the Dot Notation:
+    Lets assume our bell boy can move Suit cases. We can create the suit case as bellow:
+
+    function moveSuitcase {
+        alert("May I take your suitcase?");
+        pickUpSuitcase();
+        move();
+    }
+
+    As earlier discussed, we can achieve this by:
+        var bellBoy1 = {
+            name: "Timmy",
+            age: 19,
+            hasWorkPermit: true,
+            languages: ["French", "English"],
+            moveSuitcase: function() {
+                alert("May I take your suitcase?");
+                pickUpSuitcase();
+                move();
+            }
+        }
+
+    That is having a property with value set to the anonymous fuinction. And to access the suitcase we can use the Dot Notation as:
+
+    bellBoy1.moveSuitcase();
+
+    When using properties or calling the method is use of the dot notation(.). The difference is that the method has parenthesis.
+
+    To incorporate this to our constructor function, then we write it as:
+
+    function BellBoy (name, age, hasWorkPermit, language) {
+        this.name = name;
+        this.age = age;
+        this.hasWorkPermit = hasWorkPermit;
+        this.languages = languages;
+        this.moveSuitcase = function() {
+            alert("May I take your suitcase?");
+            pickUpSuitcase();
+            move();
+        }
+    }
+
+    The house keepers will look as below:
+
+    function HouseKeeper(name, yearsOfExperience, cleaningRepertoire)
+    {
+        this.name = name;
+        this.yearsOfExperience = yearsOfExperience;
+        this.cleaningRepertoire = cleaningRepertoire;
+        this.clean = function () {
+            alert("Cleaning in Progress");
+        }
+    }
+
+    And can call the clean method by:
+
+    var houseKeeperD = var houseKeeperD = new HouseKeeper("Sharon", 5, ["Washing", "Specialist", "Laundry"]);
+
+    houseKeeperD.clean(); //Which will print out the alert.
+
+
+    This is similar to some inbuilt methods we have looked at earlier which are pre-build libraries like the Audio method. It is likely to be something similar to:
+
+    function Audio (FileLocation) {
+        this.fileLocation = fileLocation;
+        this.play = function () {
+            //Tap into the audio hardware
+            //check the file at fileLocation exists
+            //Check the file at fileLocation is a sound file
+            //play the file at fileLocation
+        }
+    }
+
+    And this is why we called it as:
+    var tom1 = new Audio("sounds/tom-1.mp3");
+    tom1.play();
+
+78. Using Keyboard Event Listeners to check for Key Presses:
+    Other than the click event, one can also listen to the press of a specific letter on the keyboard.
+    Note: All the events are usually written in lowercase e.g., click, keydown  as opposed to using carmel case.
+
+    For buttons, we could easily filter out the button that was clicked. For keyboard, you can listen even to the entire document as:
+
+        document.addEventListener("keydown", function() {
+            alert("Key was pressed");
+        })
+
+    NOTE: For any block of JS code to be executed, all the error in the console from prior JS scripts must be addressed. For instance in the code below if the for loop throws an error, the rest of the code fails and the keydown event listener will not be executed. The code must be written right. Since it is an array, the var in the for loop should start from 0 and count to 6 hence the for loop should be:
+
+        for (var i = 0; i < numberOfDrumButtons; i++)
+
+    and not 
+        for (var i = 0; i <= numberOfDrumButtons; i++)
+
+    The final code therefore becomes:
+
+        var numberOfDrumButtons = document.querySelectorAll(".drum").length;
+        for (var i = 0; i < numberOfDrumButtons; i++)
+        {
+            document.querySelectorAll(".drum")[i].addEventListener("click", function() {
+                var buttonInnerHTML = this.innerHTML;
+                drumPlay(buttonInnerHTML);
+            });
+        }
+
+        document.addEventListener("keydown", function(event) {
+            var keypressed = event.key;
+            drumPlay(keypressed);
+        });
+
+        function drumPlay(key) {    
+            switch (key) {
+                case "w":
+                    var tom1 = new Audio('./sounds/tom-1.mp3');
+                    tom1.play();
+                    break;
+
+                case "a":
+                    var tom2 = new Audio('./sounds/tom-2.mp3');
+                    tom2.play();
+                    break;
+
+                case "s":
+                    var tom3 = new Audio('./sounds/tom-3.mp3');
+                    tom3.play();
+                    break;
+
+                case "d":
+                    var tom4 = new Audio('./sounds/tom-4.mp3');
+                    tom4.play();
+                    break;
+                
+                case "j":
+                    var snare = new Audio('./sounds/snare.mp3');
+                    snare.play();
+                    break;
+
+                case "k":
+                    var crash = new Audio('./sounds/crash.mp3');
+                    crash.play();
+                    break;
+
+                case "l":
+                    var kick = new Audio('./sounds/kick-bass.mp3');
+                    kick.play();
+                    break;
+
+                default: 
+                    console.log(key);
+                    break;
+            }
+        }
+
+79. Understanding Callbacks and How to Respond to Events:
+    As earlier highlighted, High Order Functions are functions that take functions as inputs.
+    The function that gets passed in as an input is referred to as a CALLBACK FUNCTION. Cause it makes us wait for something to finish happening, e.g a click function then the call back function gets called and executed. Consider:
+
+        document.addEventListener("keypress", respondToKey(event));
+
+        function respondToKey(event) {
+            console.log("Key Pressed.");
+        }
+
+    The respondToKey(event) will wait for a key press for it to execute.
+    The callback function is never called by us but usually the object that experienced the click/keydown etc. We can have the callback function return information only it knows once that event happens.
+
+    It call also be set to print out the event that triggered it and all the other properties/methods that can be called using the dot notation.
+
+        document.addEventListener("keypress", respondToKey(event));
+
+        function respondToKey(event) {
+            console.log(event);
+        }
+
+    The event listener works by first detecting the type of event that has happened. The event is then passed into a function which creates an object of the event mapping various properties to the object being created.
+    The code then checks if the event that happned is similar to want the developer wanted to track and if so, then the callback function gets executed. If not, it exits.
+
+    If the event is what was being detected and the call back is to print out the event, then it will just log the event and its properties.
+
+80. Adding Animation to websites:
+    While working with our drum kit, we might want to animate the code so the user can be sure that they pressed the right key.
+    From the code below:
+
+    <h1 id="title">Drum 🥁 Kit</h1>
+    <div class="set">
+    <button class="w drum">w</button>
+    <button class="a drum">a</button>
+    <button class="s drum">s</button>
+    <button class="d drum">d</button>
+    <button class="j drum">j</button>
+    <button class="k drum">k</button>
+    <button class="l drum">l</button>
+    </div> 
+
+    All buttons have class drum but in addition, each one has another unique class. With this class we can pick a specific button and animate it.
+
+    In CSS an animation has already been created that creates a shadow and a transparency to the button:
+
+        .pressed {
+            box-shadow: 0 3px 4px 0 #DBEDF3;
+            opacity: 0.5;
+        }
+
+    We can achieve this by:
+        function buttonAnimation(currentKey) {
+            var activeButton = document.querySelector("."+currentKey).add("pressed");
+            activeButton.classList.add("pressed");
+        }
+
+    With the styling, if it is not removed then at somepoint the class will have been assigned to all the buttons. There is therefore need to remove the class after a delay of some few seconds using the timeout functions:
+
+    https://www.w3schools.com/jsref/met_win_settimeout.asp
+    
+    setTimeout (function() {
+        activeButton.classList.remove("pressed");
+    }, 100);
+
+
+
+
+
+
+
+
+
 
 
 
