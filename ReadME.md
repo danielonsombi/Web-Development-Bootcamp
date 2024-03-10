@@ -2572,9 +2572,276 @@ SECTION 18: ADVANCED JAVASCRIPT AND DOM MANIPULATION:
         activeButton.classList.remove("pressed");
     }, 100);
 
+SECTION 19: JQUERY
+81. What is JQuery
+    Earlier in the course we wrote the following:
+
+        for (var i = 0; i < numberOfDrumButtons; i++)
+        {
+            document.querySelectorAll("button")[i].addEventListener("click", function() {
+                document.querySelector("h1").style.color = "red";
+            });
+        }
+
+    So many lines of code to achieve a simple task of changing the color to red.
+
+    However, JQuery shortens and simplifies the code to:
+
+    $("button").click(function() {
+        $("h1").css("color", "red");
+    });
+
+    JQUERY is therefore a library you can incorporate in your code to make your work and life easier and quicker. JQuery allows take a piece of code and instead of:
+
+    document.querySelector("h1");
+
+    you can write:
+
+    jQuery("h1");
+
+    or simplify it further as:
+
+    $("h1");
+
+82. How to incorporate jQuery into Websites:
+    Similar to bootstrap, the code can be accessed in the jQuery website or can also be incorporated through cdn.
+
+        https://jquery.com/download/
+
+    The most popular option is to use googles cdn:
+
+        https://developers.google.com/speed/libraries#jquery
+
+    The beauty of using a popular CDN is that if a user has already logged into a website using the same cdn, they already have it cached in their browser which means they won't have to fetch a fresh copy of jQuery.
+
+    The positioning of your jQuery code is really important.
+    If below our index.js, then it will throw an error since the browser reads code from top to bottom. Since it has not grabbed jQuery then any jQuery in index.js throws an error.
+
+    To avoid errors, on the custom JS, use jQuery to check whether tjQuery has been fully loaded. using:
+
+    $(document).ready(function() {
+        $("h1").css("color", "red");
+    });
+    The above code is common where the user has placed the jQuery and the custom JS code in the header section.
+
+    The best formatting of your boilerplate should be:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>jQuery</title>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+
+        <h1>Hello.</h1>
+        <button>Click Me</button>
+        <button>Click Me</button>
+        <button>Click Me</button>
+        <button>Click Me</button>
+        <button>Click Me</button>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="./index.js"></script>
+    </body>
+    </html>
+
+    With this approach, no need to user the $(document).ready(function() {...});
+
+83. How Minification Works ro Reduce File Size:
+    If you open the cdn in the link:
+        https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js
+
+    You will notice what a mess it is. Minification basically removes spaces, paragraphs and comments. This makes the files smaller and quicker to load since the browser doesn't care about tabs, indents, spaces and comments, the browser ignores it and therefore need for minification.
+
+    If you download the JQuery library, it comes both with the standard library that is human readable to allow editing and later minifyinf the code, and the minified library intended for the broweser.
+
+84. Selecting elements with jQuery:
+    Without jQuery, elements can be selected by:
+        document.querySelector("h1");
+
+    The same can be achieved in jQuery by:
+        $("h1");
+
+    To get a h1 within a div of ID header:
+        $('#header h1');
+
+    To select all buttons we'd do:
+        document.querySelectorAll("button");
+
+    In jQuery, the same can be achieved by:
+        $("button")
+    for there is no difference between selecting one and selecting many.
+
+85. Manipulating Styles with jQuery:
+    Can be done by:
+        $("h1").css("color", "green");
+
+    Can get the current value of css as:
+        $("h1").css("color")
+
+    If you console.log($("h1").css("color")) it will show the color property of the highlighted element. other than color you can also log the font-size etc.
+
+    So within the css method, if you have two values then you are setting the value, but if one then you are getting the value.
+
+    However, it is good practice to separate CSS, HTML AND JS. Instead of adding th ecss in JS then can create a class in the style sheet with the various properties we want to assign.
+
+    With jQuery we can add the class by:
+
+        $("h1").addClass("big-title");
+
+    Can also remove class:
+
+        $("h1").removeClass("big-title");
+
+    To remove multiple classes separate them by a space as:
+         $("h1").removeClass("big-title  Margin-50");
+
+    We can also check if our element has a specific class:
+        $("h1").hasClass("margin-50"); //Returns a true or false.
+
+86. Manipulate Text with jQuery:
+    Can manipulate text by:
+        $("h1").text("Bye");
+
+        $("button").text("Don't Click Me"); // Will change the text for all buttons in your page. 
+
+    To update both html tags and text, as opposed to using innerHTML in vanilla JS, you use:
+        $("button").html("<em></em>")
+
+    Most of the things in jQuery are done using methods and dot notation. jQuery works by creating functions to allow shorten the code we write and reduce repetition.
+
+87. Manipulating attributes with jQuery:
+    Can get attributes of a specific element we can use:
+        $("img").attr("src");
+
+    To set the value then:
+
+        $("a").attr("href","https://www.google.com");
+
+    Can also get the classes:
+        $("h1").attr("class");
+
+88. Adding Event Listeners with jQuery:
+    The vanilla code is simplified to:
+
+    1. Click event:
+    $(h1).click(function() {
+        $("h1").css("color", "purple")
+    });
+
+    In vanilla JS, to add an event listener to all buttons, you had to use a for loop.
+
+        for(var i = 0; i < 5; i++) {
+            document.querySelectorAll("button")[i].addEventListener("click", function(){
+                document.querySelector("h1").style.color = "purple";
+            });
+        }
+
+    This can be done in jQuery by:
+
+        $("button").click(function() {
+            $("h1").css("color", "purple")
+        })
+
+    This is because the $("button") selects all buttons and therefore there is no need to loop through.
+
+    2. Key press event:    
+    Can also detect key presses:
+        $("input").keypress(function(event) {
+            console.log(event.key);
+        })
+    To detect key presses on the entire page, then replace "input" with "body" or document.
+
+    Another more flexible way of adding an event listener is by use of the "on" method as:
+    The first parameter can be any of the events e.g., click, mouseover, keypress etc.
+
+    $(document).on("mouseover", function(){
+        $("h1").css("color", "purple")
+    })
+
+89. Adding and Removing Elements with jQuery:
+    While the website is live and running, we can use jQuery to add elements in the fly. If you want to add a button element before the h1 element then can use the before method:
+
+    1. $("h1").before("<button>New</button>");
+
+    The above code will select the h1 element then before it add the New button.
+
+    There are different ways to do this:
+
+    2. After - Adds it after the h1
+    3. prepend - adds the html within the h1 element, before the Hello word.
+    4. append - adds the element after the Hello word but before the closing tag.
+    5. remove - removes a specific element(s) from the web page
+
+90. Website Animations with jQuery:
+    jQuery makes it easy to implement common animations e.g., hide:
+
+    $("button").on("click", function(){
+        $("h1").hide();
+    })
+
+    To hide and show the buttons then we use the toggle method:
+    $("button").on("click", function(){
+        $("h1").toggle();
+    })
+
+    To make the hidding progressive then use the fadeOut method:
+    $("button").on("click", function(){
+        $("h1").fadeOut();
+    })
+
+    Can toggle the fading:
+
+    $("button").on("click", function(){
+        $("h1").fadeToggle();
+    })
+
+    Can also use the SlideUp and SlideDown, useful with dropdowns:
+
+    $("button").on("click", function(){
+        $("h1").slideUp();
+    })
+
+    $("button").on("click", function(){
+        $("h1").slideDown();
+    })
+
+    Also has a toggle feature:
+
+    $("button").on("click", function(){
+        $("h1").slideToggle();
+    })
+
+    Instead of using the prebuild animations, you can use the animate method to create your own:
+    
+    $("button").on("click", function(){
+        $("h1").animate();
+    })
+
+    This allows specify the css that you want to animate to: e.g:
+
+    $("button").on("click", function(){
+        $("h1").animate({opacity:0.5});
+    })
+
+    With animate, within the curly braces you can only add css with a umeric value.
+    
+    If you want to combine them then do:
+    $("button").on("click", function(){
+        $("h1").slideUp().slideDown().animate({opacity: 0.5});
+    })
+
+    If you can't remember the names but do remember that the feature exists, you can always search through the web or in the jQuery documentation on jQuery.com.
+
+
+SECTION 21: THE UNIX COMMAND LINE:
 
 
 
+    
 
 
 
