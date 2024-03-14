@@ -2838,26 +2838,589 @@ SECTION 19: JQUERY
 
 
 SECTION 21: THE UNIX COMMAND LINE:
+91. Understanding the Command Line.
+Kernel - Is the core of the operating system that interfaces with your hardware (CPU, Disks, Memory)
+Shell - Is the UI for the human to interact with the kernel and hardware.
 
+There are two types of shells:
+    - Graphical User interface e.g., when using finder/file explorer
+    - Command Line Interface.
 
+BASH - Bourne Again SHell. Is a CLI for the UNIX system. Alot of servers run on the inix system. Alot of things you do on the command line can be done on the graphical interface, why use the CLI?
 
+    1. Allows for better control
+    2. Easier and faster to do alot of things without lots of navigation and effort.
+    3. GUI Hides alot of complicated stUff from the common user. With terminal can access all needful files using:
+        ls -a
+
+92. Command Line Techniques and Directory Navigation:
+    ls - list of directories/folders.
+    cd - Allows change directory to a specific directory. When using cd, can partially type the directory name then press tab. If enough letters are captured, the directory will be automatically captured.
+
+    cd ~ - Takes you back to the root.
+    Can use the up and down keys to navigate the previously used commands.
+
+    cd .. - Takes you back one level.
+
+    If working with VS code, you can drag the folder to the terminal after the cd command instead of having to type in the entire path.
+
+    To edit the Comman at any point, you can:
+    1. Use the left and right arrow keys
+    2. Hold the alt key and select where you want to place your cursor.
+    3. ctrl + A - Takes you to the begining of your command line
+    4. ctrl + E - Takes you to the End of your command line.
+    5. ctrl + U - Clears the command line.
     
+93. Creating, Opening, and Removing Files through CLI:
+    1. mkdir - command to create a new directory.
+    2. touch - Used to create a file.
+    3. To open the file use: open text.txt (in MAC) or start.txt(Windows)
+    4. To Open the file: code text.txt
+    5. rm - Used to delete files.
+    6. rm * - removed/deletes all files in the current directory.
+    7. pwd - Prints Working Directory command shows the directory you are currently working in.
+    8. rm -r - Allows remove a directory. Removes the directory and all the child components.
+    9. sudo rm -rf --no-preserver-root / - (Super user do -remove r-directory f-force --no-preserver-root - It wipes your hard disk to a point where you cannot recover)
 
+    Always check the directory you are in before executing destructive commands.
 
+SECTION 22: BACKEND WEB DEVELOPMENT:
+94. Back End Web Development Explained:
+    "If you want to get rich from startups, either as a founder or early employee, be really good at building stuff" (Paul Graham)
 
+    Most jobs in the Y Combinator require full stack developers i.e, someone that can work both front end - client facing and the Backend - invisible to the user but contains all the logic that make the web app work.
 
-
-
-
-
-
-
+    The backend consists of:
+    1. Server - Should be on 24 / 7. Usually made for this purpose. Any computer connected to the internet can act as a server. 
     
+    2. Application - Logic that runs on the server. Determines how to respond to the request from the server. An application can at times return data or a status code e.g., 404 - the application does not know how to respond to the submitted request.
     
-
-
-
+    3. Database - Not a requirement of web apps. But as it gets larger, it may need to store user data. The same way you save a word document and can always come back to the document later. Database is a permanent storage for your web apps.
     
+    We've been working with the github servers to save our pages and allow users to interact with it.
+
+    Web Apps however should be able to do extra from what a web page does. E.g a Login web application. An email and password is submitted to the server then the server will check for an application that understands the submitted requested. The application has the login login which then connects to the database, checks whether the email and password in the db match to what was submitted then responds back to the application and server can now respond to the browser request.
+
+    If matched then redirects to the landing page. If not throw an error then redirect to login page.
+
+    This of a restourant with user, menu, waiter, chef, pantry where the the waiter sends an order to the chef (server) after being requested by the user reading through the menu (web app functionalities), the chef has multiple recipes(applications), depending on the request check if the recipe exists then if need to prepare the meal check the pantry for needful ingredients then when ready issues back to the waiter who then delievers to the user.
+
+95. Backend Tools & Technologies - Which one to Learn?
+    The languages for Frontend are pretty much fixed:
+    - HTML
+    - CSS
+    - JS
+    
+    Since they are all that browsers accept. Other languages likel react angular and vue are all JS.
+
+    The Backend languages are quite many:
+    - Java
+    - Rubby
+    - php
+    - C#
+    - Python
+    - JS
+  
+    The backend language does not matter as long as the end you get the results in the format a user can read.
+    Some of the popular backend frameworks include:
+    - Rails - for rubby
+    - Spring - for Java
+    - ASP.NET - for C#
+    - Laravel/cake - for php
+    - Flask/django - for Python
+    - Node - for Javascript
+  
+  We will be using node.js for our backend development which is the number one most popular framework
+
+SECTION 23: NODE.JS
+96. What is Node.js?
+    Why note write all your code from scratch, why use a framework?
+    A framework provides pre-built components, and structures that can be used to build an application instead of us having to write every single line of the code. The components include:
+    - Reading files
+    - Networking
+    - Debugger,
+    - Writing files
+    - Data streams
+    - Error Codes
+    - URL Strings
+    - Disagnostics
+    - Tests.
+  
+  Node is not quite a framework but instead "an asynchronous event-driven JavaScript runtime, Node.js is designed to build scalable network applications."
+
+  JavaScript Runtime environment - Initially JS was created to run on the browser. However, JS uses a V8 engine written in c & c++ that powers the chrome browser. 
+  With Node.js, it liberated JS from the browser land and gave it freedom to write any other sort of application desktoip or server side. So now can be run on any machine. We can therefore maintain a full JavaScriot stack for both front end and backend.
+
+  Asynchronous and event driven - It doesn't have to do everything sequencially. Synchronous means you cannot do anything else until the current requested is fully executed whereas asyncronous allows initiate an order, freeup resources and when executed, it then regains control of the resources to proceed with the execution. 
+
+  With Node, then our frontend and backend could be written in JS. This makes it easy to ttransition from the frontend and backend.
+
+    - Node.js allows for easy scaling of application
+    - It is non-blocking - because of the asynchronous nature 
+    - Ecosystem - Vibrant community and with lots of contribution from multiple people.
+
+97. Using Node.js
+    You can check whether node is installed by using the command:
+    node -v or node --version.
+
+    Node REPL:
+        REPL stands for Read Eval Print Loop - It is a computer environment where user inputs are read and evaluated, and then the results are returned to the user.
+
+        It is not unique to node but also available in other languages.
+
+        In node it is initiated by typing the command node in the terminal. This returns the below response:
+
+            $ node
+            Welcome to Node.js v20.9.0.
+            Type ".help" for more information.
+            >
+        
+        indicating you have entered the node REPL. You can then write the REPL commands.
+
+        To exit use:
+            - .exit 
+            - ctrl + c
+  
+    While in REPL mode you can write code such as:
+    5 + 8
+
+    which on enter returns eveluates the expression and prints out:
+    13
+
+    Node being a JS framework, you can write anything JavaScript:
+
+    > let a = 3
+    undefined
+    > a + 12
+    15
+
+    It therefore behaves similar to the browser console.
+
+    How to write a JS file and use node to read it:
+    node index.js
+
+    If already created an index file as is the case in 20.0 Backend > 2.1 Using Node > index.js, you can use the node index.js command. Utilize the partial typing to validate that the file exists.
+
+    Running node index.js then logs the content of the index.js.
+
+98. How to use the Native Node Modules:
+    Native modules are more of like your starting tool set.
+    Code that was written to make writing code easier as earlier illustrated. including files, networking etc. Think of them as games that cine preinstaled.
+
+    Can read through the modules in the node documentation:
+    https://nodejs.org/api/fs.html
+
+    An example is the file system;
+    - File System - Is a module that allows access the local storage. Can be utilized by importing the module. Can import is as:
+
+        const fs = require("fs");
+
+    The use its methods:
+    Consider:
+        https://nodejs.org/api/fs.html#fswritefilefile-data-options-callback
+
+     Hence:
+
+        const fs = require("fs");
+
+        fs.writeFile("message.txt","Hello from Node js",(err) => {
+            if (err) throw err;
+            console.log("The file has been saved!");
+        })   
+
+    With this you have used a native file module without having to think how to create a file.
+
+    In a similar manner, you can also read from a file:
+
+    //The code if supposed to return a string, it might returns a buffer. 
+    //To return the string then need to specify the encoding and for this case it is utf8:
+
+        fs.readFile("./message.txt","utf8",(err, data) => {
+            if (err) throw err;
+            console.log(data);
+        });
+
+99. The Node Package Manager (NPM) and Installing External Modules:
+    NPM is a place that collects the modules that people have built for node. Great place to file utilities or modules that will help you write your node code.
+    Here you find all the tools that you might think you don't need but might find useful.
+    NPM is open source and can search through it so you can find what other devs have done.
+
+    NPM comes prebundle with node. 
+
+    Node Init - brings up the initialization utility which creates a configuration file package.json. Has several prompts on the name, version, description etc.
+
+    This creates a package.json file which contains all the infor that was submitted from the npm init prompts. It is the configuration file. The magic starts when you start using/installing the packages.
+
+    On a browser you can view the various available packages on the link below:
+        https://www.npmjs.com/
+
+    Can then search the package of interest such as: sillyname.
+
+    To install, on the right side, you can pick the command and paste it to the terminal then press enter.
+        npm i sillyname
+
+    where i is the short hand for install.
+
+    You can also install multiple packages by separating them by a space:
+
+        npm i sillyname anotherPackage anotherAnotherPackage
+
+    Once installed successfully:
+    - A dependencies object is added to our Package.json file as one of properties to the object.
+    - A node_modules folder is also added to the project under which all the dependencies or packages are downloaded and stored.
+  
+    Reading the documentation will show you how to use the package. By first importing it to the file then calling some methods:
+
+    ECMAScript Modules:
+    Natively, we used the require method to import node / npm modules into our JS applications. However, since version 12 of Node, Node is enabled to use ECMAScript modules by using the Import keyword.
+    Providing a standard way to use js in both frontend and backend;
+    
+    To update our code to use ECMAScript module, navigate to the configuration file (package.json) and then add a property  "type" and assign it the value "module":
+
+        "type" : "module",
+
+    Now you can convert the code to use the module as:
+
+        import XXX from "sillyname";
+
+    Always by typing the line above then changing/typing in the method makes it easier for JS to auto suggest the method to be imported.
+
+    The file import becomes:
+
+        import generateName from "sillyname";
+
+    instead of the native:
+
+        var generateName = require("sillyname");
+    
+100. [Project] QR Code Generator
+     We will use:
+     1. inquirer.js - that allows get input from the user
+     2. qr-image - Used to generate qr code in png, svg, eps and pdf formats;
+    
+    Note that when the type is set to module in the package.json file then the require keyword will throw an error. You should stick to the use of import.
+
+SECTION 24: EXPRESS.JS WITH NODE.JS
+101. What is Express?
+    Express is a framework built on top of node to help us build our backend with ease. 
+    Node is not a framework but a runtime environment since it allows run JS on a computer. Node enables use js on a computer and not limiting it to the browser.
+    Combining the two then we can do our backend comfortably.  
+    
+    Node can be used to do many things but in addition, you can program your IoT devices, desktop application, VsCode is created using Node.js. With the ability to create many things, then it is not specialized for one thing. The one thing we are interested in is creating a website backend. Node is universal and therefore as much as it is a great tool it is better to use a specialized web framework.
+
+    Express makes it quicker and easier.
+
+    In all cases where we are creating a backend using node, we will be using the express framework. It is less cumbersome, better readability, less code, middleware.
+
+102. Creating Our first Server with Express.
+     Client-side - frontend
+     Server-side - backend/server
+
+     Creating an Express Server:
+     - Create directory - Use mkdir command
+     - Create index.js file - Using the touch command
+     - initialise NPM - Using the "npm init -y" command. The -y defaults the response to the prompts to yes to avoid having to type them in. The main must be set to index.js since npm is set to look for this file by default.
+     - Install the Express package - using "npm i express" command
+     - Write Server application in index.js
+         - Done by importing express from the installed express module
+         - Create an app using the express object
+         - Use the listen method to allow listen to the port, the location of the server where we will be listening for requests from users
+         - Callback function to be triggered when our server is setup 
+         - The sample code is as below:
+
+            import express from "express"
+            const app = express()
+
+            app.listen(3000, ()=>{
+                console.log("Server running on port 3000");
+            })
+
+        - Instead of specifying the port as in the above code, it is better to create a variable for it and hence the code below:
+  
+            import express from "express"
+            const app = express()
+            const port = 3000
+
+            app.listen(port, ()=>{
+                console.log(`Server running on port ${port}`);
+            })
+     - Start server - using the node command to run the index.js.
+
+    If the server is running, you can access it on the browser using localhost:3000.
+    Localhost refers to the computer
+    Port is the door to the server on which you grant access to the application. There are thousands of ports that can be utilized so it can listen to several requests. Can therefore run different applications, hardware and devices connected to the server.
+
+    Can check the ports listening to services from outside for windows using "netstat -ano | findstr "LISTENING"" command.
+
+103. HTTP Requests
+    HTTP stands for HyperText Transfer Protocol - Is a language that allows computers to talk to each other on the internet. Similar to the (Language) Thought Transfer Protocol in humans.
+     
+    Request Vocab:
+     - GET - When you want to request a resource from the server.
+     - POST - Sending a resource to the server.
+     - PUT - Update methods, update the record by replacing it completely
+     - PATCH - Update records by patching the record.
+     - DELETE - remove/delete resources from the server.
+    
+    By installing express, then using the listen method as specified earlier, when you try accessing the application, it throuws an error: cannot GET/
+    This is because the application can not find the root redirection. Can be resolved by adding some code to your index.js as:
+
+        app.get("/", (req, res) => {
+            console.log(req.rawHeaders);
+        })
+    
+    If the above code is added and one tries to access the site on web, alot of information will be logged on the terminal running the index file. This includes the request, host, OS, and lots of other information that we can tap and utilize in our response.
+
+    If the req is submitted successfully, we can then send back a response as:
+
+        app.get("/", (req, res) => {
+            //console.log(req.rawHeaders);
+            res.send("Hello, World!");
+        });
+
+    If you stop and restart the node server then try accessing the site, then the "Hello, World!" string is printed out.
+
+    NODEMON:
+    So you don't have to restart the server all the time, you can utilize the nodemon tool. Nodemon automatically restarts the node application when a file is changed. To use it then first install the nodemon package:
+
+    npm install -g nodemon - "-g" installs the application globally.
+    
+    instead of running the server using node:
+        node index.js
+    
+    use:
+        nodemon index.js
+
+    ENDPOINTS:
+    If writing a letter to someone in Europe, your endpoint will be /Europe.
+    So the default endpoint is usually set to root (/)
+    Any other endpoints will be set say for about => localhost:3000/about
+
+104. Postman:
+     HTTP is for client computers to communicate with the Server-side.
+     We can raise a request to the server and get a response from the server.
+     As response, we can send text, HTML or response (coded responses).
+
+     HTTP Response Status Codes:
+     Response indicate whether a specific HTTP request has been successfully completed. They are grouped into 5 categories as per MDN docs:
+     1. Infromational responses (100 - 199)
+     2. Successful responses (200 - 299)
+     3. Redirection messages (300 - 399)
+     4. Client error responses (400 - 499)
+     5. Server error responses (500 - 599)
+     
+     Can read more on:
+        https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+    In the above URL, it highlights that the various codes:
+    The most used include:
+    - 200 Ok - E.g when working with a get, put, post etc and the server responds with a message. The 200 status code is returned.
+    - 201 Created - especially when working with put or post but no message is returned from the server but still the put/pos was successful.
+    - 404 - When server cannot find the requested resource because you typed the wrong url.
+    - 301 - allows for redirection of the url permanently. E.g if you type googl.com the browser automatically redicts you yo google.com
+  
+    HTTP return Codes Cheat Sheet:
+    - 1** Hold On
+    - 2** Here you go
+    - 3** Go away
+    - 4** You (client) screwed up
+    - 5** I(server) screwed up
+  
+    POST Request:
+    Usually made from a form including the signup page etc. It goes to a server via post request. The server will do something with the request then returns a 200 or 201.
+
+    If creating the backend without a frontend, you can use post man to test the created endpoints.
+    On postman you can specify the method you want to use, add in the url/endpoints and values to the body e.g the x-www.form-urlencoded option to submit the data via postman.
+
+    Note that in an instance where you have downloaded a project or cloned it from Git, it does not alway come with the node_modules. It only has the package.json that has the npm dependencies. To install the dependencies, you run the command:
+
+        npm install
+
+    This will help only backup that which matters and make your backups/repositories lighter.
+
+    PUT Request:
+    With a put request, if you want to change one of the user details, you must load all the fields then resubmit them afresh. If any of the field is left blank when resubmitting, its value will be cleared in the database.
+
+    PATCH Request:
+    Similar to PUT in terms of it being used to update records. However, it is better when you don't want to pull all the records. Only want to update one or a few of them while leaving the rest intact.
+
+105. Introduction to Middlewares:
+    A middleware is something that sits in between the raw request and before it is process. The middleware works with the requests before they get processed and reach their final decisions.
+
+    Middlewares:
+    - Pre-process the request - change aspects of the request before its final routing
+    - Logging the requests, what is the status 
+    - Authentication
+    - Process any errors in the requests before they go to the handlers.
+  
+    A commonly used middleware is Body Parser:
+        - It can check through the body headers before it is submitted to the handlers.
+
+    A commin practice is the use of the public folder wthin the project folder. The public folder is where you find all static files i.e, html, css, images etc.
+    In sending your response, you can also use:
+
+        res.sendFile() - Which requires the exact path of the file we want to send back.
+
+    To use sendfile, there is need to import a few packages and do somebit of configure=ation as below:
+
+            import express from "express";
+            import { dirname } from "path";
+            import { fileURLToPath } from "url";
+            const __dirname = dirname(fileURLToPath(import.meta.url));
+
+            const app = express();
+            const port = 3000;
+
+            app.get("/", (req, res) => {
+            res.sendFile(__dirname + "/public/index.html");
+            });
+
+    The imports from path, url, and the dirname(fullURLToPath(import.meta.url)) will help get the path up untill where the current file resides. One does not have to type it in manually.
+
+    From the index.html file, the goal is to submit the form content to the path on the action property of the form element. We therefore need to have a route handler for the post request to that path then use body parser as piece of middleware to pass the infor coming from the form then can login under request.body.
+
+    When working with a middleware:
+    - Use the app.use([path,] callback[,callback...]) method.
+    - It must be created before any if the route handlers.
+    - In the use method add your middleware in this case bodyparser and tell it the kind of data we want to pass and in our case is urlencoded since it is an html file. Inside the urlencoded set the extended to true or false.
+    - Now every request has a body and we can use the req.body to access the submitted data.
+    - Below is the code:
+  
+        import express from "express";
+        import { dirname } from "path";
+        import { fileURLToPath } from "url";
+        const __dirname = dirname(fileURLToPath(import.meta.url));
+        import bodyParser from "body-parser";
+
+        const app = express();
+        const port = 3000;
+
+        app.use(bodyParser.urlencoded({extended:true}));
+
+        app.get("/", (req, res) => {  
+        res.sendFile(__dirname + "/public/index.html");
+        });
+
+        app.post("/submit", (req, res) => {
+        console.log(req.body);
+        })
+
+        app.listen(port, () => {
+            console.log(`Listening on port ${port}`);
+        });
+
+    Therefore the middleware is key in ensuring  we have access to some functionalities which we couldn't if we used the normal express or node features.
+    
+106. Custom Middleware:
+    With Middleware we have:
+    - Pre-processing middleware
+    - Authentication
+    - Error handling request
+    - Logging middleware
+
+    Body parser is a preprocessing middleware.
+
+    An example of the Logging middleware is:
+       
+        morgan - from dexter show.
+
+    Need to install it import and use as middleware.
+    Normally, we submit a get request and it hits get url and we expect the response.
+    With the morgan middleware, we can be able to do logging earlier even before we get to the get handler. Can log the date time, the method, the success, where it came from etc.
+    
+    Note:
+    - with the middleware, some logging will be done even if the url the user tried to access does not exisit. It will log the request and the time it took and return error 404.
+
+    Custom MiddlewareÑ
+    In all middlewares we use the app.use() method to specify a middleware we'd like to use when the request comes in. In the use method we have a request, response and next. The next function defines when we can exit from the middleware and execute other blocks of code:
+
+        app.use((req,res,next) => {
+            console.log("Request method: ", req.method);
+            next();
+        });
+
+    The middleware can be created in scratch.
+
+    If we have several middleware, then the next redirects to the next app.use(). Therefore the order of the middleware matters.  
+
+    The next() method is very key that sometimes it can be forgotten. The effect of not adding it is the code keeps on executing even when the code is done executing.
+
+    WIFI-KEY COMMAND: netsh wlan show profile Daniel key = clear
+
+    When implementing you can write code directly in the methods or use the custom middlewares which make your code easy to read. The 5.5 Secrets Project Challenge can be implemented in either of the below options:
+
+            import express from "express";
+            import bodyParser from "body-parser";
+            import { dirname } from "path";
+            import {fileURLToPath} from "url";
+
+            const app = express();
+            const port = 3000;
+
+            const __dirname = dirname(fileURLToPath(import.meta.url));
+            app.use(bodyParser.urlencoded({extended:true}));
+
+            app.get("/", (req, res) => {
+                res.sendFile(__dirname + "/public/index.html");
+            })
+
+            app.post("/check", (req,res) => {
+                console.log(req.body["password"]);
+                if (req.body["password"] === "ILoveProgramming") {
+                    res.sendFile(__dirname + "/public/secret.html");
+                } else {
+                    res.redirect('/');
+                }
+            });
+
+        Better approach:
+
+            import express from "express";
+            import bodyParser from "body-parser";
+            import { dirname } from "path";
+            import { fileURLToPath } from "url";
+            const __dirname = dirname(fileURLToPath(import.meta.url));
+
+            const app = express();
+            const port = 3000;
+
+            var userIsAuthorised = false;
+
+            app.use(bodyParser.urlencoded({ extended: true }));
+
+            function passwordCheck(req, res, next) {
+            const password = req.body["password"];
+            if (password === "ILoveProgramming") {
+                userIsAuthorised = true;
+            }
+            next();
+            }
+            app.use(passwordCheck);
+
+            app.get("/", (req, res) => {
+            res.sendFile(__dirname + "/public/index.html");
+            });
+
+            app.post("/check", (req, res) => {
+            if (userIsAuthorised) {
+                res.sendFile(__dirname + "/public/secret.html");
+            } else {
+                res.sendFile(__dirname + "/public/index.html");
+                //Alternatively res.redirect("/");
+            }
+            });
+
+            app.listen(port, () => {
+            console.log(`Listening on port ${port}`);
+            });
+
+    Body parser is now a commonly used functionality and has since been added into the express framework. You don't have to install it as a package. You can instead use express to access it as:
+
+        app.use(express.urlencoded({extended: true}));
+
+    But the earlier is much better since you can figure out which middle it is that you are working with. Prefer using bodyparser.
+
+SECTION 25: EMBEDDED JS(EJS):
     
 
 

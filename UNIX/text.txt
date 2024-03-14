@@ -1,0 +1,4 @@
+File created using:
+	touch text.txt
+Can be Opened using:
+	start text.txt
