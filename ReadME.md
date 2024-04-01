@@ -3420,8 +3420,189 @@ SECTION 24: EXPRESS.JS WITH NODE.JS
 
     But the earlier is much better since you can figure out which middle it is that you are working with. Prefer using bodyparser.
 
-SECTION 25: EMBEDDED JS(EJS):
+
+SECTION 25: EMBEDDED JS (EJS)
+107. What is EJS:
+    If you want to pass information to a webpage in express, we can use bodyparser middleware to access the information submitted from the form and using the req.body["name"] we can pass that informatiion back to the user. If the form is bulky then it might be abit difficult to pass or send an entire html through the res.send() method, this approach will clutter our index.js and therefore there is a need to separate our backend from the front end.
+
+    Separate index.js (server side) from the HTML and CSS hence the need for templating.
+    We use templating languages e.g., Twigga, Jinja, handlebars, pug, ejs. This templates are particular to different languages.
+
+    For JS EJS is the most used templating language. It works by having a little javascript module that can run Javascript code inside a HTML file. It ends with .ejs file extension which is html with some bit of JS enclosed within specific special syntax e.g,
+
+        <body>
+            <ul>
+                <% for(let i = 0; i < items.length; i++) { %>
+                    <li>
+                        <%= items[i] %>
+                    </li>
+                <% } %>
+            </ul>
+        </body>
     
+    With templating, instead of using res.send() we use the res.render() method to which we specify the file we want to render then add a js object to pass the properties. It is a key - value pair:
+        Handler:
+            app.get("/", (req, res) => {
+                res.render("index.ejs",
+                {name: req.body["name"]});
+            });
+
+
+        On the index.js:
+            <body>
+                <h1>Hello <%= name %></h1>
+            </body>
+
+        In VSCode install EJS Language Support by DigitalBrainstem.
+
+108. EJS Tags:
+    There are quite a few EJS tags the common ones being:
+    1. <%= %> - Whatever is on between will be interpretted as JS output
+    2. <% %>  - Executable JS Code. Can now write JS inside html e.g., a console.log(). This does not give an output or won't show on the browser. (JS Execute)
+    3. <%- %> - Whatever is in between will be interpretted as HTML. Allow pass HTML code. <h1>Hello</h1> will print out Hello and not <h1>Hello</h1> (Render HTML)
+    4. <%% %%> - Escape. To show the angle bracket and percentage tags then add the percentage tag to avoid having it interpretted as ejs. (Show <% or %>)
+    5. <%# %>  - This allows print out a comment. (Stop execution)
+    6. <%- include("<FILE NAME>") %> - Indert another EJS file within another EJS file. e.g., <%- include("header.ejs") %>
+    
+    The structure of the EJS tag is always the same. It starts with <% and ends with %>.
+
+    Consider:
+    index.js:
+        let bowl = ["Apples", "Oranges", "Pears"];
+
+        app.get("/", (req, res) => {
+            res.render("index.ejs", {fruits:bowl});
+        });
+
+    index.ejs:
+        <body>
+        <ul>
+            <% for(let i = 0; i < fruits.length; i++) { %> <%# This line shows executable code and wont be printed out as an output%>
+                <li><%= fruits[i] %></li> <%# Shows JS output and will be visible on the browser%>
+            <% } %>
+        </ul>
+        </body>
+
+    as an alternative to the above for loop, we can also use the foreach loop as:
+        <% items.forEach((fruit) => { %>
+            <li><%= fruits[i] %></li>
+        <% }) %>
+
+109. Passing Data to EJS template:
+     Data can be passed from the server to EJS and back.
+
+     Server to EJS:
+
+     To pass data from the server to EJS we use the res.render() method, with the ejs file to be rendered and the kind of data that we want to render. The data has a property value that can then be picked up inside the EJS file.
+
+     What if there is no Data?
+        This can be because the data is corrupted or we forgot to pass in the data while calling the res.render() method:
+
+        server:
+        app.get("/", (req, res) => {
+            res.render("index.ejs");
+        })
+
+        EJS:
+        <ul>
+            <% fruits.forEach((fruit) => { %>
+                <li> <%= fruit %> </li>
+            <% }) %>
+        </ul>
+
+        Such can be handled in JavaScript by using an if statement i.e., adding an if statement to check whether the expected variable has data or not:
+
+        <% if (fruits) { %>
+            <ul>
+                <% fruits.forEach((fruit) => { %>
+                    <li> <%= fruit %> </li>
+                <% }) %>
+            </ul>
+        <% } %>
+
+
+    However, this does not work in EJS because it is looking for the variable fruits which does not exist in its environment and this crushes the code. Therefore in EJS we use the locals variable to check all the variables that are being sent bu the res.render. The locals variable always exisits and we can use it to check the variable passed to EJS:
+
+        <% if (locals.fruits) { %>
+            <ul>
+                <% fruits.forEach((fruit) => { %>
+                    <li> <%= fruit %> </li>
+                <% }) %>
+            </ul>
+        <% } %>
+
+    
+    EJS to Server:
+    We can pass data backwards using the POST request. We ensure the form fields have a name that can be us the name in the forms:
+
+    EJS:
+    <form action="/submit" method="POST">
+        <input type="text" name="fName" placeholder="First name">
+        <input type="text" name="LName" placeholder="Last name">
+        <input type="submit" value="OK">
+    </form>
+
+
+    Server:
+    app.post("/submit", (req, res) => {
+        res.render("index.ejs", 
+        {name: req.body["fName"]}
+        );
+    });
+
+110. EJS Partials and Layouts:
+     In most cases, you need to add stylesheets, javascript bootstrap etc, we might need to use static headers and footers across various pages in our website. This implies, there might be need to capture lots of repeated code across the pages.
+
+     The files like images, css etc are static and do not need to be passed in every now and then. Instead:
+
+     Create a public folder in which you add all static files e.g., images and styles.
+     Use the express.static("public") middleware to access the static files as: app.use(express.static("public"))
+     Express will treat everything inside the public folder as static files. The files are then accessed relative to the public folder.
+
+     Say you have a styles folder within the public folder, and in the folder is the layout.css then add the link:
+
+     <link rel="stylesheet" href="/styles/layout.css">
+
+     The above is added to the ejs header file.
+
+     Inorder not to have a turn of repeated code across all our EJS files, we can use the features of EJS e.g., templating that can allow insert bits of dynamic code to the body of our website.
+
+     We can also use EJS to reduce the bunch of repeated code by use of partials: 
+
+        index.ejs:
+
+        <%- include("header.ejs") %>
+
+            ---body---
+
+        <%- include("footer.ejs") %>
+
+    For this to work the files must be in the same folder as the index.ejs file.
+
+SECTION 26:
+111. Capstone Project - Create a Blog web Application:
+
+
+Section 27: GIT, GITHUB AND VERSION CONTROL:
+112. Introduction tyo Version Control and Git:
+     The focus will be on:
+     - How to clone a project,
+     - Version Control
+     - How to Fork
+     - Pull Requests
+     - Merge repositoties
+
+    Version control allows create safe points, where if the code file is messed up at some point and opt to fully burn it and roll back to the last safe point, we can achieve this by using the compare feature or roll back your code to the specific version that you want.
+
+113. Version Control Using Git and the Command line:
+     
+
+     
+
+    
+
+
+
 
 
     
