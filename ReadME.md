@@ -3595,14 +3595,581 @@ Section 27: GIT, GITHUB AND VERSION CONTROL:
     Version control allows create safe points, where if the code file is messed up at some point and opt to fully burn it and roll back to the last safe point, we can achieve this by using the compare feature or roll back your code to the specific version that you want.
 
 113. Version Control Using Git and the Command line:
-     
+     To initgialize Git, we use the command:
 
-     
+        git init
 
+    This creates a new hidden directory named .git;
+
+    Inorder to start tracking the changes in the file, you need to add the files to the staging area. Allows choose the files that you want to track. To check the files currently being tracked in your staging area use the command:
+
+        git status 
+
+    Any files that are currently not being tracked in your working directory will be marked in red.
+
+    To track a specific file then use the command:
+
+        git add <filename> e.g., git add chapter1.txt
+
+    We then can commit the changes that have been made to that file using the command:
+
+        git commit -m "Initial commit"
+
+    The -m allows you specify or describe what is being committed. By convention, always use present tense e.g,
+        git commit -m "Complete Chapter 1"
+    
+    and not:
+        git commit -m "Completed Chapter 1"
+
+    You can see the commits you have made using the command:
+
+        git log
+
+    This returns the time the commit was done and by who
+    It also has a hash that uniquely identifies the commit.
+
+    If you have multiple files, you can not add each one of them separately. Instead use the command:
+
+        git add .
+    
+    The log gives you the history of everything that has been committed over time.
+
+    Git add - pushes the code to a staging area then the commit pushes the code to the repository. As oppossed to committing directly to the repository is that we might want not to track everything and by pushing the code to the staging area helps to establish what it is that we want to track.
+
+    Our file is then in our repository and it is given a name and we can always use the checkout command to revert to the last position in our local repository:
+        
+        git checkout
+
+    An example is if you have made changes on your files or by mistakes deleted your file, you can easily get back to a former stable version by using the checkout command. To confirm the files that have been changed/modified use the command:
+
+        git status
+
+    We can chack the differences between our current file and the already committed file by using the command:
+
+        git diff chapter3.txt
+    
+    With this you can see what was changed. If minor, then one can choose to either copy and paste or revert everything:
+
+        git checkout chapter3.txt
+
+114. Github and Remote Repositories:
+    By default most repositories are set to public and they can be accessed by anyone. Some of them being:
+        flappybird game.
+    This has helped contribute to open source technologies.
+    One can review the code, see how other developers structure their code and even contribute to some of them to better the codebases and introduce new features.
+    If developing new technologies, then you can easily create private repositories by marking them as private.
+
+    Once the repository is created on github, it gives you hints of how to go about committing you code to it by either: 
+    - Doing a desk setup
+    - Create a new repository on command line
+    - Push an exisiting repository from the command line
+    - import code from another repository.
+    
+    To push to the remote repository:
+    - git remote add <name> <url> - tells your local repository that you have created a remote repository in the internet and would like to transfer all your commits their. The name can be anything but preferrably it should use <origin>. This makes it easier for other developers to access your code:
+
+        git remote add origin https://github.com/danielonsombi/Story.git;
+
+    Then we can now push the code:
+
+        git push -u origin master
+
+    The above pushes the local to the remote repository using the -u flag which pushes it to the master branch.
+
+    Once committed to the remote repository:
+    1. Insights > Network - under this section one can view the various commits that have been made to various branches and from branches to the master repository.
+    2. Code > Commits - shows all commits that have been made. If you click on it, one can see the details of the commits. By clicking on each of the commits, you can view the changes resulting from that particular commit.
+     
+    So we then have:
+
+        Working Directory > Staging Area > Local Repository > Remote Repository.
+    
+    The main branch tracks the safe points. It is sequencial and saves your main progress.
+    You can have a local repository completely imparallel with the remote repository and can always siync them using the push command.
+     
+115. Gitignore
+    Allows set rules to prevent commiting certain files to you local and remote repositories.
+    Say you have secret API keys and passwords that you do not want committed or hosted on an open platform like github.
+
+    Other files that do with local settings and user preferences do not really have to be pushed to git so people can access them while forking files.
+
+    This can be achieved by creating a hidden file using the command:
+
+        touch .gitignore
+    
+    If the git ignore is added after the code has been pushed to a staging area, then you need to undo the commit then add them later on after the gitignore is fully setup:
+
+        git rm --cached -r .  - Ther command removes everything from the staging area using the -r (recursive flag). The "." allows remove all.
+
+    The following rules apply to gitignore:
+    - # - used to comment
+    - * - e.g., *.txt ignores all files with a .txt extension.
+
+    While working with node, various dependencies should be ignored. Most of them have already been documented by the gthub team on:
+
+        https://github.com/github/gitignore
+
+    You can find the node specific gitignore on the link:
+
+        https://github.com/github/gitignore/blob/main/Node.gitignore
+    
+    The file is premade and you can copy and paste it into the gitinore file.
+
+116. Cloning:
+    This clones the repository from the remote repository to your local repository.
+    We use the command:
+
+        git clone <url>
+    
+    Pulls down all the versions and commits of a particular remote repository to your working directory.
+    It creates a copy of the project locally.
+
+    The cloning is for you to have own copy and want to extend the functionality or found a bug and want to extend it.
+
+    To clone the quakes game:
+
+        git clone https://github.com/inolen/quakejs.git
+
+    The game uses port 8080, ensure no other application is running on this port. If there is, e.g., business central, the server won't run
+
+117. Branching and Merging:
+    If we had version 1 and 2 from 2 commits, and we want to build something different/new feature, instead of continuing with the same code, we can create a new branch using the command:
+
+        git branch <name-of-branch>
+    
+    On it we can add new features while updating the main project while we work on the experimental branch.
+    With this we have two branches parallel to each other and if the branch was useful and would like to merge it to the main branch, we can merge the changes to the main branhc using the command:
+
+        git merge <name-of-branch>
+
+    There are usually multiple branches being built concurrently in huge projects.
+
+    To view the branches in your project use the command:
+
+        git branch
+
+    An asterisc is used to mark the main/master branch.
+
+    We can switch between branches using the command:
+
+        git branch checkout <branch-to-switch-to>
+
+    With git, there is a way of adding the git add and commit together but if new to git it is better to use them as separate commands.
+
+    If you make changes to the master/main branch, and commit the changes locally, running the git log command before pushing them to the remote repository will show the last commit on your local repository and the last commit to your remote repository.
+
+    Switching from one branch to the other reflects a change in the file content.
+
+    If comfortable with the files that were created on the branch, then you need to merge them to the main branch. Always ensure you run sufficients tests.
+    To do the merging, first switch to the main branch then use the merge command to merge the changes.
+
+        git merge 
+
+    This does not delete the branchz.
+
+    Pushing the changes to github will show the network with the various branches and the various versions that were created. It aso shows the merge to the main at the end.
+
+118. Forking and Pull Requests:
+    If you have a remote repository and someone wants to make some changes to it, Then this cannot be done directly, the contributor can create a clone of your repository on their remote github server as one of their github account repositories. This is referred to as FORKING.
+
+    This makes the file accessible to the contributors, and they will have full control of the product. This allows avoid making conflicted changes. 
+
+    If the contributor FORKs the code base, they can then pull the project to their local repository and make the changes/contributions to the original code. If done with the changes, they can push the code to their FORKED remote repository.
+
+    If the contributor wants the owner to merge the changes to the owners code, the contributor should raise a PULL REQUEST. It is called a pull request and not push request because it is only the owner who has the rights to change the initial source code. The owner is then to review the changes and if approved, they pull the changes  and hence the name.
+
+    The approved changes will then be merged to the initial code and will now be reflected as a new commit.
+
+    Once a FORK is made to you repository, github tracks this and you can view the list of contributors under: 
+        
+        Insights > Network
+
+    The changes from the contributors/commits to the forked repository do not automatically reflect on the initial source/repository.
+
+    The contributor can create a pull request under Pull Requests. This shows the base repository and head repository. On clicking create pull request, the changes to be included in the base repository will be highlighted. The request allows write a description as to why you'd like this to be included in the base repository. 
+
+    Once the pull request is submitted by the contributor, it will be shown in the pull request section of the owners repository.
+
+    This then allows the owner to review the code, and if approved, initiate a merge then confirm merge.
+    This then updates the network diagram showing the fork, pull request and merge to the base repository.
+
+    Spaced Repetition - Keep a list of the things you have done and at regular intervals review the concepts and things that you have learnt. Can make a small quiz for yourself. This are the moments that you get to learn as oppossed to listening to the recordings.
+
+SECTION 28: APPLICATION PROGRAMMING INTERFACES (APIs):
+119. Introduction to APIs:
+    Software is eating the world - Everything is now software oriented and we ought to think of communication between those pieces of software.
+    If we have two software that needs to speak to each other there is need for an interface in between the applications so they can know how to communicate.
+
+    An API bridges the communication between different pieces of software.
+
+    Say you want to create a diary and would like to capture the weather for that specific date. You can create a link so the user can click on it and browse the weather details. However if there is a website that already has the weather details and is updated regularly, then you can use its APIs to pull such information to your website.
+
+    You then make a request to the website from your website to the API and then the site will respond with a response with some data. This is a GET request.
+
+    The API tells you how to get the data and the kind of response to expect.
+
+    Or say you want to forward mail notifications to users through mailchimp. This can be achieved through a POST request to mailchimp's APIs.
+
+    Say there is a plant you want to trigger its watering system through an arduino board. You can define an API to listen to requests from your application so the watering process can be executed. The Arduino board can respond with the amount of water, moisture etc.
+
+    The commonality in APIs is that they are interfaces between software and by a set of rules or protocols, the pieces of s/w know how to interact with each other and what to expect from each other.
+
+    There are various architectural styles that can be used. They include:
+    - SOAP
+    - REST:API
+    - gRPC
+    - GraphQL
+    - etc
+  
+    Which one do we choose then?
+    The best is to go with the JUST IN TIME learning - Learn what you need at the moment.
+    REST API is the most common and most used architecture.
+
+    REST API:
+     RESTful api is an API that follows a particular set of rules with the most important of all being the use of HTTP protocols (GET, POST, PUT, PATCH, DELETE) to interact with the API.
+
+     One of the common APIs is the wheretheiss:
+
+        https://wheretheiss.at/w/developer
+
+    With an example resource:
+        
+        https://api.wheretheiss.at/v1/satellites
+
+    Example Response:
+        [
+            {
+            "name": "iss",
+            "id": 25544
+            }
+        ]
+    
+    Parameters:
+        None
+
+    AN API documentation can be compared to a MENU where you look through the menu of options then decide what you want.
+
+
+120. Structuring API Requests:
+    Note that currently we have a backend and frontend to which we can make requests from a frontend and get a response in return. This is a private API since it is your application communicating to its backend.
+
+    However, if you need your server to interact with someone else's server then there is need to create a public API to aid the communication by exposing specific parts of your application for external communication.
+
+    For test purposes, you can use:
+
+        https://bored-api.appbrewery.com/
+
+    1. API Endpoints - BaseURL/Endpoint e.g, random endpoint on the above API:
+     
+        https://bored-api.appbrewery.com/random
+    
+    2. Query Parameters - BaseURL/Endpoint<query parameters>:
+     
+        https://bored-api.appbrewery.com/endpoint?query=value&query2=value
+
+        An example is where you want to filter activities:
+
+            https://bored-api.appbrewery.com/filter?type=social&participants=2
+
+        If using postman, as you type in the parameters, postman formats the url for you.
+    
+    3. Path Parameters - BaseURL/endpoint/{path-parameters}: 
+        Here we add a parameter that is likely to change. Can be an ID, USERNAME, something specific that can identify a resource.
+
+        This is different from the parameters because parameters are for filtering whereas the path parameters are for identification:
+
+            https://bored-api.appbrewery.com/activity/3943506
+
+121. What is JSON:
+     Stands for JavaScript Object Notation. It is a way to format data that can be sent over the internet in a readable and efficient way. It is structured after a javascript object.
+
+     The only difference between a JS object and JSON is that the property name is in between double quotes i.e., formatted as a string:
+
+     example.json:
+
+        {
+            "name": "Jack Bauer",
+            "age": 48,
+            "city": "Santa Monica",
+            "education": [
+                {
+                    "degree": "B.A English Literature",
+                    "University": "UCLA",
+                },
+                {
+                    "degree": "M.S. Criminology & Law",
+                    "university": "UC Berkeley",
+                },
+            ]
+        }
+
+    index.js:
+
+    const jack = {
+        name: "Jack Bauer",
+        age: 48,
+        city: "Santa Monica",
+        education: [
+            {
+                degree: "B.A English Literature",
+                University: "UCLA",
+            },
+            {
+                degree: "M.S. Criminology & Law",
+                university: "UC Berkeley",
+            },
+        ]
+    }
+
+    The difference is JSON is serialized into a string because data is mostly being transfered over the internet whereas JS is more relaxed cause the code can be interpretted by the editor or code interpretter.
+
+    IOnstead of having the large JS transfered, we have a more compact code without the many spaces in the JSON format which is then transferred across the internet. It is a string from the start to the end and it is serialized. 
+
+    When it gets to the end it can then be re-expanded to a reusable format. When you receive the JSON, it is not easy to read because it is in a format difficult to read as human in its FLAT PACK NOTATION. To make it readable use a JSON visualizer e.g.,
+
+       https://jsonviewer.stack.hu/
+
+    When you write code and would like to send code across, you need to perform serialization i.e turning the JS Object to JSON - flat pack notation. This is done by:
+
+        const jsonData = JSON.stringify(data);
+
+    This will transform the javascript object to a string that keeps all the commas, nesting, relationships etc.
+
+    When unpacking the JSON file, we use another JSON method called parse:
+
+        const data = JSON.parse(jsonData);
+
+    For random background images/styling, you can use the website:
+
+        https://pattern.monster/
+
+
+122. Server-side API Requests:
+    The goal is to have our server raise a request to another server through a public API and in return receive a response from the other server.
+
+    The code would be quite long if using the native node module such as https:
+
+        import https from "https";
+
+        app.get("/", (req, res) => {
+            const options = {
+                hostname: "bored-api.appbrewery.com",
+                path: "/random",
+                method: "GET",
+            };
+
+            const request = https.request(options, (response) => {
+                let data = "";
+                response.on("data", (chuck) => {
+                    data += chuck;
+                });
+
+                response.on("end", ()=>{
+                    try {
+                        const result = JSON.parse(data);
+                        res.render("index.ejs", {activity: data})
+                    } catch (error) {
+                        console.error("Failed to parse response:", error.message);
+                        res.status(500). send("Failed to fetch activity. Please try again");
+                    }
+                });
+            });
+
+            request.on("error", (error) => {
+                console.log("Failed to make request:", error.message);
+                res.status(500).send("Failed to fetch activity.Please try again.")
+            });
+
+            request.end();
+        });
+
+    The native node module is a bit length. It is much simpler to use the axios package which knows what purpose we are trying to achieve. It makes the responses quite simple:
+
+        import axios from "axios";
+
+        app.get("/", async (req, res) => {
+            try {
+                const response = await axios.get("https://bored-api.appbrewery.com/random");
+                res.render("index.ejs, {activity: response.data }");
+            } catch (error) {
+                console.error("Failed to make request:", error.message);
+                res.status(500).send("Failed to fetch activity. Please try again");
+            }
+        });
+
+    axios is promised based and we can use: then or async to process the request.
+    await means that the rest of the code will be executed after the response has been received from the called endpoint.
+
+    With axios we can access the data without needing the JSON.parse method. We can tap into the data by simply using the response.data.
+
+    Can view the axious package on the npm site.
+
+    Can use axious with the following methods (Request method aliases):
+    axios.request(config) 
+    axios.get(url[,config]) 
+    axios.delete(url[,config]) 
+    axios.head(url[,config]) 
+    axios.options(url[,config]) 
+    axios.post(url[,data[,config]]) 
+    axios.put(url[,data[,config]]) 
+    axios.patch(url[,data[,config]]) 
+    axios.postForm(url[,data[,config]]) 
+    axios.putForm(url[,data[,config]]) 
+    axios.patchForm(url[,data[,config]]) 
     
 
+123. API Authentication
+    Think of them as 4 tiers:
+     - No Authentication
+     - Basic Authentication
+     - API Key Authorization
+     - Token Based Authentication 
+
+    a. No Authentication (https://bored-api.appbrewery.com/)
+        e.g., the bored-API does not require authentication. They can controlled using a rate limit e.g., 100 requests in 15 minutes, so one does not hit it so much and end it end up making the API go down for everyone. Check each IP Address and count its requests per minute then decide on the limit.
+    b. Basic Authentication
+        Provide a username and password when making an API request. You are assigned the user name and password as assigned by the provider. This submits a base64 encoded string in the header of the request. 
+        Base64 takes text (ASCII) which then gets converted to 0s and 1s then convert it to another character. E.G ASCII <Man> is converted to <TWFu> see Snips > Base 64 for Man.png.
+        Each character is represented in binary. consider Snips > Binary.png 
+        The username and password are converted to <username:password> then converted to a Base64 string which is then submitted through the Authorization header and pass it a long when making the request.
+
+        To practically test it, we will use the Secrets API(https://secrets-api.appbrewery.com) and Postman. The API has different endpoints and different levels of authentication.
+        First we use a no authentication to register ourselves by submitting the username and password, then the credentials will be used for other levels.
+
+        For Basic Authentication: 
+        1. Use the https://secrets-api.appbrewery.com/register URL to register your username and password by adding the desired name and password das key and value in the x-www-form-urlencoded section of the body tab in postman. If this returns status code 200, use it in step 2.
+        2. Use the https://secrets-api.appbrewery.com/all?page=2 URL or use https://secrets-api.appbrewery.com/all url and under the Params section of postman, add the page key and 2 as the value. Under the authorization section, select Basic Auth, then input the earlier created username and password.
+        3. On pressing the send button, postman automatically generates the base64 string which is added to postman's headers section as a value to the authorization key. If the value is copied to a base 64 decoder e.g., base64decode.org, then the values <username:password> will be returned.
+
+    c. API Key Authorization
+        Authentication - if you have a user they can authenticate themselves to your service i.e you are loging in or registering. (Allows you to be identified as a user to the API provider)
+        Authorization - Is simply a client who is allowed to use your service with an API key that might be associated with a user in which case they are authenticating themselves then getting an API Key to authorize themselves to use your API. (Allows you use the API)
+        Alot of the APIs use the API Key.
+
+        E.g., if you have registered on google maps then you will use an API key to call different apis such as the places API, Geocoding API etc. This also helps track the request per key on which basis some organizations do their billing.
+
+        For API Key Authorization:
+        1. Use the URL https://secrets-api.appbrewery.com/generate-api-key to generate the API Key
+        2. The use the filter endpoint https://secrets-api.appbrewery.com/filter to make your request.
+        3. Under the params, specify the value of the score parameter. You can add the api either as a parameter or capture it under the Authorization section by changing the type to API Key, then setting the key to apiKey, and value to the key generated in 1 above. Depending on the docs, it may require the key to be added either as a query parameter or header, under the add to select the value that applies to your specific request in this case is query params.
+
+    d. Token Based Authentication
+        It is the highest in terms of security. 
+        Basic authentication is username and password and one can easily decode it to get the username and password and this can be intercepted. Most users will use HTTPs to secure the data being passed back and forth. If the password is less secure there is a risk.
+
+        API Key authorization is a little bit secure since we ain't passing a username and password, instead we use a key that can be deleted and regenerated, can have caps on it to set say 1000 requests a month, if one gets hold of it, they can not access the password and key.
+
+        Token Based Authentication is more secure cause we are getting the user to use a username and password then generate a token to be used with the API.It is the token that is used to interact with the API. Oauth 2.0 is currently the industries standard.
+        Behind the scenes you have a user who signs onto the API providers website, the provider then generates a token and the token is passed back to you as a third party then can use it to interact with the API.
+        Say developing a weather APP and want to pull some events from the users calendar, check the weather for the date then send an alert to the user and ask them to bring an umbrella to the event.
+        Might need to submit the username and password so to get this information, however, we can also use token based authentication to get the user to signin with google, this will then generate a token that will allow us to interact with the google calendar API to get their events and meeting we can interact and get all this information without ever needing their user name and password. It is a way more secure approach.
+
+        For Token Based Authentication:
+        1. The secrets API has an endpoint protected by the bearer token authentication which uses the username and password to authenticate themselves on the server then the server generates a token that will be used as a proxy for anyone else to interact with that API as a user.
+        2. Use the url https://secrets-api.appbrewery.com/get-auth-token to generate the token to be used for API authentication. 
+        3. Once the token is successfully generated call https://secrets-api.appbrewery.com/secrets/1 url. Under the Authorization tab change the value to Oauth 2.0 then paste token value. click on send to submit your request.
+        4. This should return the requested secret. 
+        5. Mostly used to post, change or delete something on behalf of a user.
+
+124. REST APIs
+    We can make get requests by using the try catch block and within the try block use axios.get("URL", {}); This information can be obtained from the axios documentation in npm. You can chain the .then, .catch and .finally to the get method. 
+    Different approaches can be used:
+    - Chaining - .get().then().catch().finally
+    - Async - async await axios.get()
+
+    The two are different in that both come from the Javascript promises API but work slightly differently. The then() method gets triggered when the get() method is done executing. Inside then then block you can add multiple .thens followed by the catch and finally methods.
+
+    The more modern approach introduced in 2017 is the use of the async and await method. The use the two keywords. To the function, the async keyword is added before it followed by the name of the function as:
+
+    async function fxn () {
+        await axios.get
+    }
+    What this means is wait till the line is done executing before the next line is executed.
+
+    As oppossed to the chaining approach, this one is easier to debug. The chaining method, especially where so many then() methods have been used, it might get messy to debug.
+
+    The recommendation is to use the more modern approach which is the async await.
+
+        async function getUser() {
+            try {
+                const response = await axios.get('/user?ID=12345');
+                console.log(response);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+    For an API to be fully RESTful, it should be able to handle all routes as specified in the below list:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+
+    1. POST requests using Axios:     
+        With axios.get, we only have two optional parameters i.e., the URL and Config as 
+            axios.get("URL", config). 
+        However, with the POST method, there is a third parameter which is data which can also be referred to as body and so the axios post method can be defined as:
+            axios.post("URL", body, config):
+
+            
+            app.put("/", async(req, rs) => {
+                try{
+                    await axios.put("URL", body, config);
+
+                    res.sendStatus(200);
+                } catch(error) {
+                    res.status(404).send(error.response.data)
+                }
+            })
 
 
+        The data/body parameter is the body which could include the form data e.g., the username and password that is being submitted to the endpoint.
 
+        The config parameter helps pass other parameters such as the headers for authentication etc. Several other settings such as parameters among others can also be passed in as configs.
 
+    2.   PUT requests:
+        Provides all of the data we want to update in the backend. It replaces everything in your data with whatever you have in your PUT request. It is pretty identical to the POST request except for the use of the PUT keyword:
+
+            app.put("/", async(req, rs) => {
+                try{
+                    await axios.put("URL", body, config);
+
+                    res.sendStatus(200);
+                } catch(error) {
+                    res.status(404).send(error.response.data)
+                }
+            })
+
+    3. PATCH request
+        With the patch request you can provide specific data that you want to update without necessarily replacing the entire data set. Other than the key word, the rest is similar to the PUT method.
     
+    4. DELETE method
+        The delete method is similar to the get method in that it takes two parameter, "URL" and config:
+
+            app.delete("/", async(req, res) => {
+                try{
+                    await axios.delete("URL", config);
+                    res.sendStatus(200);
+                } catch (error) {
+                    res.status(404).send(error.response.data)
+                }
+            });
+
+    While working with forms, the target url can be defined in two different section:
+    1. Form tag as action - 
+        <form id="myForm" action="/secret-api" method="post">
+        </form>
+    
+    2. On the button:
+        <form id="myForm" method="post">
+            <input id="get" type="submit" value="GET" formaction="/get-secret">
+            <input id="post" type="submit" value="POST" formaction="/post-secret">       
+        </form>
+
+        This option is often used when you have multiple buttons in the same form that should be calling different URLs.
+
+
+
+
+
