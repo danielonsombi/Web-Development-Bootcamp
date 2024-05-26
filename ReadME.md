@@ -4428,4 +4428,14 @@ SECTION 30: BUILD YOUR OWN API
         })
 
 130. Build your own API for a Blog:
-     
+     Here we will cover all the http requests apart from PUT since we can choose to use either of the update methods.
+     For this project we need two servers running concurrently:
+     1. Server.js - which will act as our backend that makes the API requests. (Running on port 3000).
+     2. index.js - which will be our backend for the actual API responsing to the API requests from external servers. (Running on port 4000).
+
+    We can not run two different codes on the same port. It is key that the two servers are assigned different ports.
+
+SECTION 31. DATABASES
+131. Databases Explained: SQL vs. NoSQL
+
+
