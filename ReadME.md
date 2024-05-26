@@ -3579,9 +3579,17 @@ SECTION 25: EMBEDDED JS (EJS)
 
     For this to work the files must be in the same folder as the index.ejs file.
 
-SECTION 26:
-111. Capstone Project - Create a Blog web Application:
-
+SECTION 26: CAPSTONE PROJECT:
+111. Create a Blog web Application:
+    See project in 20.0 > 4.5. Capstone Project 3 - Blog Web Application.
+    To achieve this without storing the content in a database, I used the following libraries:
+    1. Express
+    2. ejs
+    3. body-parser
+    4. express-session - To store the conntent instead of submitting to a server
+    5. Multer - To allow upload images, and get path to be added to the blog view
+    6. uuid - To allow generate a unique identifier for each blog item submitted.
+     
 
 Section 27: GIT, GITHUB AND VERSION CONTROL:
 112. Introduction tyo Version Control and Git:
@@ -4169,7 +4177,255 @@ SECTION 28: APPLICATION PROGRAMMING INTERFACES (APIs):
 
         This option is often used when you have multiple buttons in the same form that should be calling different URLs.
 
+SECTION 29: CAPSTONE PROJECT
+125. Use Public API
 
 
 
+SECTION 30: BUILD YOUR OWN API
+126. Building yout own APIs
+    We have a number of open/public APIs cutting across almost are industries.
+    APIs make development much faster, instead of developing everything from scratch, collecting data cleaning, building services, algorithms etc, you can develop on top of other peoples APIs to achieve the same goal.
 
+    A good resource to check is Rapid API, which is a company allows collects and allows pple to host APIs that customers can consume from being able to cut development type and that is why you pay for it. It mostly has paid APIs (the Amazon of APIs). They have a few free APIs but mostly uses paid APIs.
+
+    https://rapidapi.com/hub
+
+    What makes an API monitisable, valuable enough to have it on rapid api:
+    - Data Collection - Large collections of data. E.g a list of recipe, or weather
+    - Algorithm/Service - A unique algorithm that might be needed by a number of people. E.g looks at any two coordinates and get the distance or how long it can take a car to get there or chat GPT which took alot of years to achieve and paid for  because of how valuable their algorithm is.
+    - Simplified Interface - E.g., order a pizza
+
+    Another open source API using node is node-dominos-pizza-api:
+
+    https://github.com/RIAEvangelist/node-dominos-pizza-api
+
+    Can checkout the code on github.
+
+    Internal APIs.
+    As opposed to the public APIs, say you work at a company and need to work on a bunch of inventory and would like to keep track of them or sell encyclopidea, you need to check how many have been sold and which haven't or might want to know the addressed that have been visited already so you don't have to double up agents. Private/Internal APIs are basically not documented and we haven't promised to support it. It is something not supported for external use unless you put in place security features in place. It doesn't mean it can't be accessed. It is a huge category where people want to know what are the methods in various companies private APIs.
+
+    REST: API:
+    REST - REspresentational State Transfer API. This are a bunch of rules that describe how an API should be (What makes an API RESTful):
+    - HTTP Methods
+        Uses standard HTTP methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+
+    - JSON Output
+        Should have a standard data format it responds with. This is a response that is given back to the client.
+
+    - Client - Server
+        Client and server are not on the same system, completely separate and are able to message each other on the network to send a request and receive a response.
+        
+        This makes it possible to scale, evolve, be developed by completely different people and can be scaled easily
+
+    - Stateless
+        Each request from client to the server should contain all the information needed to process the request. The server should not in anyway be storing the client side state or data between requests. Each single request can be complete (with all the server needs) and each single response complete without need to know what happened previously. This allows better scalability of the API and simplifies server side implementation. This allows serve many clients and many requests.
+    - Resource-Based
+        Centered around resources using a unique resource identifier or locater in order to locate resources (URI/URL). URL is just an address for a particular resource and is a type of URI. Identifies that resource in an API.
+
+    The internet is considered one of the most successful implementation of the RESTful architecture because we have resources in the URLs, we work with the server using http protocal, adn get back standard data formats such as JSON, XML, JS, HTML etc.
+    We also have the client and server separated, the client is the person using the browser and server, computer holding the data that should be served when one requests a particular webpage.
+    The internet is pretty much stateless and each request has everything required in order to determine what the response should be.
+
+    And since studying web development it is important to understand how to build REST APIs.
+
+    We'll be building the JokeAPI:
+
+127. Creating GET Routes:
+     To see what our API should look like, you can open the docs which get automatically generated when you creatre a new postman collection:
+
+     https://documenter.getpostman.com/view/6048123/2s9XxsTv8Y
+
+     Not that such a documentation can be created for any collection in postman. All you need to do is create the requests with their headers and some data then right click and click view documentation.
+     To be viewed on the web, click on the publish button on the top right side of Postman. This will generate a unique URL that can be accessed publicly.
+
+     The published URL will show the data request format and in most cases it is set to use cURL.
+     It also shows the kind of response you should expect on request which in this case is JSON.
+
+     The project 6.0 DIY API includes an array of Jokes which are to be used in creating the API.
+     To send a response back to the requester, we use the res.json() method which takes a JavaScript object and converts it to JSON and sends it back as a response.
+
+     Get specific joke:
+        We use the format: http://localhost:3000/jokes/:id
+        The :id, allows us to tap into a specific URL or path parameter. Can do this by going to the Params part of postman and under path variable add a key and value.
+
+        Postman reformats the request as:
+        http://localhost:3000/jokes/<value> => http://localhost:3000/jokes/2
+
+        Note that when working with get, we can use either query parameters ( accessed using req.query) which are in the format:
+            http://localhost:3000/jokes?id=2
+
+        or use the the request params (accessed using req.params) which are in the format:
+            http://localhost:3000/jokes/:id
+
+        When calling such endpoints, at times its is necessary to ensure that the passed in id has the right data type. And since the id is passed in as a string, two approaches can be used:
+        
+        Approach one: Using the "==" Operator.
+        This is a loose comparison, in this case the type does not matter. JS will perform a type comparison if necessary.
+            app.get("/jokes/:id", (req, res) => {
+                const joke = jokes.find(j => j.id == req.params.id);
+                res.json(joke);
+            })
+
+        Approach two: Using the "===" operator:
+        This operator says that the left hand side must be strictly equal to the righ side including the data type. If the left is a string and the right is an integer even though they are both equal, this check doesd not pass.
+        For this to work, there is need to convert the string to an integer as below:
+
+            app.get("/jokes/:id", (req, res) => {
+                const id = parseInt(req.params.id);
+                const joke = jokes.find(j => j.id === id);
+                res.json(joke);
+            })
+
+        for clarity sake, and so you don't assume anything, it is good practice to use the later that the former.
+
+        To find a joke, we use the JS fin() method. It takes an array and uses the .find() method that expects a callback that return true.
+
+            array.find(callback);
+        
+
+        When using query parameters, the approach is a bit different from that of a specific id. This is meant to filter by a specific parameter or multiple parameters e.g., 
+
+            http://localhost:3000/filter?type=Wordplay
+
+        The parameters should not be part of your URL, they should rather be pulled using the req.query method. This is where the documentation come in handy. It tells the world what parameters are expected by our endpoint and how they are speclled and how many are required and which ones are optional. Can use either of this approaches:
+
+            app.get("/filter", (req, res) => {
+            const { type } = req.query;
+            let filteredArray = jokes;
+
+            if (type) {
+                filteredArray = filteredArray.filter(j => j.jokeType.toLowerCase().includes(type.toLowerCase()));
+            }
+
+            res.json(filteredArray);
+            })
+
+        or:
+            app.get("/filter", (req, res) => {
+            const type = req.query.type;
+            const filteredActivities = jokes.filter((joke) => joke.jokeType === type);
+            res.json(filteredActivities);
+            });
+128. Creating POST, PUT, and PATCH Routes:
+     POST Request:
+        To Post or add to the array, we use the POST method. With the post method, different approaches can be used within the call back, If the form being submitted is the same to the array parameters then with bodyparser, you can accessed the form data as: 
+            
+            const { jokeText,  jokeType } = req.body;
+
+        If not, then there is need to reassign them as below:
+            app.post("/jokes", (req, res) => {
+            const newJoke = {
+                id: jokes.length + 1,
+                jokeText: req.body.text,
+                jokeType: req.body.type,
+            };
+            jokes.push(newJoke);
+            console.log(jokes.slice(-1));
+            res.json(newJoke);
+            });
+
+        Use the push method to add the new object to your array.
+        You can also use the slice method as shown to access the very last item added to the array.
+
+    PUT Request:
+        This is a complete update. Provide all the fields. We'll need the id to identify the item in the array. The id is kept constant can therefore use either:
+
+            app.put("/jokes/:id", (req, res) => {
+            const id = parseInt(req.params.id);
+            const replacementJoke = {
+                id: id,
+                jokeText: req.body.text,
+                jokeType: req.body.type,
+            };
+
+            const searchIndex = jokes.findIndex((joke) => joke.id === id);
+
+            jokes[searchIndex] = replacementJoke;
+            // console.log(jokes);
+            res.json(replacementJoke);
+            });
+
+        or still this achieves the same goal:
+
+            app.put("/jokes/:id", (req, res) => {
+            const id = parseInt(req.params.id);
+
+            //Can also use the findIndex method. See the solution.js.
+            const joke = jokes.find(j => j.id === id);
+            joke.jokeText = req.body.text;
+            joke.jokeType = req.body.type;
+
+            res.json(joke);
+            })
+
+    PATCH Request:
+        It a little update to a complete resource. Most often what we will be using when making updates. You don't want to update the entire resource. It will hit the path parameter, search to find the particular id and see what they want to replace
+
+        With patch, the id must be submitted. When doing the patch, we need to reconstruct our replacement joke. The only thing we can patch the text or body and check if it has a value, if it does, then use the new value else grab the text from the existing joke:
+
+            (jokeText: req.body.text || existingJoke.jokeText)
+
+        One can also opt to use the if else statement to achieve the same:
+
+            if (req.body.text) {
+                jokeText = req.body.text
+            } else {
+                jokeText = existingJoke.jokeText
+            }
+
+        But the earlier is abit simple to use though less readable.
+
+129. Creating the DELETE Route:
+     You can use different methods when deleting items from an array.
+     - Splice - it takes an index and amount of items to delete starting from that index, if amount is one, then it will only remove the item in that returned index.
+     - Shift - used to remove items from the beginning.
+     - Pop - used to remove the last item.
+     - delete - Should be avoided by all means. This results to sparse arrays i.e., arrays with holes in them. Delete removes items from the array but it does not update the length properly. This leave a funny array and should be avoided.
+
+    Hence the code:
+        app.delete("/jokes/:id", (req, res) => {
+        const id = parseInt(req.params.id);
+
+        console.log(id);
+
+        const itemIndex = jokes.findIndex((joke) => joke.id === id);
+
+        if (itemIndex >= 0) {
+            jokes.splice(itemIndex, 1);
+            res.sendStatus(200);
+        } else {
+            res
+            .status(404)
+            .json({error: `Joke with id: ${id} not found. No jokes were deleted.`});
+        }
+        })
+
+    Since this was a single joke, it doesn't need a key to delete.
+
+    When doing mass deletions, there could be a need for authentication before deletion. This can be done using an API key or bearer token or whichever approach might be preffered by the provider.
+
+    If API Key then that would mean there is a need to pass in a parameter of of type key and its value for the deletion to be effected. The key needs to be validated against a master key in the system.
+
+    When working with API keys, always remember to use the req.query and not the req.params if the authorization was set to add the key to Query Params. The code should then be:
+
+        app.delete("/all", (req, res) => {
+        const userKey = req.query.key;
+        
+        if(userKey === masterKey) {
+            jokes = []
+            res.sendStatus(200);
+        } else {
+            res
+            .status(404)
+            .json({error: `Joke with id: ${id} not found. No jokes were deleted.`});
+        }
+        })
+
+130. Build your own API for a Blog:
+     
