@@ -3281,7 +3281,7 @@ SECTION 24: EXPRESS.JS WITH NODE.JS
 
     When working with a middleware:
     - Use the app.use([path,] callback[,callback...]) method.
-    - It must be created before any if the route handlers.
+    - It must be created before any of the route handlers.
     - In the use method add your middleware in this case bodyparser and tell it the kind of data we want to pass and in our case is urlencoded since it is an html file. Inside the urlencoded set the extended to true or false.
     - Now every request has a body and we can use the req.body to access the submitted data.
     - Below is the code:
@@ -3533,7 +3533,7 @@ SECTION 25: EMBEDDED JS (EJS)
 
     
     EJS to Server:
-    We can pass data backwards using the POST request. We ensure the form fields have a name that can be us the name in the forms:
+    We can pass data backwards using the POST request. We ensure the form fields have a name that can use the name in the forms:
 
     EJS:
     <form action="/submit" method="POST">
@@ -3565,7 +3565,7 @@ SECTION 25: EMBEDDED JS (EJS)
 
      The above is added to the ejs header file.
 
-     Inorder not to have a turn of repeated code across all our EJS files, we can use the features of EJS e.g., templating that can allow insert bits of dynamic code to the body of our website.
+     Inorder not to have a tone of repeated code across all our EJS files, we can use the features of EJS e.g., templating that can allow insert bits of dynamic code to the body of our website.
 
      We can also use EJS to reduce the bunch of repeated code by use of partials: 
 
