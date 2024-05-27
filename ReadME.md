@@ -4436,6 +4436,76 @@ SECTION 30: BUILD YOUR OWN API
     We can not run two different codes on the same port. It is key that the two servers are assigned different ports.
 
 SECTION 31. DATABASES
-131. Databases Explained: SQL vs. NoSQL
+131. Databases Explained: SQL vs. NoSQL (Data Persistance)
+    In the previous modules, whenever you create say a new blog post, then restart the server, the newly added blogs are lost and the server is returned to the original state since the data is held in a temporary memory state.
+
+    To persist the data we need some form of data storage, in a permanent state of memory using electromagnate. With this you can store data in bits and bytes by changing the magnatic pollarity.
+
+    We need a form of data storage that prevents variables held in temporary memory frombeing wiped out.
+    There are many types of databases:
+    - SQL DB - Structured Query Language
+    - NoSQL DB - Not only SQL
+
+    SQL DBS:
+        - Has been around for years and years.
+        - Structurally data is stored in tables e.g., a users tab;le
+        - Before hand need to anticipate what to store in the table. The fields to be stored determine the structure and size of the table. The columns can be then populated line by line.
+        - Another feature is they allow for creation of relations hence the name relational databases. E.g., with the user table, and a blog table, you can link the two using the username. With this you can query the blogs written by a specific user using the relation.
+        - Other types of SQL dbs are Oracle DBs (quite expensive), Postgress, MySQL, SQL lite
+        - Some are open source e.g., postgress and SQL Lite.
+
+    NoSQL DBs
+        - Characterized by their flexibility. 
+        - The data doesn't necessarily have to be in table format. Can store it in JSON and other formats.
+        - For example if you create a new user:
+            user: {
+                name: "Daniel",
+                email: d@gmail.com, 
+                password: 1234
+            }
+        with NoSQL you can change the structure of your data afterwards without having to change the entire db. E.g., if you want to give only user Daniel an extra field, then this is possible in NoSQL:
+
+            user: {
+                name: "Daniel",
+                email: d@gmail.com, 
+                password: 1234
+            }
+        
+        the data can be modified on the fly. does not affect the user table but can target a single record in that DB.
+
+        - Used to address most of the challenges that devs faced with SQL
+        - SQL DBs needed learning.
+        - Flexibility - No need to anticipate the fields before hand
+        - Scalability - easy to add a field without affecting structure
+        - Examples include: Mongo DB, Redis, Dynamo DB. Some like Redis are open source while others like Dynamo and Mongo DB are run by companies.
+
+    SQL is a bit more traditional than the NoSQL DBs. There are discussion on using NoSQL challenges with NoSQL even from addressing the scalability issue and integrity which has seen SQL still remain relevant in large projects.
+
+    Being able to plan, a consistency and relationship has also been considered a great plus in SQL.
+
+    In databases statistics, the clear winner is PostgresSQL:
+
+    https://www.walturn.com/insights/stack-overflow-survey-2023-revealed#:~:text=Most%20Popular%20Databases&text=Among%20professional%20developers%2C%2050%25%20prefer,latter%20group%2C%20just%20behind%20MySQL.
+
+    Detailed:
+    https://survey.stackoverflow.co/2023/#most-popular-technologies-databse-learn
+
+    See stats in snips > Most popular <> graphs.
+    Postgress SQL:
+        - Open source,
+        - Free to use
+        - Used by professionals
+        - Scalable
+        - And good to use as web developers.
+
+
+
+
+
+
+
+
+
+
 
 
