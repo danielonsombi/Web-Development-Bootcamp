@@ -4497,13 +4497,152 @@ SECTION 31. DATABASES
         - Used by professionals
         - Scalable
         - And good to use as web developers.
+  
+SECTION 32: SQL
+132. SQL Commands: CREATE Table and INSERT Data
+     A great resource in terms of documentation of SQL is:
+
+        https://www.w3schools.com/sql/
+    
+    With SQL we can create, manipulate, update, destroy etc.
+    The main things you'll be able to do are Create, Read, Update, Destroy commonly referred to as CRUD.
+
+    For every DB you need to learn how to do CRUD.
+
+    For practice purposes, you can use the sqliteonline.com:
+
+        https://sqliteonline.com/#fiddle-5bbdbaef7288bo2ajn2wly03
+
+    With this resource and w3shools you can create and manipulate tables using sql.
+
+    Create table:
+
+        CREATE TABLE Products (
+            id int,
+            name STRING,
+            price MONEY,
+            PRIMARY KEY (id)
+        );
+
+    While creating a table, you should consider the right data types for each field and also each table should have a primary key.
+
+    A primary key cannot be null and therefore when creating the table there is need to check and set it as such. hence:
+
+        CREATE TABLE Products (
+            id int NOT NULL,
+            name STRING,
+            price MONEY,
+            PRIMARY KEY (id)
+        );
+
+    To add records, we use the INSERT key word and as per the documentation it takes the format:
+
+        INSERT INTO table_name (column1, column2, column3, ...)
+        VALUES (value1, value2, value3, ...);
+    
+    The above allows insert to specific columns. However, if you want to insert into each and every column, you don't need to explicitly specify the columns. Instead use:
+
+        INSERT INTO table_name
+        VALUES (value1, value2, value3, ...);
+
+    To insert to products table:
+
+        Insert into Products
+        VALUES (1, 'Pen', 1.20)
+    
+    If you want to skip a field say submit the id and name without the price then
+        Insert into Products (id, name)
+        VALUES (2, 'Pencil')
+    
+    The above covers the CREATE and UPDATE parts of CRUD.
+ 
+133. SQL Commands: READ, SELECT, and WHERE:
+     Here the focus is on the READ part of CRUD.
+     The most often used key word is the SELECT keyword.
+
+        SELECT * FROM 'Products';
+
+    * - selects all from the products.
+  
+     To select only the name then use:
+        SELECT name from 'Products';
+
+    To select only the first row, you'll need to search through the DB using the WHERE keyword:
+       
+        SELECT column1, column2, ...
+        FROM table_name
+        WHERE condition;
+
+    e.g., SELECT * FROM Products WHERE id = 1;
+
+134. Updating Single Values and Adding Columns in SQL:
+    These will address the U in CRUD.
+    Say we'd like to update the pencil record to add a price:
+
+        SELECT column1, column2, ...
+        FROM table_name
+        WHERE condition;
+
+    E.g., Update Products SET price = 10.8 WHERE id=2
+
+    One might also want to change the structure of the table, e.g., add a new column stock:
+
+        ALTER TABLE table_name
+        ADD column_name datatype;
+
+    e.g., ALTER TABLE Products ADD Stock INT
+
+135. SQL Commands: DELETE
+    Addresses the Destroy part of CRUD:
+
+        DELETE FROM table_name WHERE condition;
 
 
+    E.g., DELETE FROM Products WHERE id = 2
 
+136. Understanding SQL Relationships, Foreign Keys and Inner Joins.
+    For relationships, one ey component is the use of Foreign Keys. The Foreign Keys act as a link between two tables. They are usually primary keys in the associated table.
 
+    More information:
+        https://www.w3schools.com/sql/sql_foreignkey.asp
 
+    If we have an orders table and a products table, the product ID will be captured in the orders table as a Foreign Key. We can use the Foreign key to pull more information about the product acquired. An example is:
 
+        CREATE TABLE Orders (
+            id INT NOT NULL,
+            order_number INT,
+            customer_id INT,
+            product_id INT,
+            PRIMARY KEY (id),
+            FOREIGN KEY (customer_id) REFERENCES Customers(id),
+            FOREIGN key (product_id) REFERENCES Products(id)
+        )
 
+    To show a much detailed table with the details of the order, customer and product details we use the SQL JOIN keyword. There are different types of joins but the most common is the INNER JOIN:
+
+        SELECT column_name(s)
+        FROM table1
+        INNER JOIN table2
+        ON table1.column_name = table2.column_name;
+
+    An example is:
+
+        SELECT Orders.order_number, Customers.name
+        FROM Orders
+        INNER JOIN Customers
+        ON Orders.customer_id = Customers.id;
+
+    This will return two from two different tables and returns another table with the selected columns.
+    
+    See the module code here:
+
+        https://www.mycompiler.io/view/7ZK5EPwt68f
+
+SECTION 33: POSTGRESQL
+137. Introduction to Postgress
+    
+
+    
 
 
 
