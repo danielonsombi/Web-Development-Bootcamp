@@ -4180,7 +4180,7 @@ SECTION 28: APPLICATION PROGRAMMING INTERFACES (APIs):
 SECTION 29: CAPSTONE PROJECT
 125. Use Public API
 
-
+- CHECK THE LINK: https://www.instructure.com/canvas Simple non cluttered landing page.
 
 SECTION 30: BUILD YOUR OWN API
 126. Building yout own APIs
@@ -4640,11 +4640,293 @@ SECTION 32: SQL
 
 SECTION 33: POSTGRESQL
 137. Introduction to Postgress
+    An Open Source RDBMS. This is our DMS we will use to persist our data in all our web apps. It is widely used by many of the big companies like Aple, NASA, Instagram, Spotify etc.
+    It is one of the worlds most advanced open source relational db, widely used and has career opportunities and has a community of support with plenty of help available.
+
+    To use postgres, we have a clien -> Server -> Application (App.js) -> DB.
+    The DB is responsible for storing things like users, posts and any other data.
+
+    The code used to setup postgress is pretty simple because there are packages set to be used with node. We use npm package "pg" as:
+
+        import client from "pg"
+
+     We create a constant db which contains all the information we need to connect to our postgress database. Imagine the postgress db as a server on its own. The DB also runs on a db server, this could be local or hosted on the internet.
+
+     To connect to the db you need a way to authenticate yourself and connect to the right db that you want to submit your data to:
+
+        const db = new Client({
+            user: "username",
+            host: "localhost",
+            database: "mydatabase",
+            password: "password",
+            port: 5432,
+        });
+
+    Then we can use the connect() from the pg package method to connect to the database then use the db.query to perform CRUD requests. Within query, we can then write SQL queries.
+
+    We then close the connection using the db.end() method.
+
+    Here is the complete code:
+
+        import Client from "pg";
+
+        const db = new Client({
+            user: "username",
+            host: "localhost",
+            database: "mydatabase",
+            password: "password",
+            port: 5432,
+        });
+
+        db.connect();
+
+        db.query("SELECT * FROM users", (err, res) => {
+            if (err) {
+                console.error("Error executing query", err.stack);
+            } else {
+                console.log("User data:", res.rows);
+            }
+
+            db.end();
+        })
+
+    To get started we need to install two pieces of software:
+        - Postgres Server which can also be installed locally.
+        - pgAdmin - This is a user interface for us to be able to tap into the postgres server so we don't have to use commandline.
+
+138. Understand how to use keys, Postgress types and Keywords
+    Dat can be stored in tables (rows and columns) where the row includes a unique ID and all the records of the row can be accessed using that specific id.
+    If the data is stored in excel, the data gets to a point it becomes difficult to maintain and track and thus the need for databases since they are efficient in handling lots of data.
+
+    A database is lots of tables, relationships and rules on how they should behave. Datatypes in postgres are abit limited but it allows for quite a number.
+
+    While creating Primary Keys you can use the SERIAL postgres key word which allows you to automatically autoincrement from the previous record to a new id wihtout having to capture the information.
+
+    Datatypes:
+        - VARCHAR(50) - A more efficient way to store data. 
+          - If using CHAR(50) it doesn't matter the size of the name being stored, it still reserves the 50 characters. With VARCHAR, the size is adjusted to fit the need, say if storing a word 4 characters long, it will be adjusted accordingly. 
+          - TEXT - Does not allow you specify the size. TEXT is a little bit slow that VARCHAR but if in the foreseeable future there are possibilities of storing more data, then it is advasable to use this datatype.
+          - Text is a more modern practice being used. varchar is the old standard best practice way of doing it. For flexibility best to use text.
+
+139. Flag Emojis on Windows:
+    Windows does not support or show flags. Instead you can use Mozilla Firefox instead of Chrome.
+
+140. Use pgAdmin to CREATE a Table
+    If have data in excel, it is possible to identify the data types that we might need then with this we can create table in postgress. We can create code inside pgAdmin to create a table.
+
+    You can create a database by rightclicking on databases in postgress pgAdmin > create > Database.
+    Under the newly created db, navigate to schemas > tables. By default there are no tables. You can choose to create tables directly by right clicking on tables or use the query tool icon the first on the top left side of the navigation section.
+
+    Unlike JS, it is very important to end every line of code with a semicolon otherwise it won't work.
+    When creating a primary key, it is good practice to assign the serial property to the primary key in postgress. Run the code. The navigate to table and refresh.
+
+    You can view the data by righclicking on the table and depending on the option selected, postgress will autogenerate the SQL code and show the table.
+    It is better to access postgress through the GU than using the terminal.
+
+    Postgress also allows importation of data from CSV by navigating to:
+        
+        - Schema > Tables > <Table> righ click and click import/export data.
+        - Ensure the import option is selected then navigate to file and import.
+        - If the file includes headers, click on the Header option to activate it. This tells the import that the first line is not an import.
+        - With this the columns can be viewed in the columns tab.The columns in your table should match those in your table.
+        - Click ok to import the data
+    To rename the table fields, you can right click on the table, then click on properties then under columns you can edit each of the names then save.
+
+    You can also import a list of Flags which has an id, name of country(varchar(45)) and flag(an emoji of UTF-8 datatype). Flag can be stored as a varchar or text.
+
+    It is much faster to define a schema that typing it in by right clicking on the tables then adding in the columns manually. Should be the preferred approach.
+
+141. Query data using SELECT, WHERE, and LIKE in PostgreSQL
+    When importing data in postgres, if the intention is for Postgress to automatically generate the unique identifier, then in the import window under the columns tab, remove the id column. This will allow you import an excel that does not have the id and as a result allow postgress to attach the serial number. See world_food.csv.
+
+    Various SELECT commands can be used:
+    1. Select All - Select * from <table name>.
+    2. Select a Column - Select <column name> from <Table name>
+    3. Select multi-column - Select <column name>, <column name> from <table name>
+    4. Select with condition -  SELECT <column> from <table> where <condition> with condition you can use various comparisons/conditions, greater than (>), Equal to (=), less than (<), greater than or equal to (>=), less than or equal to (<=)
+    5. Using the LIKE keyword - Where you want to match part of your data. E.g can save a country as either united states/United States of America, can use the %ge sign to represent a wild card. E.g., find anything that has the united keyword. So can do: 
+    Select <column> from <table> where <column> like <pattern> 
+    E.G., SELECT country from world_food where country like 'U'||'%' will return all companies starting with letter U. The || is used to concatenate.
+    SELECT country from world_food where country like '%'||'a' Gets all countries that end with a.
+
+145. UNIQUE & NOT NULL | Travel Tracker Part 1
+    The project is to help visualize all the countries that we've been to.
+    For a travel tool, you don't want to insert a blank country or log a country into the database twice.
+    To ensure it is not null we use the NOT NULL keywords while creating the table structure and to ensure there is no repetition, use the UNIQUE keyword.
+    The two are key to ensure your data is sanitized:
+
+        CREATE TABLE visited_countries (
+            id SERIAL PRIMARY KEY,
+            country_code char(2) NOT NULL UNIQUE
+        )
+
+    Once the table is created, one can manually add data to it from pg admin. First select all row to show the table in one of the views, on top of the empty table is an icon with + sign. Click on it to add a new row. Once added then click the save button.
+
+    While writing PostgreSQL code in express, there is need to use the async await approach so to ensure the db response is received before the rest of the code can be executed. If this is not in place, the code db.end might be executed before receiving the response and the expected result won't be rendere:
+
+        app.get("/", async (req, res) => {
+        let countries =[];
+        let total = 0;
+
+        const result = await db.query("SELECT country_code from visited_countries");
+
+        result.rows.forEach((country) => {
+        countries.push(country.country_code)
+        });
+
+        total = result.rowCount;
+
+        res.render("index.ejs", {countries : countries, total:total});
+        db.end()
+        });
+
+    In some cases, depending on the kind of result to be rendered, you may be expected to create an array of codes as opposed to the returned array of objects returned from the DB. The forEach function comes in handy as shown above. Instead of passing key:value items, it helps recreate an array with just values. This depends on what your .ejs file expects.
+
+146. INSERT and add Data|Travel Tracker part 2:
+    We can use the pgadmin to add data into a table as illustrated earlier. From a web development perspective, it is also critical to know how this can be done programmatically.
+    Good programming disctates that the application should do  the heavy lifting on behalf of the users. For instance, not all users know the 2 letter codes of a country, you need to provision for both the two letter country code and still if the user types the entire country name, the application should work ok:
+
+        INSERT INTO world_food (country,rice_production,wheat_production) values ('Italy', 1.46, 7.3);
+
+    Working with the pg package allows us to use the db.query() method to insert values. The query method allows you to write the SQL command as the first parameter and values as the second parameter. With this we can pass in both hard coded and variable parameters to the database. 
+
+    We do this by using the dollar($) placeholder for each of the values that need to be added to the database:
+
+        db.query("INSERT INTO world_food (country,rice_production,wheat_production) values($1, $2, $3)", ['Italy', 1.46, 7.3]);
     
+    Can combine multiple SQL queries to achieve the desired result. One can also opt to create functions to manage some of the processes the code earlier written for the home page can be revised to:
 
+        async function checkVisisted() {
+        const result = await db.query("SELECT country_code FROM visited_countries");
+
+        let countries = [];
+        result.rows.forEach((country) => {
+            countries.push(country.country_code);
+        });
+        return countries;
+        }
+
+        app.get("/", async (req, res) => {
+        const countries = await checkVisisted();
+        res.render("index.ejs", { countries: countries, total: countries.length });
+        });
+
+    To add a new country, the below queries can be used to achieve the desired end goal:
+
+        app.post("/add", async (req,res) => {
+        const country = req.body.country;
+        
+        // Get the country code of the submitted country:
+        const country_code = await db.query(
+            "SELECT country_code from countries where country_name = $1",
+            [country]
+        );
+
+        //Insert the country code to the visited countries table:
+        if (country_code.rows.length > 0) {
+            const result = await db.query(
+            "INSERT INTO visited_countries (country_code) values ($1)", 
+            [country_code.rows[0].country_code]
+            );
+        }
+
+        //Redirect to the get method to show the countries
+        res.redirect("/");
+        })
+
+    To figure out how to get the specific code from the returned rows, you can do a bunch of console logs to find the positioning as <country_code.rows[0].country_code>
+
+    Note:
+    In the implementation, it is possible to pass an error to the form field placeholder.
+    For error handling we can use try catch blocks to check if the country being submitted already exists in our list of visited country or not.
+ 
+    We can also validate that it is a valid country from the list of countries.
+    Error catching is always a long process but it always makes your application more rounded and a little bit better in terms of user experience.
+
+    While using the try catch blocks, some of the if statement e.g., <if (country_code.rows.length > 0) {> will not be needed. The new code becomes:
+
+        app.post("/add", async (req,res) => {
+        const country = req.body.country;
+        
+        // Get the country code of the submitted country:
+        try {
+            const result = await db.query(
+            "SELECT country_code from countries where country_name = $1",
+            [country]
+            );
+
+            const data = result.rows[0];
+            const country_code = data.country_code;
+            //Insert the country code to the visited countries table:
+            try {
+            await db.query(
+                "INSERT INTO visited_countries (country_code) values ($1)", 
+                [country_code]
+            );
+            //Redirect to the get method to show the countries
+            res.redirect("/");
+            } catch(err) {
+            console.log(err);
+            const countries = await checkVisisted();
+            res.render("index.ejs", {
+                countries: countries,
+                total: countries.length,
+                error: "Country has already been added, try again."
+            });
+            }
+        } catch(err) {
+            console.log(err);
+            const countries = await checkVisisted();
+            res.render("index.ejs", {
+            countries: countries,
+            total: countries.length,
+            error: "Country name does not exist, try again."
+            });
+        }
+        });
+
+    To avoid an overlap of try catch blocks it is good practice to separate the reading of the returned row data. Just as is in the above code, use:
+
+        const data = result.rows[0];
+        const country_code = data.country_code;
+        try {
+            await db.query(
+                "INSERT INTO visited_countries (country_code) values ($1)", 
+                [country_code]
+            );
+        }
     
+    instead of defining the second try catch block as:
+        try {
+            await db.query(
+                "INSERT INTO visited_countries (country_code) values ($1)", 
+                [result.rows[0].country_code]
+            );
+        }
 
 
+    This at times makes the above try catch execute meaning the first try block error will never be executed.
 
+    For an even better experience, you can use the WHERE LIKE pattern in order to match a particular string in a column. Users may also submit there input in either lower case or upper case and so there is uniformity, you can lower the input and the column names. The complete code is as below:
 
+        ("SELECT country_code FROM countries WHERE LOWER(country_name) LIKE '%' || $1 || '%';",[country.toLowerCase()]);
 
+147. One-to-one Relationships: 
+    (How to use foreign keys and inner joins in one-to-one relationships)
+    There are three types of relationships:
+    1. One to Many
+    2. One to one
+    3. Many to Many.
+     
+    This is where the power of SQL comes in.
+    See image in    Snips > One to One Relationships.png
+
+    One to one relationship mean there is one entry in the student table that maps to one entry in the contact table.
+    Alot of DBs are optimized to have many rows and columns. One wa to split a table is using a one to one relationship to avoid having so many columns.
+
+    The table Student will have the first name and last name of the student. Every now and then you might want to find a student in the contact table. This is achieved by creating a new contact. As much as you can create the contacts in the student table it is not optimal.
+
+    We use the primary key id of the student and use it in the contact table and it is marked to be unique. Set as an integer and use a references key word which sets it as a foreign key.
+
+    The above brings about the database designs. One of the tools used is the draw.io
+    
