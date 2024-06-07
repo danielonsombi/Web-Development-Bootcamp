@@ -4929,4 +4929,233 @@ SECTION 33: POSTGRESQL
     We use the primary key id of the student and use it in the contact table and it is marked to be unique. Set as an integer and use a references key word which sets it as a foreign key.
 
     The above brings about the database designs. One of the tools used is the draw.io
+
+    Can see the code in 8.5 Family Travel Tracker > queries.sql. The code is to be run in PostgreSQL.
+
+    To get a list/table with both the student name and the contact details we use the join key word. The code is as below:
+
+        SELECT * FROM STUDENT
+        JOIN contact_detail 
+        ON student.id = contact_detail.id
+
+    This does an inner join. The inner join joins two tables based on a unique criteria.
+    The SQL comman can be used to join the two tables together and returns one big table with all the fields.
+
+148. One-to-Many Relationships
+    (Use REFERENCES to link tables in One-to-Many relationships with a foreign Key)
+    It is one of the frequently used relationships.
+
+    See:
+        Snips > One to Many Relationships.png
+
+    Happens in something that has one record and seems to have many of the other records. E.g., 1 Student that makes many assignment submissions.
+
+    Each piece of assignment can only be done by one student but one student can have multiple.
+    Depending on how you look at it it can be a many to one or one to many. The two are one and the same.
+
+    Another example is that of customer and order. ne customer can make many orders.
+
+    A cross-feet is used to represent the many side of the relationship and the link is through the foreign key which in this case (Assignment submission) will be the student_id
+
+    On the many side, each record has a primary key which is to uniquely identify each entry.
+
+    The foreign key is used to establish the many to one relationship.
+
+    The REFERENCES key word marks the field as the Foreign Key and to its immediate right, the name of the table with the reference field must be set in the format:
+
+        student_id integer REFERENCES student(id)
+
+    The code is as below:
+
+        CREATE TABLE homework_submission(
+            id serial PRIMARY KEY,
+            mark INTEGER,
+            student_id integer REFERENCES student(id)
+        )
+
+    While naming the tables, there is no common approach, one can either name them in singular or plural. It often depends on the company preference or the developers preference. However, it is good practice to keep it the same across the database. If singular then keep it say student, contact_detail etc. If plural then, students, contact_details etc. Do not mix them up. Stick to one scheme.
+
+    To insert data to the above table then use INSERT as:
+
+        INSERT INTO homework_submission (mark, student_id)
+        VALUES (98, 1), (87, 1), (88, 1)
+
+    The above will capture the mark and student ID. Its serial id will be auto incremented during insertion.
+
+    With the JOIN command we can also be able to join the student and homework_submission table as:
+
+        SELECT * FROM student
+        JOIN homework_submission
+        ON student.id = homework_submission.student_id
+
+    You also must not specify the second table.FK. Can still do it as:
+
+        SELECT * FROM student
+        JOIN homework_submission
+        ON student.id = student_id
+
+    Can also opt to select a few columns:
+
+        SELECT student.id, first_name, last_name, mark 
+        FROM student
+        JOIN homework_submission
+        ON student.id = homework_submission.student_id
+
+149. Many to Many
     
+    See:
+        Snips > Many to Many Relationships.png
+
+    It is one of the most complex and least used of the relationships.
+    Say you have a student and could be in many classes.
+
+    On the other hand we have an English subject taken by many students.
+    So one class to many students.
+
+    So having many students to one class and one class to many students results to a many to many relationship.
+
+    To represent this relationship in Postgres we create a new table that represents just that relationship.. Each record in the new Enrolment table will represent a student id and class id and for each class, we'd have a separate record. That table in its entirety will represent the many to many relationship. since it will show student with id 1 and all the class_ids for that student.
+    If a student is doing 5 subjects then the student will appear 5 times in the Enrolment table.
+
+    The Extra table will represent a many to many relationship while the Enrolment to Student and Enrolment to Class will represent a one to many relationship.
+
+    While creating the Enrolment table the ids of the two table will be of type REFERENCE since Foreign Keys. The two will then be combined to form the primary key of the table so no two combinations of Student and Class IDs will appear twice in the Enrolment table.
+
+        CREATE TABLE enrollment (
+            student_id INTEGER REFERENCES student(id),
+            class_id INTEGER REFERENCES class(id),
+            PRIMARY KEY (student_id, class_id)
+        );
+
+    When selecting/retrieving the data we first select everything from the Enrolment table which has both FKs then join with the other tables as below:
+
+        SELECT * FROM enrollment
+        JOIN student on student.id = enrollment.student_id
+        JOIN class ON class.id = enrollment.class_id;
+
+    The above returns the three tables in the order enrollment, student then class table.
+    You can now sum up how many are doing how many students are taking which class and so many other queries we can use the same approach.
+
+    ALIASES: (Using the AS keyword)
+    1. Queries using Aliases:
+    An alias can be introduced using the AS keyword. Say you want to pull the specific fields from the Joined table and you'd prefer using a different field instead of using (id). This can be achieved by:
+
+        SELECT student.id AS stud, first_name, last_name, title
+        FROM enrollment
+        JOIN student ON student.id = enrollment.student_id
+        JOIN class ON class.id = enrollment.class_id;
+
+    2. Shorten & Simplify queries:
+    Instead of having to xtype out the entire table names then you can shorten them using aliases:
+
+        SELECT s.id AS stud, first_name, last_name, title
+        FROM enrollment AS e
+        JOIN student AS s ON s.id = e.student_id
+        JOIN class AS C ON C.id = e.class_id;
+
+    3. Omitting the AS Keyword.
+    One can opt to omit the AS key word and with a space achieve the same end goal:
+
+        SELECT s.id stud, first_name, last_name, title
+        FROM enrollment e
+        JOIN student s ON s.id = e.student_id
+        JOIN class C ON C.id = e.class_id;
+
+    The recommendation is to keep the AS keyword especially when renaming the fields so your code is set to:
+
+        SELECT s.id AS stud, first_name, last_name, title
+        FROM enrollment e
+        JOIN student s ON s.id = e.student_id
+        JOIN class C ON C.id = e.class_id;
+
+    This helps avoid confusion and makes your code easy to read.
+
+    In some instances you might want to return the record inserted. Instead of having to write the SELECT command, you can use the returning keyword to return the submitted entry:
+
+        INSERT INTO users (name, color) VALUES('Amy', 'red') RETURNING *;
+
+    Can read more on the Returning Data fromModified rows here:
+
+        https://www.postgresql.org/docs/current/dml-returning.html
+
+150. Update & Delete
+    1. ALTER TABLE
+    Alter is usually used when you want to update the schema of your table:
+
+        ALTER TABLE <TABLE TO ALTER>
+            <Do Something>
+
+        e.g.,
+
+        ALTER TABLE student
+            RENAME TO user
+
+        or 
+
+        ALTER TABLE user
+            ALTER COLUMN first_name TYPE VARCHAR(20)
+
+    Alter can also be used to add a new column as:
+
+        ALTER TABLE contact_detail
+            ADD email TEXT
+
+    For the visited countries you can add:
+
+        ALTER TABLE visited_countries
+	        ADD UNIQUE (user_id, country_code)
+
+    Once the constraint has been added, if one tries to add a similar combination. Postgres throws an error:
+
+        ERROR:  duplicate key value violates unique constraint "visited_countries_user_id_country_code_key"
+
+    2. DROP TABLE
+    It drops a table with a particular name from the database:
+
+        DROP TABLE <NAME OF TABLE>
+
+        DROP TABLE IF Exists visited_countries, users;
+
+        The if Exists constraints the DROP comman.
+
+    3. UPDATE Data
+    Instead of an ALTER, for particular records we use the UPDATE Command as:
+
+        UPDATE <TABLE TO UPDATE>
+        SET <COLUMN TO UPDATE> = VALUE,...
+        WHERE <SOME CONDITION>;
+
+    4. ORDER BY
+    It is one of the useful commands in PSQL:
+
+        SELECT *
+        FROM <SOME TABLE>
+        ORDER BY <SOME CONDITION>;
+
+    Helps retrieve data ordered by some condition. E.g if order by name in ascending or descending order:
+
+        SELECT * from users 
+            order by id asc
+    
+    5. DELETE Data
+    When deleting tables we use DROP but when deleting data we use the DELETE command:
+
+        DELETE FROM <TABLE TO DELETE>
+        WHERE <SOME CONDITION>
+
+    e.g.,
+
+        DELETE FROM visited_countries 
+        where user_id = 1 AND country_code = 'FR'
+
+SECTION 35: AUTHENTICATION & SECURITY - Hnadling Credentials and Designing a Secure Login
+151. Introduction to Authentication:      
+    Why Authnticate?
+        - As you create a web app, users will start generating data, like messages, like other users, recipes created etc. This will require that we create a user account through which we can identify them and store all there data in that account.
+        - This way you don't have everyones messages on the platform.
+        - Restrict access to various areas of the application to a few. E.g., on spotify premium verses free version.
+        - Authentication can be done in a number of ways. The difficult part of authentication comes from how secure you are to make your website.
+        - Level can go gfrom creating an account and saving user name and password all the way to OAuth, creating sessions and cookies, encrypting passwords etc. We'll try to replicate the Whispers website:
+            - https://whisper.sh/
+
+    This will have a home page, and another tab to allow the user to either register or login. Upon doing either, it should then redirect them to the secrets page.
