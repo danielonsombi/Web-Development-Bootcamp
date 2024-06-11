@@ -5159,3 +5159,194 @@ SECTION 35: AUTHENTICATION & SECURITY - Hnadling Credentials and Designing a Sec
             - https://whisper.sh/
 
     This will have a home page, and another tab to allow the user to either register or login. Upon doing either, it should then redirect them to the secrets page.
+
+152. Level 1 - Registering Users with Email and Password:
+    Here we will use a very simple website with two buttons one for Register and the other for Login.
+    In this approach, we are going to allow access to the Secrets page only after the user has been authenticated by first registering then loging in.
+    This is not the best approach because if someone hacks into the database, they can seeboth the user email and password.
+
+153. Level 2 - Ecryption and Hashing
+    Storing the username and password is the worst way of storing the user information and prone to hacking. We therefore need to think of how to store the passwords more securely. Need to store them using a code/cipher so people don't view that information easily e.g., 
+        1. The Caesar Cipher -  Where you have a key say 4 and with this the letters of the alphabet will be shifted by 4. For example, A becomes E, B becomes F etc.
+            ABC -> EFG.
+        Since the recipient knows the key, they can write it back. Can try this out on:
+            https://cryptii.com/pipes/caesar-cipher
+        Where you can type the letter/word and depending on the key, it will be encrypted.
+        Encryption allows for the user to use an encryption key and a cipher method a ceasar cipher, enigma cipher or modern cipher method which then generates a cipher text making it hard for someone to guess what the user passord is.
+
+        To get the original passowrd you need to use the password and adjust the cipher text by the key to generate it.
+
+        The ceasar cipher is really basic and easy to hack. We should not use a week encryption system.
+
+        Week encryption systems can end up putting user passwords at risk and mess up the user trust.
+        2. In modern day we use aes256 Encryption which entails alot of math but the essential process is still the same with text, encryption keys are used. The result is much much longer and impossible to tell how many characters were in the original password. 
+        The weekeness with this is that if one gets this encryption, no matter how strong, if they get hold of the key, they can work out everyones password using that key.
+
+            https://encode-decode.com/aes256-encrypt-online/
+        
+        How do we then address the need of securing our encryption keys? 
+        3. We use Hashing to address the encryption key issues. Hashing takes a way the need for an encryption key which if exposed can be a risk to the encrypted data. In this case, the password is subjected to a hashing function which then generates the corresponding hashed password. The hash is stored in the database.
+
+        How do you then decrypt, in this case you don't. Hash functions are mathematical functions to make it almost impossible to turn it backward. How do you turn a password an Hash?
+        Going forward is usually quick and easy than working backward. For example, multiplying 29 * 13 to get 377 is much quicker than trying to calculate the 2 numbers other than 1 and 377 which when multiplied will give you 377.
+
+        This is how the Hash function works. It is meant to be calculated easily going forward but almost impossible to go backward using the current levels of computing power it will take a while.
+
+        So when a user registers on a website, we covert the password using the hash function and store the hash on our db. On a later point when they try to login, we hash the submitted password then compare it with the one in the DB, if they match then the two are the same and at no point will we store the original password.
+
+        Hashing has its own problems which might need more secure options.
+
+154. How to hack passwords:
+    Some organizations send plain text passwords to their users. With this we know they are doing horrible with regards protecting their users access to their portals:
+        https://plaintextoffenders.com/
+    
+    Understanding how the other side approaches the problem, we can learn more about security and make our websites safer for our users.
+    So many companies including linkedIn with its 167M + users, and Adobe with its 38M + users and many more have been hacked in the past.
+
+    Is it that they are not encrypting or hashing their passwords? They do. As a hacker is you access the users database and they have for sure been hashed, if more than one of those pasword hashes are identical, note that the same pasword always returns the same hash function and so if a hacker notices a similar password, the hacker will start constructing a hash table, which takes most of the commonly used and create the respective  hashes. Then lookup the hash of the user and the hash in your table with this you'll land on the table.
+
+    If they did not use the same password, then one will use different approaches to create a HASH Table including:
+    - Use all the words in the dictionary (roughly 150,000) which informs the Dictionary attack key word - Creating hashes from all the words in the dictionally
+    - To it add the numbers from a telephone book (5, 000,000)
+    - Then combinations of the characters up to 6 places (19,770,609,664)
+    - The above results to a rough total of 19,775,759,664 hashes.
+
+
+    With a good GPU/Graphics cards capable of parallel processing and particularly suited for not only bitcoin minning but also generating hashes. With such you can generate 20 billion MD5 hashes/second
+
+    This means with our hash table it will take the GPU 0.9s to generate and it is not alot of time to invest. And already, large tables have been generating for the commonly used passwords from previous hacks and from other companies:
+        https://en.wikipedia.org/wiki/List_of_the_most_common_passwords
+
+    There are also prebuilt hash tables that people have worked on and from this you'll notice that MD5 is one of the quickest hashes to calculate and at times it is possible to search the hashed common passwords.
+
+    Some of the passwords however do not match any passwords if submitted on google. It is good practice to increate the number of characters, mix the lower and upeercase as well as special characters. Such will make it difficult for hackers to crack the passwords. You can use the Password checker to confirm the strength of your password:
+
+        http://password-checker.online-domain-tools.com/
+
+    You should avoid using a dictionary word, a place name, a telephone or anything in a directory somewhere. For fun can checkout:
+
+        https://hackertyper.net/
+
+155. Level 3 - How to Salt Passwords from improved Encryption
+     Salting takes the hasing a little bit further. Salting generates a random set of characters along with the users password then put into the user password. So no matter simple the password is, the salting makes the password alot more secure.
+
+    If our users had the same password and for each in addition to the password were a random set of characters, the resulting hash would be different from that of another. See the resulting hashes in the image:
+
+    With an additional Salt, this will make it secure for users to generate unique passwords as much as their passwords would be the same. Try out this using a text view, Hashfunction Encoding option and Bytes view in the site below:
+
+        https://www.udemy.com/course/the-complete-web-development-bootcamp/learn/lecture/41780536#questions
+
+    The salt is something that the user doesn't have to remember and is stored in the DB along with the database. In the table we will only store the hash and salt in the database. To increase the security, we can use another hashing algorithm instead of MD5.
+
+    Using the Bcrypt algorithm makes it more secure. With MD5 generating upto 20 billion hashes/second, the BYCRYPT algorithm can generate only 17,000 bycrypt hashes/second which makes it abit harder for the hacker than MD5.
+
+    To make the passwords even more secure, bycrypt has Salt Rounds.
+
+    What are Salt Rounds:
+        Say the original password wasy qwerty and we generate a random salt and pass it thorugh bycrypt and come up with an hash, if we have 2 rounds of salt rounds, we will take the hash that was generated and add the same salt from before then run it through the bycrypt function to generate a new hash.
+
+        The more computer technology grows, we get more computing power at a lower price. With this you can keep increasing the salt rounds and hence making the password more secure over time.
+
+        The hash is stored after the specified number of rounds until we end up with the final hash.
+
+    For Encryption, we will be using the bcryt npm package. The bycrypt package uses the blowfish cipher option. This ensures that no one with modern computational skills should be able to decode the passwords in the reasonable amount of time.
+
+    Hashing makes it a little bit safer for the users:
+
+        app.post("/register", async (req, res) => {
+            const email = req.body.username;
+            const password = req.body.password;
+
+            try {
+                const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+                email,
+                ]);
+
+                if (checkResult.rows.length > 0) {
+                res.send("Email already exists. Try logging in.");
+                } else {
+                //Password Hashing using bycrypt method.
+                //Instead of storing the password to the database, we will store the hash generated by the callback function:
+                bcrypt.hash(password, saltRounds, async (err, hash) => {
+                    if (err) {
+                    console.log("Error hashing password:", err);
+                    } else {
+                    const result = await db.query(
+                        "INSERT INTO users (email, password) VALUES ($1, $2)",
+                        [email, hash]
+                    );
+                    console.log(result);
+                    res.render("secrets.ejs"h);
+                }
+                })
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        });
+
+    After the hashing, we now need to compare every password with that which is currently stored in the database so to authenticate the users when logging in.
+
+    With the many salting rounds, we cannot just compare the generated password with the stored password. Each time the generated hash has a different password.
+
+    Bcrypt comes with a compare method that allows run some comparison between the keyed in password and the stored password.
+
+    bcrypt.compare(<Data from user>, <encrypted as is in the DB>, <Callbanc>)        
+        app.post("/login", async (req, res) => {
+        const email = req.body.username;
+        const loginPassword = req.body.password;
+
+        try {
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [
+            email,
+            ]);
+            if (result.rows.length > 0) {
+            const user = result.rows[0];
+            const storedHashedPassword = user.password;
+
+            bcrypt.compare(loginPassword, storedHashedPassword, (err, result) => {
+                if (err) {
+                console.log("Error comparing passwords", err);
+                } else {
+                if (result) {
+                    res.render("secrets.ejs");
+                } else {
+                    res.send("Incorrect Password");
+                }
+                }
+            })
+            } else {
+            res.send("User not found");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+        });
+
+156. Managing Cookies and Sessions    
+    Say you go to Amazon and search for an item and add it to the Shoping basket/cart and by any chance if the user navigates away from the site tio a different site, the expectation is that when they navigate back to Amazon, they should be able to see the items added to Cart.
+
+    To achieve this, Amazon create a cookie which is stored in the user's browser. In chrome, the cookie can be viewed under settings > search for cookie, you'll find cookies under content settings.
+
+    If you click on the cookies you'll see the cookies added. TRhe session includes an id number which is used to fetch all the things added to cart on amazon. This is why even after closing and opening the browser, we can still see the switch in the shopping cart.
+
+    However, if we log into Amazon and delete the cookies, it will forget the last browsing sessions. Cookies are used widely to save sessions. With the cookies, if one logs into a different website say facebook, it will know who the user is and the kind of items you want to buy.
+
+    Cookies and sessions come in handy to achieve such a user experience.
+
+    From a web development perspective:
+        - When accessing Amazon, the system creates a get request.
+        - Amazon servers sends back a response
+        - If the user adds a computer to Cart, amazon treats this as a POST request and responds with a cookie of the users request and the browser is told to save that cookie
+        - If one visits the website much later, the cookie gets sent together with the get request to identify who the user is and see if there were any previous sessions in amazon. More of breaking a fortune cookie revealing the previous things then response with HTML, CSS and JS and render the user's cart so the computer is already added into the Cart. 
+    
+    Session:
+        A session is a period of time that a browser interacts with the server. When you login, the cookie is created. As you continue to browse, the system won't require you to login for a cookie of the auntenticated credentials is created and can be destroyed upon logging out.
+
+    To implement cookies and sessions, we will use the PASSPORT package an authentication middleware for Node.js.
+
+    Passport allows authenticate users using a local strategy or a whole bunch of services like google, linkedIn, twitter etc.
+
+
+
+
