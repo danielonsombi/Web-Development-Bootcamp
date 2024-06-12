@@ -5347,6 +5347,246 @@ SECTION 35: AUTHENTICATION & SECURITY - Hnadling Credentials and Designing a Sec
 
     Passport allows authenticate users using a local strategy or a whole bunch of services like google, linkedIn, twitter etc.
 
+    We will use a couple of packages:
+    1. Express-session - to enable session persistance to allow save cookies and check the cookies.
+    2. Passport, passport-local - The library allows one to add different authentication strategies into one project easily. There are more than 500 strategies. Some of the common ones are logging in with twitter, microsoft, google etc.
+
+        https://www.passportjs.org/
+
+    Can view the packages here:
+        https://www.passportjs.org/packages/
+
+    We will start by implementing the passport-local since at the moment we are only using the local login. To use it you need both the passport, passport-local and express-session.
+
+    The express-session package will be used to bypass the login process, we need to make sure we are doing everything we can to protect user information.
+
+    The middleware can be set as:
+
+    app.use(session({
+        secret: "TOPSECRETWORD",
+        resave: false,
+        saveUninitialized: true
+    }));
+
+    The secret is the keyword that will be used for encryptioin and to help keep the user infromation more secure.
+    Resave - Allows set whether to save the session into the store or not. The session can be save to the database and if only using it for the timebeing set it to false. To save to db can research on how to configure it in postman.
+
+    saveUninitialized - Whether or not we want to force the session to the store. Set it to true to save it to server memory.
+
+    The next step is to import passport. The passport entry should come after the session middleware:
+
+    app.use(passport.session())
+
+    The code to be added to your project is as below:
+
+        import session from "express-session";
+        import passport from "passport";
+
+
+        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(express.static("public"));
+
+        app.use(session ({
+        secret: "TOPSECRETWORD",
+        resave: false,
+        saveUninitialized: true
+        }));
+
+        app.use(passport.session());
+
+    
+    In our current code, we can only redirect our users to the secrets page if they have either registered or logged in:
+
+        
+        res.render("secrets.ejs");
+
+    But this is not often the case, we are likely to use a path which in return will render the secrets.ejs page. With this how do we know whether the user has logged in or not?
+
+    We do this using the req property isAuthenticate to redirect the user to the secrets page. the isAuthenticate() method is a method from passport:
+        
+        app.get("/secrets", (req, res) => {
+        if (req.isAuthenticated()) {    
+            res.render("secrets.ejs");
+        } else {    
+            res.render("login.ejs");
+        }
+        })
+
+    With this if one tries to access the secrets url, they will be redirected back to the login page.
+
+    If you inspect elements, navigate to Applications > cookies, you may or may not see localhost:3000.
+
+    We then need to implement login for a user we have already stored in the cookies section. To do this you need to import strategy from passport-local.
+
+    The before the app.listen, tap into the passport.use() to register a strategy as:
+
+        passport.use(new Strategy(function verify(username, password, cb) {
+  
+        }))
+
+    where cb stands for callback.
+    The fact that it is a local strategy it is trying to validate if the user already has the right password and the email exists in the db which is basically everything we are trying to do inside the login route.
+
+    We can therefore cut the entire login try catch block and paste it inside the passport.use method as below:
+
+
+    It is key to remember that passport can automatically through the verify function grab the username and password from the form that submits the login request. The login form fields should match the username and password naming in the same way in both the form and veriufy function:
+
+        passport.use(new Strategy(async function verify(username, password, cb) {
+        try {
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [
+            email,
+            ]);
+            
+            if (result.rows.length > 0) {
+            const user = result.rows[0];
+            const storedHashedPassword = user.password;
+            bcrypt.compare(loginPassword, storedHashedPassword, (err, result) => {
+                if (err) {
+                console.error("Error comparing passwords:", err);
+                } else {
+                if (result) {
+                    res.render("secrets.ejs");
+                } else {
+                    res.send("Incorrect Password");
+                }
+                }
+            });
+            } else {
+            res.send("User not found");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+        }))
+
+    There is therefore no need to use bodyparser to pull the username and password as was the case earlier. For more information checkout:
+
+        https://www.passportjs.org/tutorials/password/
+
+    Passport gets triggered whenever we want to authenticate the user. With passport, the queries should be in a way that we can use the usernames that come from the form. 
+    We will also have to chenge the 
+        
+        res.render("secrets.ejs");
+
+    so we can call the callback function instead. If the result is true then there is no error and hence pass null, we then have to pass the the details of the actual user. We can save the details of the db through the lookup and when we redirect to secrets, we can by this be able to access the isAuthenticated set to true and you can also console log the user. 
+    But if there were any errors, then we will still call the cb function and pass the error as the first parameter.
+
+    And if the password was incorrect, we will also return the call back but not with really an error since it is not passport related but it is a user error which then means we will not return user, but return false making the req.isAuthenticated() set to false.
+
+    The user not found section will also be modified to:
+
+        return cb("User not found");
+    
+        Passport sets the process in a way that it can be reused through our code. The final code will be:
+
+            passport.use(new Strategy(async function verify(username, password, cb) {
+            try {
+                const result = await db.query("SELECT * FROM users WHERE email = $1", [
+                email,
+                ]);
+                
+                if (result.rows.length > 0) {
+                const user = result.rows[0];
+                const storedHashedPassword = user.password;
+                bcrypt.compare(loginPassword, storedHashedPassword, (err, result) => {
+                    if (err) {
+                    return cb(err)
+                    } else {
+                    if (result) {
+                        return cb(null, user)
+                    } else {
+                        return cb(null, false)
+                    }
+                    }
+                });
+                } else {
+                return cb("User not found");
+                }
+            } catch (err) {
+                return cb(err);
+            }
+        }))
+
+    Once the above is implemented, we then implement the passport.serializeUser() which takes a function that serializes a user. Meaning we can save the data oif the logged in user to local storage and can use the callback to pass over any of the details of the user:
+
+        passport.serializeUser((user, cb) => {
+            cb(null, user);
+        });
+
+    We then need to deserialize user using:
+
+        passport.serializeUser((user, cb) => {
+            cb(null, user);
+        })
+    
+    This save the user's information such as the id, email to the local session and when you want to get hold of the user deserializes it in a way that you can access that user's information.
+
+    Once the above is done, inside the login route, instead of having an async function, grapping hold of request and sending response, we ignore that process and instead use the passport.authenticate method. Will be changed from:
+
+        app.post("/login", async (req, res) => {});
+
+
+    To:
+
+        app.post("/login", passport.authenticate("local", {
+            successRedirect: "/secrets",
+            failureRedirect: "/login"
+        }));
+
+    The above includes option such as:
+        - SuccessRedirect - Where you want to redirect the user if the request goes through.
+        - failureRedirect - Where the user will be redirected incase of failure.  
+
+
+    How do we set the expiry of the session:
+        While initializing the session, one of the available options is cookie which is an object that can eb set as below:
+
+            app.use(session ({
+                secret: "TOPSECRETWORD",
+                resave: false,
+                saveUninitialized: true,
+                cookie: {
+                    maxAge: 1000 * 60 * 60 * 24
+                }
+            }));
+
+        The max age specifies a number in milliseconds when calculating the expiry. With 1000 to get one second
+
+            If meant to last for 1 day then should be set to
+
+                1000 * 60 * 60 * 24
+
+    We also need to update the register route so to ensure it incorporates the passport functionality. This can be updated using another passport method. Instead of just inserting the registered user, we will change this to Return the record that has just been inserted. This will help get hold of the new user in the result of the query then get the user using:
+
+        const result = await db.query(
+            "INSERT INTO users (email, password) VALUES ($1, $2)",
+            [email, hash]
+        );
+
+        const user = result.rows[0];
+        req.login(user, (err) => {
+            console.log(err);
+            res.render("secrets.ejs");
+        });
+
+    The above automatically authenticates the user, passess the users information into session, serializes the serializers and we will still be able to log the user under secrets.
+
+    See the modules "/register" route.
+
+    While creating the session, the docs will highlight the fact that the secret should be created in the environment variable so it does not get published to your repository. This and more is to be covered under the environments section.
+
+157. Environment Variables:
+    
+
+
+        
+
+
+
+
+
+
 
 
 
