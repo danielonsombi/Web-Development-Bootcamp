@@ -56,11 +56,22 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.get("/secrets", (req, res) => {
+app.get("/secrets", async (req, res) => {
   if (req.isAuthenticated()) {
-    res.render("secrets.ejs");
-
     //TODO: Update this to pull in the user secret to render in secrets.ejs
+    try {
+      const useremail = req.user.email;
+      const userSecret = await db.query("SELECT * FROM users where email = $1", [useremail]);
+      if (userSecret.rows[0].secret) {
+        res.render("secrets.ejs", { 
+          secret: userSecret.rows[0].secret
+        });
+      } else {
+        res.render("secrets.ejs", {secret: "I am my own hero"})
+      }
+    } catch (err) {
+      console.log(err);
+    }
   } else {
     res.redirect("/login");
   }
@@ -68,6 +79,31 @@ app.get("/secrets", (req, res) => {
 
 //TODO: Add a get route for the submit button
 //Think about how the logic should work with authentication.
+app.get("/submit", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render("submit.ejs");
+  } else {
+    res.redirect("/login");
+  }
+})
+
+app.post("/submit", async (req, res) => {
+  if (req.isAuthenticated()) {
+    //Get the entries to posted from the form
+    const secret = req.body.secret;
+    const email = req.user.email;
+    try{
+      const result = await db.query("UPDATE users SET secret = $1 WHERE email = $2", [secret, email]);
+      res.redirect("/secrets")
+    } catch(err) {
+      console.log(err)
+    }
+  } else {
+    res.redirect("/login");
+  }
+})
+
+
 
 app.get(
   "/auth/google",
