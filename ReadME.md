@@ -5577,12 +5577,709 @@ SECTION 35: AUTHENTICATION & SECURITY - Hnadling Credentials and Designing a Sec
     While creating the session, the docs will highlight the fact that the secret should be created in the environment variable so it does not get published to your repository. This and more is to be covered under the environments section.
 
 157. Environment Variables:
+    This lesson focuses on keeping your data safe as opposed to that of the user. Keeping secrets in index.js which at someppoint will be pushed to the repository or on the server. You often hear of stories where bad things happened because a developer put their secret keys on github. An example is:
+
+        https://www.theregister.com/2015/01/06/dev_blunder_shows_github_crawling_with_keyslurping_bots/
+        https://vertis.io/2013/12/16/unauthorised-litecoin-mining
     
+    The above show the risk that comes with storing your keys where they are publicly searchable.
+    The way developers solve this conundrum is through the use of environment variables which have two major use cases:
+        1. Convinience - The implementation is usually a bit complecated and instead of modifying the code for variables whiuch might mess up the code, you only need to update the environment variables and everything else will just work out
+        2. Security - When developing the code base might be sitted somewhere and may not want your API keys and Authentication keys uploaded and stored in the same place as your code.
 
+    Environment Varaibles - Allows separate out where we store out our secret stuff and keys from the rest of our code.
 
+    DOTENV Package: (https://www.npmjs.com/package/dotenv)
+        We will use a famous varibale dotenv to achieve this in express.
+
+        To move the secret from the session in index.js, create a new file under the root directory and give it the name .env. Then cut the secret and paste it in the newly created file. The syntax is:
+
+            SESSION_SECRET="TOPSECRETWORD"
         
+        The above is not a javascript object but just a way to create the variables.
+        The name should be all caps and if more than one word, they shoud be separated by an underscore.
+        The name should the be assigned to a string which is basically the value that is to be assigned or used in your code.
+
+        There should be no space between the start and end of the equal sign and if adding another value there is no comma at the end of the line.
+
+        In index.js, we replace:
+
+            secret: "TOPSECRETWORD",
+
+        with:
+
+            secret: process.env.SESSION_SECRET,
+        
+        This will tap into the environment and find the one using the specified name.
+        env must also be imported from dotenv and then have it initialized as: 
+
+            .....
+
+            import env from "dotenv";
+
+            const app = express();
+            const port = 3000;
+            const saltRounds = 10;
+            env.config();
+
+            app.use(
+                session({
+                    secret: process.env.SESSION_SECRET,
+                    resave: false,
+                    saveUninitialized: true,
+                    cookie: {
+                    maxAge: 1000 * 60 * 60 * 24
+                    }
+                })
+            );
+
+            ....
+    With this if you run the page and login everything should work just like before.
+    The .env file should then be added to the .gitignore file so it doesn't get uploaded to a github repository.
+    Always remember to add .gitignore to ensure you exclude any needful files or folders
+
+158. Set up your Google OAuth Credentials
+    To set up, sign in to:
+
+        https://console.cloud.google.com/
+
+    Upon login:
+    1. create a new project by clicking Select a Project then New Project > Secrets.
+    2. Select the newly created project.
+    3. Click the hamburger menu and Navigate to API & Services > Credentials
+    4. Configure Consent Screen - Will prompted to do this when you click "Create OAuth Client ID".This will give you a form. On the form select External then click create.
+    5. Add the needful information in the next form then SAVE AND CONTINUE.
+    6. Then configure your Scope - fields thay you will receive once the user logs in through google. If only interested on the email, Click on Add or Remove Scopes and add a checkmark against email then click on update.
+    7. Under Credentials, click on CREATE CREDENTIALS, then OAuth client ID which is meant to allow request user consent so your app can access the user's data, then choose web application.
+    8. Under JavaScript origins add: http://localhost:3000
+    9. Then add the url: http://localhost:3000/auth/google/secrets under Authorized redirect URIs.
+    10. Then click CREATE to create the client ID. The information, ID and Secret can be accessed per project by clicking on the project then navigating to the Additional information section.
+
+    The above information will come in handy in the next module.
+
+159. Level 6 - OAuth: Implement "Sign in with Google":
+    This is something you can have alongside your local strategy where you can have people to authenticate using username and password and have this alongside or as is the case in some of the modern websites, they do not allow people to register new usernames and passwords or make it very small so people go for social log in.
+
+    OAuth - is an open standard for Token Based Authorization. If you were to create a clone of facebook, and since on registering as a new user one won't have any friends, we can have then log in using the facebook credentials and as a result check who among his/her friends is in the new site.
+
+    This can be achieved by requesting the user to either sign in manually, where they don't get connection with other friends, or have them login with facebook. We will do a gate request to facebook and then  it will respond with the info of the friends including their usernames and emails.
+
+    This is then transferred to our servers where we can then compare them with our list of users to see if we have any users with similar emails. We can then automatically add them as friends in the new site.
+
+    This has been used in linkedIn where it checks all all contacts on gmail and adds them as connections.
+    Using OAuth we are able to access this pieces of information on this third party apps.
+        
+    The approach also brings about delegation of managing ot passwords securely to big tech companies like facebook.
+
+    As developers we could implement all security measures but this would take alot of time to achieve hence the delegation to other companies. So everytime they login they are automatically authenticated into our system. This is where most of the companies are going.
+
+    We therefore need to learn about OAuth. It is quite special in three ways:
+    1. Granular Access Level - On login with facebook you can request specific things from their profile. No need to get everything from the facebook account
+    2. Allows for read only or read and write access - E.g for facebook, retrieve the information or write access, e.g if word press is to post to the user account then read and write requested.
+    3. Revoke Access - User should be able to login to facebook etc and revoke the access they had granted to your website.
+
+    How does OAuth work in reality:
+    1. First, tell this third party, be it Facebook, twitter etc about our web application. Set up our app in their developer console. Our App becomes the client to facebook.
+    2. Redirect to Authenticate - When user access your website, give them an option to login via facebook.
+    3. User Logs In- Redirect them to Facebook so they can see a page they are familiar with. Without OAuth we might have to ask the user to share there facebook password, No one wants to do this. 
+    4. User Grants Permissions - On login, the user has to review the permissions that our website is asking for e,g, profile and email address and grant access. 
+    5. Authorization Code - Now that they have granted access, our website receives an authorization code from facebook aqllowing check whether the user successfully signed onto facebook, then we can log them into our website.
+    6. Exchange the Authentication code for an Access Token - Instead of receiving an Auth code, we can receive an access token. We can save the access token into our databse and use it to request for pieces of information subsequently. The Access Token is valid for a lot longer than the Auth Code.
+
+    The Auth Token is more like a ticket that you will use once whereas the Access Token is more like a year pass that you can use to request for a lot more information fro longer.
+
+    We will use the Google Oath set up earlier to for this project. For google OAuth strategy, we will innstall the "passport-google-oauth2" package as:
+
+        import GoogleStrategy from "passport-google-oauth2";
+    
+    Then we will have it configured below the passport.use method for the local strategy.
+
+    For google you need to setup a password authentication middleware. And since a google strategy, we can give it a name "google" as the first parameter, then create the actual async function using the google strategy using the client id and secret created earlier. Also as part of the object is the callback url and the userprofile url: "https://www.googleapis.com/oauth2/v3/userinfo"
+
+    After the above, add an async function which is triggerred once the process succeeds. The above is triggered when the users manage to login with their google account. It should return an access token, refresh token, profile and the callback.
+
+    with this we can now get parts of the google profile.
+
+    We then need to create a get route for google authentication.and a button for signup with google on the register page.
+
+    We will then add in a new route:
+
+        app.get('/auth/google',
+            passport.authenticate('google', { 
+            scope: [ 'email', 'profile' ] }
+        ));
+
+    The above will show that when the user logs in we will grab your email and public profile. If they consent and login we will then receive them in the strategy. 
+
+    Note that if you only have one strategy, you don't have to name it. But if multiple like in the case in project Authentication LV.3, then it is key to name them so they can be differentiate.
+
+    Once this is done, we can then run the app and try signing in with Google. The code is as below:
+
+        app.get('/auth/google',
+            passport.authenticate('google', { 
+            scope: [ 'email', 'profile' ] }
+        ));
 
 
+        passport.use("google", new GoogleStrategy({
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: "http://localhost:3000/auth/google/secrets",
+            userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+            passReqToCallback: true
+            },
+
+            async (request, accessToken, refreshToken, profile, cb) => {
+                return cb(err, user);
+            }
+        ));
+
+    Clicking the button will bring up the google sign in screen which you don't have to code up then you can click on the account you have a google sign in with. The app will notify you that Google hasn't verified the app. The app verification can take anywhere between 1 and 3 months but for development purposes we can continue without verification since keeping it localhost.
+
+    The system will prompt you on the information that is to be received if the process is completed.On clicking continue, it will try do a get request to the path: /auth/google/secrets which is the callback method that must be added to your routes:
+
+        app.get(
+            '/auth/google/secrets', 
+            passport.authenticate("google", {
+                successRedirect: "/secrets",
+                failureRedirect: "/login",
+            })
+        ); 
+    
+    On login, if you console.log(profile), it will log all the information that the user allowed you to pull from their google account. With this you can choose to add them to you list of users/application.
+
+    Since we don't get the user password from google, it is upto you as a user to determine which password to use. Some people store the user id, some store a word like google so you know why they don't have a password. For use can use google to id that it is from google and not locally created.
+
+    The we can pass the newly created user to our callback function.
+
+    The final thing is to make the log out button work:
+        - In passport the logout method is really simple
+        - Create a get request in the server and add "/logout"
+        - Then use the req.logout method one that is all lowercase.
+        - Add the call back to check if there is an error and console log it else res.redeirect("/")
+
+            app.get("/logout", (req, res) => {
+                req.logout((err) => {
+                    if (err) console.log(err);
+                    res.redirect("/")
+                });
+            });
+
+        With this you can easily logout. On logout, if one tries to access the other secrets page, they will be redirected to the login page.
+
+SECTION 36: REACT.JS
+160. What is React
+    It is a JavaScript Library for building interfaces.
+    It is one of the most loved/used web Frameworks as per the survey below:
+
+        https://survey.stackoverflow.co/2022#most-popular-technologies-platform-prof
+    
+    It makes it super easy to create components when creating an entire user interface by breaking the entire site as a component tree. See Snips > Component Tree Sample.png
+
+    It also simplifies the structure of your code by using a bunch of different components represented as if they were an HTML element, defining the styling and functionality of each keeping the code clean and moduler.
+
+    This is achieved by mixing different files. React combines smaller amount of each of this file into a single component so each has a different appearance and functionality.
+
+    It enables websites to be really interactive, no need to be refreshing pages, each component listens for changes in the server and updates itself talking to the server independently.
+
+    Able to rerender the changes independently by checking which component has changed. It is not the only Front end framework. But why React, as per the current trend, it is the most used and desired framework:
+
+        https://zerotomastery.io/blog/angular-vs-react-vs-vue/#:~:text=As%20you%20can%20see%2C%20devs,not%20far%20behind%20at%2050.75%25.
+    
+    The framework os also being used by different big organizations such as Airbnb, Uber, Facebook,Netflix,Instagram, twitter, Pinterest etc.
+
+    We will cover quite alot in the module including:
+    - JSX
+    - Props
+    - Styling,
+    - Components
+    - Babel,
+    - Virtual DOM,
+    - State,
+    - Container,
+    - Declarative Programming
+    - Hooks
+    - Destructuring
+    - etc.
+
+161. Introduction to Code Sandbox and the structure of the Module:
+    This is a browser based dev env that allows you to instantly deploy whatever you develop. Was developed with react in mind. Could code collaboratively with friends, with good dependency management, installation and keeping track of NPM packages allowing get up and running immediately. Free to use.
+
+    Instantly we can have access to the url that we can share with friends.
+
+        https://codesandbox.io/
+    
+    Why transition to a browser based editor:
+    - For instance deployment at no cost
+    - Any change in React will affect the course and hence at times we need to do online.
+    - But can still do the implementation on VSCode.
+
+162. Introduction to JSX and Babel
+    We will be doing our implementation on codesandbox, the free version supports upto 10 projects. When done, you can download the projects so you can have a local copy and so we can keep to the 10 even as we implement the rest of the submodules.
+
+    Note: On Codesandbox, you can clone the projects from a different account to your account using github.
+
+    By default the file will include a blank index.js, blank style.css and an index.html file that with the structure below:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>React App</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <div id="root"></div>
+        <script src="../src/index.js" type="text/javascript"></script>
+    </body>
+    </html>
+
+    Being a react application, it will include:
+
+    <div id="root"></div>
+
+    which by convention is the root of your react application. Everything created in react will be inserted inside the above DIV. 
+
+    We won't be touching the html file, all of our code will be written in JS using React.
+    In index.js require React and React-dom.
+
+    While working with Node, we have been using the terminal to install the dependencies but in code sandbox we will search for dependencies and click on them to add them to our project. Once installed, you have to require it in the index.js file.
+
+    To use React to create something on screen we use the Render() function, we use the ReactDOM.render() function that takes in:
+    1. what to show, 
+    2. Where to show it
+    3. Optional callback to tell us when it has completed.
+     
+    An example is:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        ReactDOM.render(<h1>Hello World</h1>, document.getElementById("root"));
+
+    The getElementById plugs in the code to the div with id root in the index.html file which is within the public folder.
+
+    This is what JSX does. React works by creating JSX files. Where we have HTML right in the body of JS.  The HTML is picked up by a compiler and is converted to actual Javascript. The compile comes in by adding the <import React from "react">.
+
+    Inside the React Module is Babel which is a JS compiler that is able to take next generation JS and compile it down to the type of JS every browser understands:
+
+        https://babeljs.io/
+    
+    For more infor, it includes a try it out section where you can paste the next generation code and it will generate the compiled code:
+
+        https://babeljs.io/repl
+
+    For example the code:
+        <ReactDOM.render(<h1>Hello World</h1>, document.getElementById("root"));>
+
+    will be compiled down to:
+        <ReactDOM.render(React.createElement("h1", null, "Hello World!"), document.getElementById("root"));
+        >
+    which is vanilla JS that can be read/understood by all browsers.
+
+    Instead of having all the steps done while using Vanilla JavaScript with so many lines of code, we can achieve the same by using the single line above.
+
+    Babel goes further than just rendering JSX, it allows use the new concepts of JS. The map and arrow functions for instance are converted to what all browsers can understand. Babel takes care of the conversion for us.
+
+    With this, we know with Babel our code is not going to break when using latest versions of JS.
+
+    Note: When using the render method, it can only take a single html element. The below code will return an error since it includes more than one html element:
+
+        ReactDOM.render(<h1>Hello World</h1><p>This is a paragraph</p>, document.getElementById("root"));
+
+    Turning the above into one element will do the magic. Wrapping all the elements within a single div element will resolve the error as:
+
+        ReactDOM.render(
+            <div>
+                <h1>Hello World</h1>
+                <p>This is a paragraph</p>
+            </div>,
+            document.getElementById("root")
+        );
+
+    The code in the web development folder is as was downloaded from the codesandbox tool. And is yet to be tested locally.
+
+163. Javascript Expressions in JSX & ES6 Template Literals
+    If you have a variable that is to be inserted inside the reactDOM. The constant cannot be passed directly but the name of the const needs be passed as a child.  
+    index.js is a JS file but using JSX means we intend to pass HTML to the ReactDOM. So to pass JS to HTML with a JS file, we use curlybraces to pass the constants as:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        const name = "Daniel";
+
+        ReactDOM.render(<h1>Hello {name}!</h1>, document.getElementById("root"));
+
+    Within the curlybraces you can write any JS expression can be a string or even use the Math.floor(Math.random() * 10) for a number between 1 and 10.
+
+    But we cannot write JS statements say add in an entire if statement such as:
+
+        if (name == "Daniel") {
+            return 7;
+        } else {
+            return Math.floor(Math.random() * 10)
+        }
+
+    For an expression will be evaluated to a value i.e after execution it equals to something/a value whereas a statement is set to allow the system evaluate something then depending on statement work out something.
+
+    Expression can be either:
+        x = 5
+        y = getAnswer()
+        12 + square(7 + 5) + square(square(2)) //Expression with multiple sub-expressions
+
+    All the above resolve to a value and hence expressions.
+
+    You cannot assign a statement e.g., console.log(const x) or an if statement to an expression. It will return an error cause only expressions are expected.
+
+    For a case where you want it to show the full name, then create the two constants then can call them as below:
+
+        const fName = "Daniel";
+        const lName = "Onsombi";
+
+    Then:
+        1. Hello {fName} {lName}! //Since everything is treated as a string then the space will be added automatically
+        2. Hello {fName + " " + lName}! // One if the best and simple approaches
+        3. Hello {`${fName} ${lName}`}! //Using template literals in ES6
+
+164. JSX Attributes & Styling the React Elements
+    For styling purposes, a CSS file is maintained in the public folder within the project root directory.
+    After creating the classes, they can be added directly to the elements in JSX. However, when added directly, it return a console error since the class attribute cannot be recognized when the JSX is converted to JS when being compiled.
+
+    The class should therefore be changed to className.
+
+    This also leave a warning of Uncaught SyntaxError: Unexpected token '<'. The reason is because it does not recognize the JSX file that includes HTML code. We can tell it it is a JSX file by navigating to the index.html under the section in which we are import JS Scripts and change the type to text/JSX from text/Javascript.
+
+    Note that for all HTML Element attributes, they should be camel cased. So that if classname it should be written as className and contenteditable as contentEditable. This applies to all Global attributes and other HTML attributes.
+
+    The use of className is the recommended approach when working with react styling. You can also target various elements say:
+
+        ul {
+            color: blue
+        }
+
+    We can also insert JS as an attribute. For example, if one navigates to [picsum](https://picsum.photos/) and gets a number of images, one can create variables to hold the image than pass the variables to the img element as below:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        const img = "https://picsum.photos/200";
+
+        ReactDOM.render(
+            <div>
+                <h1 className="heading" contentEditable="True" spellCheck="False">
+                My Favourite Foods
+                </h1>
+                <img src={img}></img>
+            <div>,
+            document.getElementById("root")
+        )
+
+        When using picsum, grayscale helps change the theme of the image to gray. and can be achieved by:
+
+        In some IDEs the code might have lots of wornings especially with images. This can be addressed by adding the alt property for the blind.
+
+165. Inline Styling for React Elements
+    When working with HTML, we can add inline styling using the style keyword as:
+
+        ReactDOM.render(<h1 style="color: red">Hello World!</h1>, document.getElementById("root"));
+
+    However, with JSX, the approach is abit different. The above returns an error and tells you how you should write it instead. In JSX it expects the style value as a JS Object. {key:value}. The key value pairs are separated by a comma. Therefore the above can be written as:
+
+        ReactDOM.render(<h1 style={{color: "red"}}>Hello World!</h1>, document.getElementById("root"));
+
+    Remember whenever we want to insert JS in JSX, we need curlybraces hence the first pair. We then will insert the js object for styling.
+
+    Where would you need the inline styling?
+        - This is useful when you want style for certain elements to be updated on the fly.
+        - You might want to trigger a change in your style
+  
+    An example is as below:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        const customStyle = {
+        color: "red",
+        fontSize: "20px",
+        border: "1px solid black",
+        };
+
+        ReactDOM.render(
+        <h1 style={customStyle}>Hello World!</h1>,
+        document.getElementById("root")
+        );
+
+    Say if for instance time changes, all we will need to do is update the properties of our customStyle objects. Such immediately updates our sites on the go.
+
+    Note that all JS code can be written in the index.js file. This includes creating constants for the styling, or even the if statements etc. For instance, one can opt to change the greeting depending on the time of day that someone is accessing a website. The constants to be passed to the JSX code can be created then passed as below:     
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        const date = new Date();
+        const currentTime = date.getHours();
+
+        let greeting;
+
+        const customStyle = {
+            color: "",
+        };
+
+        if (currentTime < 12) {
+            greeting = "Good Morning";
+            customStyle.color = "red";
+        } else if (currentTime < 18) {
+            greeting = "Good Afternoon";
+            customStyle.color = "green";
+        } else {
+            greeting = "Good Night";
+            customStyle.color = "blue";
+        }
+
+        ReactDOM.render(
+            <h1 className="heading" style={customStyle}>
+                {greeting}
+            </h1>,
+            document.getElementById("root")
+        );
+
+166. React Components   
+    React components helps breakdown a large website into individual compact and reusable components. 
+    We often have to scrol so to view the code for a large website. Research has found that the longer you have to scroll the more difficult it becomes to understand the code. Components allow split up a large structure to smaller components.
+
+    We can therefore split the below code:
+        <
+            ReactDOM.render(
+            <div>
+                <h1>My Favourite Foods</h1>
+                <ul>
+                <li>Bacon</li>
+                <li>Jamon</li>
+                <li>Noodles</li>
+                </ul>
+            </div>,
+            document.getElementById("root")
+            );
+        >
+
+    So it is easier to understand and reuse.
+
+    We first start by creating a function. It is react convention to give the function a name pascal cased where the first letter is always capital.
+
+    <
+        function Heading() {
+            return <h1> My Favourite Foods </h1>
+        }
+    >
+
+    Then to the code it will be added just like any other tag:
+        <
+            ReactDOM.render(
+                <div>
+                    <Heading></Heading>
+                    <ul>
+                        <li>Bacon</li>
+                        <li>Jamon</li>
+                        <li>Noodles</li>
+                    </ul>
+                </div>,
+                document.getElementById("root")
+            );
+        >
+
+    Note that the convention comes in hand in that all the components are in pascal case which helps differentiate them from the default html components. While rendering, it will check for the custom component location then return the HTML code which will then be rendered together with the rest of the code. 
+
+    By convention if there are no children, it is best practice to use self closing tags so the code becomes:
+        <
+            ReactDOM.render(
+                <div>
+                    <Heading />
+                    <ul>
+                        <li>Bacon</li>
+                        <li>Jamon</li>
+                        <li>Noodles</li>
+                    </ul>
+                </div>,
+                document.getElementById("root")
+            );
+        >
+
+    For best practices on how to write and name things in your React code, you can checkout the site:
+
+        https://github.com/airbnb/javascript/tree/master/react
+
+    The heading file still sits in the index.js however, this can sit in a different file which will be much easier. For all the components, we will be using the ".jsx" file extension as will be seen in the subsequent React projects. The file can still use the ".js" extension and work fine. 
+
+    In the new file, <React> must imported since we will be writting jsx code which needs this package to convert the html code to JS using methods like document.createElement() etc.
+
+    We then use the ES6 import and export functionality to get the file accessible in index.js. To export:
+
+        export default Heading;
+
+    When importing the file, one can choose to include the file extension or not. So one can import using either of the two options:
+
+        - import Headeing from "./Heading";
+        - import Headeing from "./Heading.JSX"; //or.js depending on the file's extention.
+
+    In most React Apps, you won't see any html elements in the index.js files. It often has a custom component called App.jsx which will contain all the custom components. This will then be exported then imported in the index.js file. 
+
+    The files then become:
+    1. Heading:
+        <
+            import React from "react";
+
+            function Heading() {
+            return <h1>My Favourite Foods</h1>;
+            }
+
+            export default Heading;
+        >
+
+    2. List:
+
+        import React from "react";
+
+        function List() {
+        return (
+            <ul>
+            <li>Bacon</li>
+            <li>Jamon</li>
+            <li>Noodles</li>
+            </ul>
+        );
+        }
+
+        export default List;
+    
+    3. App:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import Heading from "./Heading";
+        import List from "./List";
+
+        function App() {
+        return (
+            <div>
+            <Heading />
+            <List></List>
+            </div>
+        );
+        }
+
+        export default App;
+
+    4. index.js
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import App from "./App";
+
+        ReactDOM.render(<App />, document.getElementById("root"));
+
+    There is then a need to break them down further by creating a components folder to hild our components and as the application grows there grows a need to subdivide them further and create login components, registration components folder etc to make your files more manageable.
+
+    While naming the files, be careful not to have conflicts in the file names and variables created in a specific file. For instance, if you create a component named Greeting in which there is a constant variable named greeting, on exporting, the compiler might see this as a conflict and will not render the index.js file. It is therefore necessary to choose the file and function names carefully to avoid such conflicts. See 21.0 React > 1.7 React Components Practice. Had to rename the file from Greeting to Greetings for it to work.
+
+167. Javascript ES6 - Import, Export and Modules
+    In quite a number of projects we have used the above key words which come from ES6. This module will help understand how they work.
+
+    Import allows import functionality to a different file. Say in a file if you create a math.js file that stores the value of pi among other things. If you want to get the value of pi and use it elsewhere, we must then find a way to import it to our new file. This can achieved by:
+
+        const pi = 3.1415962;
+
+        export default pi;
+
+    Then the file is imported as:
+
+        import pi from "./math.js";
+
+    We can then use its content which in this case is pi as:
+
+        <ul>
+            <li>{pi}</li>
+        </ul>
+
+    While importing it, you can call it whichever name you wish especially if the file exports a single constant. It always results to the default export.
+
+    However, a file can export the default constant together with many other values as below:
+
+        const pi = 3.1415962;
+
+        function doublePi() {
+            return pi * 2
+        }
+
+        function tripplePi() {
+            return pi * 2
+        }
+
+        export default pi;
+        export {doublePi, triplePi};
+
+    Notice the export of the non default functions.
+
+    To import the other things being imported then the approach is different and the names do matter. There can only be only one default export per file but the rest should be differentiated by name. The same name must be used when importing as oppossed to when importing the default export. The files are as below:
+    
+    1. math.js
+     
+        const pi = 3.1415962;
+
+        function doublePi() {
+        return pi * 2;
+        }
+
+        function triplePi() {
+        return pi * 3;
+        }
+
+        export default pi;
+        export { doublePi, triplePi };
+
+    2.   index.js
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import PI, { doublePi, triplePi } from "./math";
+
+        ReactDOM.render(
+        <ul>
+            <li>{PI}</li>
+            <li>{doublePi()}</li>
+            <li>{triplePi()}</li>
+        </ul>,
+        document.getElementById("root")
+        );
+
+    Note that since the doublePi and triplePi are functions, you must include the () for them to be triggered.
+
+    Import, export and the concept of modules allows us to start splitting our files into individual components and this is where our React components are leveraging from.
+
+    The concept is similar to that of using the require() method/concept in node.js:
+
+        var react = require("react").
+    
+    For more infor on the difference see below:
+
+        https://stackoverflow.com/questions/31354559/using-node-js-require-vs-es6-import-export
+    
+    If you don't want to specify the various exports, you can always use the * with which you must also give a name with which to call the various exported constants/functions as:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import * as pi from "./math";
+
+        ReactDOM.render(
+        <ul>
+            <li>{pi.default}</li>
+            <li>{pi.doublePi()}</li>
+            <li>{pi.triplePi()}</li>
+        </ul>,
+        document.getElementById("root")
+        );
+
+    With this approach, the import returns an object which will then be accessed as shown above. The default export will be accessed using the default keyword which the rest will be accessed using their respective names.
+
+    Using the wildcard approach os often discouraged since it is abit restricting and prevents you from doing single/individual impoets.
 
 
 
