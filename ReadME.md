@@ -6281,9 +6281,122 @@ SECTION 36: REACT.JS
 
     Using the wildcard approach os often discouraged since it is abit restricting and prevents you from doing single/individual impoets.
 
+168. React Props:
+    In a case where you are creating a contact list, one of the approaches one might use is to create repetative entries on the browser with the contact name, email and picture as repetetive elements.
+
+    Props help avoid creation of repetetive code and instead create a single component to handle the repetetive elements. 
+
+    Consider:
+        
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        ReactDOM.render(
+        <div>
+            <h1>My Contacts</h1>
+
+            <h2>Beyonce</h2>
+            <img
+            src="https://blackhistorywall.files.wordpress.com/2010/02/picture-device-independent-bitmap-119.jpg"
+            alt="avatar_img"
+            />
+            <p>+123 456 789</p>
+            <p>b@beyonce.com</p>
+
+            <h2>Jack Bauer</h2>
+            <img
+            src="https://pbs.twimg.com/profile_images/625247595825246208/X3XLea04_400x400.jpg"
+            alt="avatar_img"
+            />
+            <p>+987 654 321</p>
+            <p>jack@nowhere.com</p>
+
+            <h2>Chuck Norris</h2>
+            <img
+            src="https://i.pinimg.com/originals/e3/94/47/e39447de921955826b1e498ccf9a39af.png"
+            alt="avatar_img"
+            />
+            <p>+918 372 574</p>
+            <p>gmail@chucknorris.com</p>
+        </div>,
+        document.getElementById("root")
+        );
 
 
+    In the above code, the below elements are repeated three times but with different values:
 
+        <h2>Chuck Norris</h2>
+        <img
+        src="https://i.pinimg.com/originals/e3/94/47/e39447de921955826b1e498ccf9a39af.png"
+        alt="avatar_img"
+        />
+        <p>+918 372 574</p>
+        <p>gmail@chucknorris.com</p>
 
+    One can instead create a single card with an h2, img and paragraph and pass different pieces of information to that card.
 
+    In plain old html, this could be handled by use of attributes. For example an input element can have multiple attributes as:
 
+        <input id="fName" placeholder="Enter your first name" value="Daniel Onsombi"> 
+
+    The attributes are a way of passing values to the input element. On the console, if one is to use the document.getElementById:
+
+        var input = document.getElementById("fName");
+    
+    then they can easily be able to access the values of each of the attributes as below:
+
+        input.placeholder;
+        input.value;
+
+    The attributes from html elements are used to send custom data to that element. We get the input above as object and use it to access each of its properties. The attributes are predetermined but we cannot go beyond what is int the MDN docs.
+
+    However, React components being custom html elements, we can define the attributes. Those attributes are referred to as properties famously referred to as props.
+
+    We can therefore pass props to the card above in a similar manner to the html elements as:
+
+        <card name="Daniel"/>
+
+    in the card function, one can log the passed name. We can then remove the hard coded code an instead log the props passed down. The Card function will have one parameter often named as props. This receives the attributes as an object and they can be accessed as:
+
+        props.<attributeName>
+
+    The card will then return the same site similar to the earlier created but now allowing the user to call it multiple times with different properties. The code is summarized as below:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+
+        function Card(props) {
+        return (
+            <div>
+            <h2>{props.name}</h2>
+            <img src={props.img} alt="avatar_img" />
+            <p>{props.tel}</p>
+            <p>{props.email}</p>
+            </div>
+        );
+        }
+        ReactDOM.render(
+        <div>
+            <h1>My Contacts</h1>
+            <Card
+            name="Beyonce"
+            img="https://blackhistorywall.files.wordpress.com/2010/02/picture-device-independent-bitmap-119.jpg"
+            tel="+123 456 789"
+            email="b@beyonce.com"
+            />
+        </div>,
+        document.getElementById("root")
+        );
+
+    If you have a style, and go back to react code, the class in the style can be added to the div. This changes all the text in the file for instance to red.. If the style is added to the custom component, the styling won't work since it sees everything as a prop like in the case below:
+
+        <Card
+            className="my-style"
+            name="Daniel"
+            img="https://img.etimg.com/thumb/width-1600,height-900,imgsize-478624,resizemode-75,msid-107058137/news/international/us/my-life-with-the-walter-boys-season-2-release-date-cast-everything-we-know.jpg"
+            tel="+254 456 123"
+            email="me@daniel.com"
+        />
+    
+    Whenever using html predetermined attributes they should always go to the predefined html attributes but not to the custom elements.
+    In the custom components you can create as many custom elements and properties as you want as opposed to the html attributes which are predefined.
