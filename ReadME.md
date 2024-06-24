@@ -6400,3 +6400,78 @@ SECTION 36: REACT.JS
     
     Whenever using html predetermined attributes they should always go to the predefined html attributes but not to the custom elements.
     In the custom components you can create as many custom elements and properties as you want as opposed to the html attributes which are predefined.
+
+169. React DevTools
+    Some of the components can be simplified further by creating other components so they can be reused. For example the Avatar <img> in the Card components can be a separate component from the rest of the elements because there might be other sections where we might need a circular image with a white border. It will make sense to create a custom component and separate it out. The code below will therefore change to factor in the separation:
+
+        function Card(props) {
+            return (
+                <div className="card">
+                <div className="top">
+                    <h2 className="name">{props.name}</h2>
+                    <img className="circle-img" src={props.img} alt="avatar_img" />
+                </div>
+                <div className="bottom">
+                    <p className="info">{props.tel}</p>
+                    <p className="info">{props.email}</p>
+                </div>
+                </div>
+            );
+        }
+
+        With the separation, since the Avatar expects an image, the image must be passed down to the new Avatar function using the props feature. The two functions will be updated as below:
+
+        1. Card.jsx 
+
+            function Card(props) {
+                return (
+                    <div className="card">
+                    <div className="top">
+                        <h2 className="name">{props.name}</h2>
+                        <Avatar img={props.img} />
+                    </div>
+                    <div className="bottom">
+                        <p className="info">{props.tel}</p>
+                        <p className="info">{props.email}</p>
+                    </div>
+                    </div>
+                );
+            }
+
+        2. Avatar.jsx
+
+            function Avatar(props) {
+                return <img className="circle-img" src={props.img} alt="avatar_img" />;
+            }
+
+    
+    Using the ReactDevtool one can see the entire React DOM tree. With the components, you can also view the components that are being passed to each of the component and from which component is rendering the props. With such infor, one can know which props to pass to subsequent components.
+
+    The DevTool can be used in chrome by first installing the React Developer Tool. This will then show at the top right of the browser. To view the components, Inspect the elements on the browser. One of the submenus will be Components which if clicked will show the component tree of the website being inspected.
+
+    Using the selector, one can then easily highlight the component of interest and be in a position to view its properties. With such, as you go down the tree, it will be easier to know which properties to tap into.
+
+    The good thing about the React Developer tool is that it works even on websites we have not developed. Say if you open airbnb.co.uk then one can see the component tree and the respective properties under developer tool > components. The color of the ReactDevtool changes depending on whether the app is in development or production (blue when in production and red when in dev).
+
+    The developer tool makes it easier to debug whenever something goes wrong.
+
+    Often the React Dev Tree only shows the React components. It is often less likely that you will debug the native html components. However you can also switch off the filter so to be able to view both the custom and native components. This can be done by clicking the  Settings button > Components > switch off the type filter.
+
+    From the Devtools, one can also access the source code of each of the components. This brings up the file rendering the component.The code icon is at the far right of the Components tab.
+
+    One of the most important parts of a React project is to know how to create the component tree because there are many places that can be reusable. Whenever you find yourself creating onething over and over again, it is good practice to create a custom resusable component.
+
+    With this approach we can plug in the components wherever they might be needed without having to write new code. See Avatar in the App.jsx file of ReactDevtool module.
+
+
+
+
+
+
+
+
+
+
+
+
+
