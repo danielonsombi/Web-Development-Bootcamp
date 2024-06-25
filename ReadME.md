@@ -6463,7 +6463,109 @@ SECTION 36: REACT.JS
 
     With this approach we can plug in the components wherever they might be needed without having to write new code. See Avatar in the App.jsx file of ReactDevtool module.
 
+170. Mapping Data to Components:
+    While working with the components, especially those pulling data from an array of objects, to avoid writing repetetive code, we can leverage the use of loops to simplify it further. Consider:
 
+        <Card
+            name={contacts[0].name}
+            img={contacts[0].imgURL}
+            tel={contacts[0].phone}
+            email={contacts[0].email}
+        />
+        <Card
+            name={contacts[1].name}
+            img={contacts[1].imgURL}
+            tel={contacts[1].phone}
+            email={contacts[1].email}
+        />
+        <Card
+            name={contacts[2].name}
+            img={contacts[2].imgURL}
+            tel={contacts[2].phone}
+            email={contacts[2].email}
+        />
+
+    We will use the mapping technique to address the repetetiveness of the code above.
+    We achieve this by tapping into the contacts array then tapping into the contacts.map().
+    So the code is interpretted as Javascript code, we must wrap it around curlybraces. 
+
+    The map function expects an actual function. This are the fundamentals of functional programs where you pass functions into other functions.
+
+    We then create a function to create a new card and to the function pass a single contact:
+
+        function createCard(contact) {
+            return <card
+                name = {contact.name}
+                img = {contact.imgURL}
+                TEL = {contact.phone}
+                email={contact.email}
+            />
+        }
+    
+    The function above is then passed to the map method. What this does then it checks through the array and for each one of them, it calls the createCard function which in return renders the card for each.
+ 
+    Therefore the code becomes:
+
+        function createCard(contact) {
+            return (
+                <Card
+                    name={contact.name}
+                    img={contact.imgURL}
+                    tel={contact.phone}
+                    email={contact.email}
+                />
+            );
+        }
+
+        function App() {
+            return (
+                <div>
+                <h1 className="heading">My Contacts</h1>
+
+                {contacts.map(createCard)}
+                
+                </div>
+            );
+        }
+
+        export default App;
+
+However the above returns a warning that each child in a list should have a unique key property. React is able to create a virtual DOM and for it to effectively render, we will have to give the components a property called key and must be unique for each. And since our contacts has a unique identifier, In the created card, we must add a key spelled as key and to it pass the unique identifier. Our createCard function becomes:
+
+    function createCard(contact) {
+        return (
+            <Card
+                key={contact.id}
+                name={contact.name}
+                img={contact.imgURL}
+                tel={contact.phone}
+                email={contact.email}
+            />
+        );
+    }
+
+    The value must be unique for each of the item. However, the key is not considered a prop. One cannot access it in the child components directly. Therefore, to access it, it should be created as a different prop. Key is a special property and is used to ensure the right order goes into the tree and that it can render them when subjected to a loop.
+
+    We then need a custom prop, though it seems repetetive, the key is not for us to use. The final code is as below:
+
+        function createCard(contact) {
+            return (
+                <Card
+                key={contact.id}
+                id={contact.id}
+                name={contact.name}
+                img={contact.imgURL}
+                tel={contact.phone}
+                email={contact.email}
+                />
+            );
+        }
+
+    In the practice, we will render data using Description List elements. For details on the <dl> <dd> elements checkout:
+
+         https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl
+
+    
 
 
 
