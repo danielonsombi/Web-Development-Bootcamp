@@ -6710,10 +6710,79 @@ However the above returns a warning that each child in a list should have a uniq
 
     See:
         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring
-    
-    
 
+172. Javascript ES6 Arrow functions 
+    ALso referred to as the fat arrow functions. It is a shorter way of writing JS functions. There are a few ways of writting functions e.g.,
 
+        function square(x) {
+            return x * x
+        }
+
+    Other ways are using an anonymous function:
+
+        var numbers = [3, 56, 2, 48, 5]
+
+        const newNumbers = numbers.map(function (x) {
+            return x * x
+        })
+
+    Arrow functions take it a step further and allows us delete the function keyword and instead replace it with => as:
+
+        const newNumbers = numbers.map( (x) => {
+            return x * x
+        })
+
+    The above can be made much shorted. Say we have two parameters then it must follow the syntax:
+
+        const newNumbers = numbers.map( (x, y) => {
+            return x * y
+        })
+    
+    however, if just a single parameter, then one can do away with the brackets as below:
+
+        const newNumbers = numbers.map( x => {
+            return x * x
+        })
+
+    And if returning a single line expression, then you can end up with inline code as below:
+
+        const newNumbers = numbers.map( (x) =>  x * x )
+
+    This means we have pros and cons especially understand the above as a function moreso for those junior in the field.
+
+    The arrow function can be used with different other functions as below:
+
+        1. const newNumbers = numbers.filter(num => num < 10);
+        2. var newNumber = numbers.reduce((accumulator, currentNumber) => accumulator + currentNumber);
+        3. const newNumber = numbers.find(num => num > 10)
+        4. const newNumber = numbers.findIndex(num => num > 10);
+
+    
+    The emojipedia App.js file can then be written as:
+
+        function App() {
+            return (
+                <div>
+                <h1>
+                    <span>emojipedia</span>
+                </h1>
+                <dl className="dictionary">
+                    {emojipedia.map((emojItem) => {
+                    <Entry
+                        key={emojItem.id}
+                        emoji={emojItem.emoji}
+                        name={emojItem.name}
+                        description={emojItem.meaning}
+                    />;
+                    })}
+                </dl>
+                </div>
+            );
+        }
+
+    For more on arrow functions checkout:
+        https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/
+    
 
 
 
