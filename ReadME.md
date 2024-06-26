@@ -6565,6 +6565,152 @@ However the above returns a warning that each child in a list should have a uniq
 
          https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl
 
+171. Javascript ES6 Map/Filter/Reduce   
+    Say we have an array of numbers:
+        var numbers = [3, 56, 2, 48, 5]
+
+    1. Map - Allows loop through the array and create a new a rray by doing something with each item.
+        Map allows pass a function to another function. The function allows specify what we want to do with each item. Can be a doubling function say:
+
+            function double(x) {
+                return x * 2;
+            }
+
+            numbers.map(double)
+
+        This will double the numbers and return the double output. By assigning the numbers to a variable, you can console log the numbers as:
+
+            const newNumbers = numbers.map(double);
+
+            console.log(newNumbers);
+
+        From earlier lessons, this could be achieved using the forEach() method by:
+
+            var newNumbers = [];
+
+            function double(x) {
+                newNumbers.push(x * 2)
+            }
+
+            numbers.forEach(double);
+            console.log(newNumbers);
+
+        With forEach we could also simplify it using an anonymous function as below:
+
+            var newNumbers = [];
+            numbers.forEach(function double(x) {
+                newNumbers.push(x * 2)
+            });
+            console.log(newNumbers);
+
+        Equally we can do the same with the map function. You will notice that the map is more consise than the forEach function which expect a new array created and expects one to do a map.
+
+        This comes in handy when creating new components and mapping data to them:
+
+            const newNumbers = numbers.map(function(x) {
+                return x * 2;
+            })
+
+            console.log(newNumbers)
+
+        For more info:
+            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+
+    2. Filter - Creates a new array by keeping the items that return true.
+        Still using the numbers array, the filter function also expects a function and we can use an anonymous function as below:
+
+            const newNumbers = numbers.filter(function(num) {
+                return num > 10
+            });
+        
+        Notice that the above again is much concise oppossed to using the forEach method which will be abit longer:
+
+            //Using the foreachapproach, this would be done by:
+            var newNumbers = [];
+            numbers.forEach(function (num) {
+            if (num > 10) {
+                newNumbers.push(num);
+            }
+            });
+
+            console.log(newNumbers);
+
+        For more info:
+
+            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+
+    3. Reduce Function - Accumulates a value by doing something to each item in the array.
+        Say you wanted to add or sum up the items in the array. This can be done by:
+
+        ForEach:
+            var newNumber = 0;
+            numbers.forEach(function(currentNumber) {
+                newNumber += currentNumber
+            })
+
+            console.log(newNumber);
+
+        Using reduce it is abit simpler. It still expects a function with two parameters i.e., the accumulator and trhe current number as below:
+
+            var newNumber = numbers.reduce(function (accumulator, currentNumber) {
+                console.log("Accumulator = " + accumulator);
+                console.log("Current Number = " + currentNumber);
+                return accumulator + currentNumber;
+            });
+
+            console.log(newNumber);
+
+        The accumulator basically holds the sumtotal as it is being updated for each item and it is what is finally returned. This can be viewed when printed out.
+
+        For more info;
+
+            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+
+    The three functions are some of the most useful Javascript functions that existed even before ES6.
+
+    Some of the most recently introduced functions are the Find and FindIndex functions.
+
+     4. Find - Allows find the first item that matches in an array. Say:
+
+            const newNumber = numbers.find(function(num) {
+                return num > 10
+            })
+
+            console.log(newNumber);
+
+        The above expects a function and as opposed to the other three, it does not loop through the entire array. Instead, it stops when it finds an item meeting the condition. This will return 56 which is the first number that matches the condition.
+
+        See:
+            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+
+    5. FindIndex - Finds the index of the first item that matches.
+            const newNumber = numbers.findIndex(function(num) {
+                return num > 10
+            })
+
+            console.log(newNumber);
+
+        As oppossed to find which returns the number, this returns the index of the number that meets the condition. Instead of returning 56, this returns 1 becuase arrays start from zero.
+
+        It is good to understand what each function does as oppossed to memorizing each one of them.
+
+        See:
+            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+        
+    The other functions that you are likely to come accross is the substring() function.
+    For instance using the earlier emojipidea array you can combine it with the map function to pull the first 100 characters of the meaning:
+
+        import emojipedia from "./emojipedia";
+
+        const emojiMeaning = emojipedia.map(function (emoji) {
+            return emoji.meaning.substring(0, 100);
+        });
+
+        console.log(emojiMeaning);
+
+    See:
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring
+    
     
 
 
