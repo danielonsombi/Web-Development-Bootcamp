@@ -7006,8 +7006,165 @@ However the above returns a warning that each child in a list should have a uniq
     The are functions that allow hook into the function that allow us to hook into the state of our app and modify it. One of the most common is the useState Hook.
 
 175. React Hooks - useState
-    
+    They allow create changeable states.
 
+    Consider:
+
+        ReactDOM.render(
+            <div className="container">
+                <h1>0</h1>
+                <button>+</button>
+            </div>,
+            document.getElementById("root")
+        );
+
+    How can we write the code in a way that when the button is clicked, the <h></h1> value is increamented by 1?
+
+    The h1 should not have a hard coded value. Then we also need to create a trigger that is called when the button receives a click action.
+
+    If the code is restructured as below:
+
+        var count = 0;
+
+        function increase() {
+            count++;
+            console.log(count);
+        }
+
+        ReactDOM.render(
+            <div className="container">
+                <h1>{count}</h1>
+                <button onClick={increase}>+</button>
+            </div>,
+            document.getElementById("root")
+        );
+
+    You will notice that the when the button is clicked, the count logged is increased but not the <h1> count. As much as we are writting HTML elements, remember we are relying on the ReactDOM to render each of the elements to the screen. To update, we then need the ReactDOM to rerender.
+
+    We therefore need to call the code everytime we clcik the + button:
+
+        var count = 0;
+
+            function increase() {
+                count++;
+
+                ReactDOM.render(
+                    <div className="container">
+                    <h1>{count}</h1>
+                    <button onClick={increase}>+</button>
+                    </div>,
+                    document.getElementById("root")
+                );
+            }
+
+            ReactDOM.render(
+                <div className="container">
+                    <h1>{count}</h1>
+                    <button onClick={increase}>+</button>
+                </div>,
+                document.getElementById("root")
+            );
+
+    However, this brings about lots of repetition. We can address this using hooks.
+
+    Instead of using variable count, we will be using a const state which will be set to React.useState() which is a function from the React module. It can be called as:
+
+        1. const state = React.useState()
+            For the above approach, one doe not have to import it in the project.
+
+        2. import React, {useState} from "react"
+           const state = useState();
+
+            For this approach, in which the method is accessed directly, one should first import it then call the method as shown above.
+
+
+    What is useState?
+        if state is logged, you will notice it holds the return value of the useState() method which has an array with two items, one undefined and the other a function.
+
+        If updated as:
+            const state = useState(123);
+
+        The logged item will show the earlier undefined as 123 then the function still remains untouched.
+
+        To get the value 123, then we will do:
+
+            console.log(state[0]) // since it is an array and we want to pull the value at index 0.
+
+        The state value can then be passed to our <h1> as below:
+
+            function App() {
+            const state = useState(123);
+
+                function increase() {
+                        count++;
+                    }
+
+                    return (
+                        <div className="container">
+                        <h1>{state[0]}</h1>
+                        <button onClick={increase}>+</button>
+                        </div>
+                    );
+                }
+            
+            With this we can read the content but we might find it a bit difficult to know what value state[0] is. In ES6, there is a concept called destructuring which helps destructure object and arrays.
+
+            Say we are dealing with colors, can get one from:
+
+                https://flatuicolors.com/palette/defo
+
+            And want to access the amount of red grean and blue from:
+
+                const rgb = [9, 132, 227]
+
+            One can use the rgb[0] to get the first etc. However this is not that friendly. Instead we can destructure it as:
+
+                const [Red, Grean, Blue] = [9, 132, 227];
+
+            A console.log(Grean) will log 132. This is more clear and easy to understand as opposed to the former.
+
+            Using the destructuring approach, we can theredore give the useState() method return values a value they can use so to make them readable:
+
+                const [count] = useState(123);
+
+            So instead of accessing the value as state[0] we can use the count variable. Since  123 is the only value in useState, it will then be assigned to count.
+
+            To increament the count, we need to call the increase function. Again since the use state returns a function, we can use destructuring to access that function as below:
+
+                const [count, setCount] = useState(123);
+
+            setCount is the fucntion that will be used to update our value inside the state. then inside our increase function we can call the setCOunt function as:
+
+                function increase() {
+                    setcount(12)
+                }
+
+            So when the app loads we call usestate and assign the defalt value 123 and the value is stored inside variable count and gets rendered on <h1>
+
+            When the button is clicked the increase function is activated which then updates the state of the count variable. The final code is as below:
+
+                function App() {
+                    const [count, setCount] = useState(0);
+
+                    function increase() {
+                        setCount(count + 1);
+                    }
+                    function decrease() {
+                        setCount(count - 1);
+                    }
+
+                    return (
+                        <div className="container">
+                        <h1>{count}</h1>
+                        <button onClick={decrease}>-</button>
+                        <button onClick={increase}>+</button>
+                        </div>
+                    );
+                }
+
+
+
+        
 
 
 
