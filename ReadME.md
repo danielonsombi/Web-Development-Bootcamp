@@ -6939,3 +6939,76 @@ However the above returns a warning that each child in a list should have a uniq
                 </form>
             );
         }
+
+174. State in React - Declarative vs. Imperative Programming
+    Our focus will be on how to make our apps more interactive. To do this we need to understand the concept of state. It can be summarized as:
+
+        UI = f(State);
+
+    That whatever your user sees is a function of the state. Say we have ice and water, they are basically the same but changes their appearance depending on the state of the temperature. If up then water else ice..
+
+    If state is changed to say 60 degree = water else iif -10 then changes to ice.
+
+    If we created a todo app and inside is a list component with a single paragraph, when we click on the list item and want it to have a strikethrough, For this we can have a variable
+
+        var isDone = false,
+
+    If the state is changed to true, then this should change the paragraph list to strikethrough the paragraph.
+
+    So if we wanted to change the styling we can use the tenary operator  to check the state of the isDone variable then apply the change.
+
+        function App() {
+            var isDone = false;
+
+            const strikeThrough = { textDecoration: "line-through" };
+
+            return <p style={isDone ? strikeThrough : null}>Buy Milk </p>
+        }
+
+    This indicates that we have an interface that is dependent on a state variable. This type of programming is often referred to Declarative Programming where we are declaring while writting code how our UI should look under different conditions depending on state.
+
+    Imperative programming is what we have been used by imperatively telling the element to do something:
+
+        document.getElementById("root").style.textDecoration = "line-through";
+
+    You can achieve the same result by using either. 
+
+    Consider:
+
+        import React from "react";
+
+        var isDone = false;
+
+        function strike() {
+            isDone = true;
+        }
+
+        function unStrike() {
+            isDone = false;
+        }
+
+        function App() {
+            return (
+                <div>
+                <p style={isDone ? { textDecoration: "line-through" } : null}>Buy milk</p>
+                <button onClick={strike}>Change to strike through</button>
+                <button onClick={unStrike}>Change back</button>
+                </div>
+            );
+        }
+
+        export default App;
+
+
+
+    In declarative approach the code will not work. This is because once a component has been rendered it does not change. For the changes to be effected, we need to learn and use React Hooks.
+
+    The are functions that allow hook into the function that allow us to hook into the state of our app and modify it. One of the most common is the useState Hook.
+
+175. React Hooks - useState
+    
+
+
+
+
+
