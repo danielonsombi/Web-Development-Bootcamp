@@ -6281,6 +6281,8 @@ SECTION 36: REACT.JS
 
     Using the wildcard approach os often discouraged since it is abit restricting and prevents you from doing single/individual impoets.
 
+    See Keeper App Project - Part 1
+
 168. React Props:
     In a case where you are creating a contact list, one of the approaches one might use is to create repetative entries on the browser with the contact name, email and picture as repetetive elements.
 
@@ -6783,12 +6785,157 @@ However the above returns a warning that each child in a list should have a uniq
     For more on arrow functions checkout:
         https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/
     
+    
+    See the Keeper App project - Part 2 for practice.
+
+173. React Conditional Rendering with the Ternary Operator & AND Operator:
+    To complete the module, we will be working on a login flow. When creating such, we create different components depending on whether the user wants to login on logout.
+
+    We will learn the technique to show different components depending on the condition. If we had a variable:
+
+        var isLoggedIn = false;
+
+    and check if it was true render the hello message else render the log in form.
+
+    While working with components, it is always good to remember that each component should have a single responsibility. See:
+
+        https://en.wikipedia.org/wiki/Single-responsibility_principle
+    
+    The simplicity can be achieved by using conditions. To load different pages pages by condition then we can:
+
+        const renderConditionally = () => {
+            if (isLoggedIn) {
+                return <h1>Hello</h1>;
+            } else {
+                return <Login />;
+            }
+        };
+
+        function App() {
+            return <div className="container">{renderConditionally()}</div>;
+        }
+
+    This can be simplified further by:
+    We can use a single line as oppossed to calling a different function.
+    We cannot however have the code inserted directly because every JSX can only take expressions hence the code below cannot work:
+
+        function App() {
+            return <div className="container">{
+                if (isLoggedIn) {
+                    return <h1>Hello</h1>;
+                } else {
+                    return <Login />;
+                }
+            }</div>;
+        }
+
+    The above is a statement and not an expression. It does not resolve to a single value hence the above will throw an error.
+
+    The ternary operator comes in handy at this point. Since it resolves to a single value. It is formatted as below:
+
+        CONDITION ? DO IF TRUE : DO IF FALSE
+
+        E.g., isCloudy === true ? bringUmbrella() : bringSunscreen();
+    
+    In our statement the condition is (isLoggedIn===true) if true then create <h1>Hellow</h1> : <Login />
+
+    The code then becomes:
+
+        function App() {
+            return (
+                <div className="container">
+                {isLoggedIn === true ? <h1>Hello</h1> : <Login />}
+                </div>
+            );
+        }
+
+    This can also be simplified further to:
+
+        function App() {
+            return (
+                <div className="container">
+                {isLoggedIn ? <h1>Hello</h1> : <Login />}
+                </div>
+            );
+        }
+
+    Sometime you may not want to render anything if a condition is not met. Say:
+
+        const currentTime = new Date().getHours();
+        console.log(currentTime);
+
+    If wanted to check if the current time is past 12 oclock, then we should check if time is greater than 12 then render the h1 but if less render nothing. This can be shown as below:
+
+        function App() {
+            return (
+                <div className="container">
+                {
+                    /* isLoggedIn === true ? <h1>Hello</h1> : <Login /> */
+                    currentTime > 12 ? <h1>Why are you still working? </h1> : null
+                }
+                </div>
+            );
+        }
 
 
+    We can also use the ampersand operator which allows combine a number of expression and if they are all evaluated to true then the entire line of code turns to the value of true e.g.,
 
+        var x = 5;
 
+        (x > 3 && x < 5)
 
+    The overal expression evaluates to true. If X was 1, JS will only evaluate the first and since false then JS will exit since not all will evaluate to true. See Snips > Ampersand Operator execution in JS.png.
 
+    The above code can therefore be revised to:
 
+        function App() {
+            return (
+                <div className="container">
+                {
+                    currentTime > 12 && <h1>Why are you still working? </h1>
+                }
+                </div>
+            );
+        }
 
+    This ensures that the second part only executes when the first condition is met else the entire block is skipped.
 
+    An example is a case where you are to show or hide a button depending on whether a user is logged in or not. See Conditional Rendering Project.
+
+    The form is similar to one below:
+
+        function Form(props) {
+            return (
+                <form className="form">
+                <Input type="text" placeholder="Username" />
+                <Input type="password" placeholder="Password" />
+
+                {props.IsRegistered == false && (
+                    <Input type="password" placeholder="Confirm Password" />
+                )}
+                <Button
+                    type="submit"
+                    btnLabel={props.IsRegistered ? "Register" : "Login"}
+                />
+                </form>
+            );
+        }
+
+    For the input, one can opt to keep just the form and the elements without having to create the rest of the components as implemented in the original course. But still doable with the components.
+
+    The above can be simplified further as:
+
+        function Form(props) {
+            return (
+                <form className="form">
+                <Input type="text" placeholder="Username" />
+                <Input type="password" placeholder="Password" />
+
+                { !props.IsRegistered  && <Input type="password" placeholder="Confirm Password" />}
+                <Button
+                    type="submit"
+                    btnLabel={props.IsRegistered ? "Register" : "Login"}
+                />
+                </form>
+            );
+        }
