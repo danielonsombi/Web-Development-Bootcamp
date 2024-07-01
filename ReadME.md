@@ -7400,7 +7400,271 @@ However the above returns a warning that each child in a list should have a uniq
             document.getElementById("root")
         );
 
+178. Event Handling in React
+    The focus will be on how you can detect when the user interacts with your app or components and have the app render different things depending on the interaction.
 
+    Remember the names of attributes in RFeact are written in Camel case. So is we wanted to take some action when a button is clicked we can write the code as below:
+
+
+        function handleClick() {
+            console.log("Clicked");
+        }
+
+        function App() {
+            return (
+                <div className="container">
+                <h1>Hello</h1>
+                <input type="text" placeholder="What's your name?" />
+                <button onClick={handleClick}>Submit</button>
+                </div>
+            );
+        }
+
+    If the button is clicked then the Clicked string is logged to the console.
+    Therefore, we can call the function handle click to do whatever we want. We can therefore use it to change the state of our application by using useState hooks.
+
+    So instead of having the hard coded Hello in the h1 tag, with useState we can make it dynamic:
+
+        const [headingText, setHeadingText] = useState("Hello")
+
+        function handleClick() {
+            setHeadingText("Submitted");
+        }
+
+        function App() {
+            return (
+                <div className="container">
+                <h1>{headingText}</h1>
+                <input type="text" placeholder="What's your name?" />
+                <button onClick={handleClick}>Submit</button>
+                </div>
+            );
+        }
+
+
+    Other than the button being clicked, we can also have other events such as the ones in the below documentation:
+
+        https://www.w3schools.com/tags/ref_eventattributes.asp
+
+    Examples are onMouseOut and onMouseOver.
+
+    To change the background color of a button depending on mouseOver and mouseOut events, we can approach using either of the approaches below:
+
+    1. Approach 1
+        import React, { useState } from "react";
+
+        function App() {
+            const [headingText, setHeadingText] = useState("Hello");
+            const [buttonColor, setButtonColor] = useState("white");
+
+            function handleClick() {
+                setHeadingText("Submitted");
+            }
+
+            function handleMouseOver() {
+                setButtonColor("black");
+            }
+
+            function handleMouseOut() {
+                setButtonColor("White");
+            }
+
+            return (
+                <div className="container">
+                <h1>{headingText}</h1>
+                <input type="text" placeholder="What's your name?" />
+                <button
+                    onClick={handleClick}
+                    style={{ backgroundColor: buttonColor }}
+                    onMouseOver={handleMouseOver}
+                    onMouseOut={handleMouseOut}
+                >
+                    Submit
+                </button>
+                </div>
+            );
+        }
+
+        export default App;
+
+    2. Approach 2:
+
+        import React, { useState } from "react";
+
+        function App() {
+            const [headingText, setHeadingText] = useState("Hello");
+            const [isMousedOver, setMouseOver] = useState(false);
+
+            function handleClick() {
+                setHeadingText("Submitted");
+            }
+
+            function handleMouseOver() {
+                setMouseOver(true);
+            }
+
+            function handleMouseOut() {
+                setMouseOver(false);
+            }
+
+            return (
+                <div className="container">
+                <h1>{headingText}</h1>
+                <input type="text" placeholder="What's your name?" />
+                <button
+                    onClick={handleClick}
+                    style={{ backgroundColor: isMousedOver ? "black" : "white" }}
+                    onMouseOver={handleMouseOver}
+                    onMouseOut={handleMouseOut}
+                >
+                    Submit
+                </button>
+                </div>
+            );
+        }
+
+179. React Forms
+    In this module we will focus on how to get the user input and use the information the user has typed in.
+    Similar to the onMouse, onClick events, we have onChange event which is triggered everytime the user types in some content.
+
+    So everytime one starts typing, the onChange is triggered as can be logged below:
+
+        function App() {
+            function handleOnChange() {
+                console.log("Changed!");
+            }
+            return (
+                <div className="container">
+                <h1>Hello </h1>
+                <input
+                    onChange={handleOnChange}
+                    type="text"
+                    placeholder="What's your name?"
+                />
+                <button>Submit</button>
+                </div>
+            );
+        }
+
+    But we are more interested in what the user is submitting and not the fact that they have started typing.
+
+    When you input triggers the function under onchange, it also passess over an object that corresponds to the events that triggered the onChange. So the function that gets triggers can be set to include one parameter which can help pull the event. The object which we call call any name, includes a target property which also has a value property of the input element.
+
+    Our function can then be changed to:
+
+        function handleOnChange(event) {
+            console.log(event.target.value);
+        }
+
+    We can also access the rest of the <input> properties using the same approach:
+
+        console.log(event.target.placeholder);
+        console.log(event.target.type);
+
+    etc.
+
+    With every new letter added, handlechange is triggered passing in the event that triggered and using target.value, we can access it. To use what the user has typed in other parts of the site, we need to use the useState hook. The code will thus be updated as:
+
+        function App() {
+            const [name, setName] = useState("");
+
+            function handleOnChange(event) {
+                console.log(event.target.value);
+                setName(event.target.value);
+            }
+            return (
+                <div className="container">
+                <h1>Hello {name}</h1>
+                <input
+                    onChange={handleOnChange}
+                    type="text"
+                    placeholder="What's your name?"
+                    value = {name}
+                />
+                <button>Submit</button>
+                </div>
+            );
+        }
+
+    The name in the h1 will thus be updated as one types in the value.
+
+    html Form elements are responsible for handling their own state. The value in input should be set to the value from the value of event.target.value which in the above code has been destructured and assigned to the name constant. This makes our code have one single source of truth which is {name}.
+
+    The aspect of ensuring a single source of truth and that the destructured name is passed to the value of the input, the concept, in React is called a controlled component. Can read more below:
+
+        https://legacy.reactjs.org/docs/forms.html#controlled-components
+
+    Often, you might be required to only show the value only after the form has been submitted. This therefore means that the input can only be added to the site upon clicking the submit button. This can be implemented as below:
+
+        function App() {
+            const [name, setName] = useState("");
+            const [headingText, setHeading] = useState("");
+
+            // Applicable when doing dynamic update to the DOM
+            function handleOnChange(event) {
+                setName(event.target.value);
+            }
+
+            function handleClick() {
+                setHeading(name);
+            }
+
+            return (
+                <div className="container">
+                <h1>Hello {headingText}</h1>
+                <input
+                    onChange={handleOnChange}
+                    type="text"
+                    placeholder="What's your name?"
+                    value={name}
+                />
+                <button onClick={handleClick}>Submit</button>
+                </div>
+            );
+        }
+
+    Normally, we are using to put inputs and submit inside an HTML form component and the button set to submit so if you have multiple button its only the type submit that will trigger for submission.
+
+        <form>
+            <input
+                onChange={handleOnChange}
+                type="text"
+                placeholder="What's your name?"
+                value={name}
+            />
+            <button type="submit" onClick={handleClick}>Submit</button>
+        </form>
+
+    if the above was created with the <input> within the form component and the button type is not set to submit, on submission, the name will be added to the <h1> and almost instantly it refreshes the application. This is the default behaviour of forms in html.
+
+    If you click a submit button it automatically triggers a method onSubmit on the form. The onSubmit can also be mapped to the handler and it will have the same effect as the earlier code:
+
+        return (
+            <div className="container">
+                <h1>Hello {headingText}</h1>
+                <form onSubmit={handleClick}>
+                    <input
+                        onChange={handleOnChange}
+                        type="text"
+                        placeholder="What's your name?"
+                        value={name}
+                    />
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        );
+
+    However, with this approach, it still refreshes the page and clear the added name. Within the handle click button, we can handle this and since the event is passed as an event to the handleClick, we can then prevent the default behavior of the page automatically refreshing. So the handleClick method becomes:
+
+         
+        function handleClick(event) {
+            setHeading(name);
+
+            event.preventDefault();
+        }
+    
+
+    
 
 
 
