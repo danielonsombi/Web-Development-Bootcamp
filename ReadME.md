@@ -7663,15 +7663,114 @@ However the above returns a warning that each child in a list should have a uniq
             event.preventDefault();
         }
     
+180. Class Components vs. Functional Components
+    There were two ways of adding state into a React App.
+    1. Through functional components such as:
 
+        import React from "react";
+
+        function App() {
+            return <h1>Hello</h1>
+        }
+
+        export default App;
+
+    2. Use of class
+        The difference being in the use of keyword class as:
+
+            import React from "react";
+
+            class App() extends React.Component {
+
+            }
+
+            export default App;
+
+        Note that with classes, it had to extend something from the react module called component. This turns your app to a class component. To render what you want to see then had to use the render keyword as:
+
+            import React from "react";
+
+            class App() extends React.Component {
+                render() {
+                    return <h1>Hello</h1>
+                }
+            }
+
+            export default App;
+
+        The two would return the same results.
+
+
+    The main reason for conversion from functional to class components is because it was required in order to have state:
+
+        https://legacy.reactjs.org/docs/state-and-lifecycle.html
+
+    With classes there was a need to use the this keyword while accessing state and would be a bit confusing to read through. It also required binding and could be abot complicated when you wanted to reuse some of the state functionality across different components.
+
+    This saw the introduction of hooks:
+
+        https://legacy.reactjs.org/docs/hooks-intro.html
     
+    It is therefore recommended to use hook than classes for makes code clearer and easier to reason about. You can only use hooks with functional components but not class components.
 
+    With hooks, we save ourselves alot of lines of code. Compare:
 
+    1. Class component:
 
+        import React from "react";
+
+        class ClassComponent extends React.Component {
+            constructor() {
+                super();
+                this.state = {
+                count: 0
+                };
+                this.increase = this.increase.bind(this);
+            }
+
+            increase() {
+                this.setState({ count: this.state.count + 1 });
+            }
+
+            render() {
+                return (
+                <div>
+                    <h1>{this.state.count}</h1>
+                    <button onClick={this.increase}>+</button>
+                </div>
+                );
+            }
+        }
+
+        export default ClassComponent;
+
+    2. Functional COmponent:
+
+        import React, { useState } from "react";
+
+        function FunctionalComponent() {
+            const [count, setCount] = useState(0);
+
+            function increase() {
+                setCount(count + 1);
+            }
+
+            return (
+                <div>
+                <h1>{count}</h1>
+                <button onClick={increase}>+</button>
+                </div>
+            );
+        }
+
+        export default FunctionalComponent;
     
+    The later is simpler becuase it removes alot of boiler plate that is required inorder to use classes. No this keyword, state together in one constant, to change count only call seCount etc.
 
+    This way we can use functional components al through without needing a class component.
 
-
+181. Changing Complex
+    
         
 
 
