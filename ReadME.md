@@ -7162,6 +7162,250 @@ However the above returns a warning that each child in a list should have a uniq
                     );
                 }
 
+    For more information:
+
+        https://legacy.reactjs.org/docs/hooks-reference.html#usestate
+    
+    Also for practice checkout the useState Hook Practice project:
+
+    Here is how you can implement a timer as tried in the useState Hook Practice Project:
+
+        import React, { useState } from "react";
+
+        function App() {
+            let now = new Date().toLocaleTimeString();
+
+            const [time, setTime] = useState(now);
+
+            function updateTime() {
+            const newTime = new Date().toLocaleTimeString();
+            setTime(newTime);
+        }
+
+        setInterval(updateTime, 1000);
+
+        return (
+            <div className="container">
+                <h1>{time}</h1>
+                <button onClick={updateTime}>Get Time</button>
+            </div>
+            );
+        }
+
+        export default App;
+
+176. Javascript ES6 Object & Array Destructuring
+    For more insight can check out:
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+
+    Say we have an array animals with two objects:
+
+        const animals = [
+            { name: "cat", sound: "meow" },
+            { name: "dog", sound: "woof" }
+        ];
+
+    We will export the animals as the default export.
+
+    We can then pull it into our file so we can then log it to confirm that we can view the data. We can then destructure the data into a variable cat and dog.
+
+    Since we are destructuring an array, then the variable created will go into an array literal []. Then the two variables will be created as:
+
+        const [cat, dog] = animals;
+
+    The code above will go to the array animals and assign the first item to variable cat and the second to varaible dog. The variable names must be unique.
+
+    Once we have destructured an array, we can then destructure an object as well. So if we wanted to access the cat properties, we can then use the object literals as below:
+
+        const {name, sound} = cat;
+
+    The above are equal to cat.name and cat.sound but the destructuring approach simplifies them.
+
+    If value is logged as:
+
+        console.log(sound) -  meow is logged.
+
+    This approach simplifies the former which if we wanted to access the cat sound, we'd have to do:
+
+        animals[0].sound.
+
+    There is a crucial difference when destructuring arrays verses objects.
+
+    With arrays, the constants can be called any name say:
+
+        const [c, d] = aniumals;
+
+    This is not the case for objects. One must use the specific keys within the array.
+
+    If we use the same array approach for an object:
+
+        const {n, s} = cat
+
+    the solution will return undefined. One must therefore use the specific names used by the respective keys.
+
+    If you wanted to give the variable names as they were, you can simply add a colon and assing them new names as:
+
+        const {name : catName, sound: catSound} = cat;
+
+    You no longer have access to name and sound but instead will be using catName and catSound. This is a way to provide alternative names. Really key when getting data from public arrays and would want to put your own touch to JSONs that you did not work on.
+
+    If you wanted to assin a value as a placeholder especially in a case where the say the cat name is not in the returned JSON, you can approach it as:
+
+        const {name = "Fluffy", sound = "Purr"} = cat
+
+    The above will return cat and meow if printed out.
+
+    However, if our array was something similar to :
+
+        const animals = [
+            {sound: "meow" },
+            { name: "dog", sound: "woof" }
+        ];
+
+    Where the first object has no name, then:
+
+        const {name = "Fluffy", sound = "Purr"} = cat
+        console.log(name);
+
+    will print out Fluffy. Meaning, if name is not defined then use Fluffy instead. Fuffy serves as the default value.
+
+    If we had nested objects, say:
+
+        const animals = [
+            { name: "cat", sound: "meow", feedingRequirements: {
+                food: 2,
+                water: 3
+            }},
+            { name: "dog", sound: "woof" }
+        ];
+
+    In this case we have an object with an object inside it. If we need to log the number of times to feed our cat. The approach is:
+
+        const {name, sound, feedingRequirements} = cat;
+
+    A console.log(feedingRequirements) will return an object:
+        {
+            food: 2,
+            water: 3
+        }
+
+    To get the food one can use the usual syntax using the dot syntax as:
+
+        feedingRequirements.food;
+
+    Without the dot syntax, one can destructure it further using extensive destructuring as below:
+
+        const {name, sound, feedingRequirements: {food, water}} = cat;
+    
+    One can then log food directly as:
+
+        console.log(food);
+
+    If only interested in just food, you don't have to add water and other keys:
+
+        const {
+            name,
+            sound,
+            feedingRequirements: { food },
+        } = cat;
+
+        console.log(food);
+
+    If we had a function inside the data.js file that accepts an animal and returns an array with two items as:
+
+        function useAnimals(animal) {
+            return [
+                animal.name,
+                function() {
+                    console.log(animal.sound);
+                }
+            ]
+        }
+
+    If we export the function from the data.js, we can also import the function. We can then call the function as:
+
+        console.log(useAnimals(cat))
+
+    The log has the name of the animal and the function. Now that we know the two, we can go ahead and destructure them as:
+
+        const [animal, makeSound] = useAnimals(cat);
+
+        console.log(animal) 
+        makeSound();
+
+
+    The function above is exactly how useState will look. By deconstructing our own example shows how useState would work.
+
+177. Destructuring Challenge:
+    Consider:
+
+        const cars = [
+            {
+                model: "Honda Civic",
+                //The top colour refers to the first item in the array below:
+                //i.e. hondaTopColour = "black"
+                coloursByPopularity: ["black", "silver"],
+                speedStats: {
+                    topSpeed: 140,
+                    zeroToSixty: 8.5,
+                },
+            },
+            {
+                model: "Tesla Model 3",
+                coloursByPopularity: ["red", "white"],
+                speedStats: {
+                    topSpeed: 150,
+                    zeroToSixty: 3.2,
+                },
+            },
+        ];
+
+        export default cars;
+
+    If we were to access the models and and the colours by popularity and top speed, we'd approach it as below:
+
+        import React from "react";
+        import ReactDOM from "react-dom";
+        import cars from "./practice";
+
+        const [honda, tesla] = cars;
+
+        const {
+            speedStats: { topSpeed: teslaTopSpeed },
+            coloursByPopularity: [teslaTopColour],
+        } = tesla;
+
+        const {
+            speedStats: { topSpeed: hondaTopSpeed },
+            coloursByPopularity: [hondaTopColour],
+        } = tesla;
+
+        ReactDOM.render(
+            <table>
+                <tr>
+                    <th>Brand</th>
+                    <th>Top Speed</th>
+                </tr>
+                <tr>
+                    <td>{tesla.model}</td>
+                    <td>{teslaTopSpeed}</td>
+                    <td>{teslaTopColour}</td>
+                </tr>
+                <tr>
+                    <td>{honda.model}</td>
+                    <td>{hondaTopSpeed}</td>
+                    <td>{hondaTopColour}</td>
+                </tr>
+            </table>,
+            document.getElementById("root")
+        );
+
+
+
+
+
+    
+
 
 
         
