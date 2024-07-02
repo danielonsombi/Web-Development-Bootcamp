@@ -8235,11 +8235,7 @@ However the above returns a warning that each child in a list should have a uniq
                 </div>
                 <div>
                     <ul>
-                    {items.length > 0 ? (
-                        items.map((listItem, index) => <li>{listItem}</li>)
-                    ) : (
-                        <li>A Item</li>
-                    )}
+                        {items.map((listItem) => <li>{listItem}</li>)}
                     </ul>
                 </div>
                 </div>
@@ -8248,8 +8244,171 @@ However the above returns a warning that each child in a list should have a uniq
 
         export default App;
 
+184. Managing a Component Tree
+    The component tree up until now has been a simple one since we have only been using useState with a single component, the app component. However for large projects this is not the case.
+
+    The code should be divided into different components one for the header, another for form and the other for the list. 
+
+    With the Todo list, we can separate the <li>{listItem}</li> section so it added in as a separate component by creating the ToDoItem.js file as below:
+
+        import React from "react";
+
+        function ToDoItem(props) {
+            return <li>{props.todoItem}</li>;
+        }
+
+        export default ToDoItem;
+
+    Such a component is referred to as a stateless component because it is not trying to change itself but just receives read only properties and displaying them. 
+
+    Remember props are readonly. They can not be modified.
+
+    We can however have state inside the component so to effect such a change. An example is if you wanted to do a text decoration to line through when an item is clicked:
+
+        function ToDoItem(props) {
+            const [isClicked, setClicked] = useState(false);
+
+            function handleClick() {
+                setClicked((prevValue) => {
+                return !prevValue;
+                });
+            }
+
+            return (
+                <li
+                onClick={handleClick}
+                style={{ textDecoration: isClicked ? "line-through" : null }}
+                >
+                {props.todoItem}
+                </li>
+            );
+        }
+
+    However, the style has somehow been localized to the item above. What if we wanted to change the state of a parent component? 
+    Say on strike through we want to delete it from the parent array.
+
+    We have to rethink the entire ToDoItem functional component. Consider the starting code:
+
+        function ToDoItem(props) {
+            function handleClick() {}
+
+            return (
+                <div>
+                <li onClick={handleClick}>{props.todoItem}</li>
+                </div>
+            );
+        }
+
+        export default ToDoItem;
 
 
+    When passing over props, we can also pass over functions that can get called by the child component. So that a function is created in the parent component and passed down to the child component as one of the props. An example is if we are to add the deleteItem function, we can pass it to our props as below:
+
+        function App() {
+            const [inputText, setInputText] = useState("");
+            const [items, setItems] = useState([]);
+
+            function handleChange(event) {
+                const newValue = event.target.value;
+                setInputText(newValue);
+            }
+
+            function addItem() {
+                setItems((prevItems) => {
+                return [...prevItems, inputText];
+                });
+                setInputText("");
+            }
+
+            function deleteItem() {}
+
+            return (
+                <div className="container">
+                <div className="heading">
+                    <h1>To-Do List</h1>
+                </div>
+                <div className="form">
+                    <input onChange={handleChange} type="text" value={inputText} />
+                    <button onClick={addItem}>
+                    <span>Add</span>
+                    </button>
+                </div>
+                <div>
+                    <ul>
+                    {items.map((todoItem) => (
+                        <ToDoItem todoItem={todoItem} onChecked={deleteItem} />
+                    ))}
+                    </ul>
+                </div>
+                </div>
+            );
+        }
+
+    Then , in the ToDoItem instead of creating a handleClick function, we can call the deleteItem() as below:
+
+        function ToDoItem(props) {
+            return (
+                <div onClick={props.onChecked}>
+                    <li>{props.todoItem}</li>
+                </div>
+            );
+        }
+
+        export default ToDoItem;
+
+    We can now address the deletion of array items using the function passed from the parent component. The function needs to know which item is to be deleted. This can be done by passing over what identifies this item uniquely. Ensure you array has a key so to make this possible. Our map function therefore changes to:
+
+        
+        {items.map((todoItem, index) => (
+            <ToDoItem 
+                key={index} 
+                id={index} 
+                todoItem={todoItem} 
+                onChecked={deleteItem} 
+            />
+        ))}
+
+    However, React does not recomend the use of index but instead use of a different unique identifier such as the one provided by the uuid package:
+
+        https://www.npmjs.com/package/uuid
+
+    Our ToDoItem will be able to receive the id which we can then use to delete the item to be deleted.
+
+    Passing the id is not as easy as including within the brackets of the function passed props as below:
+
+        return (
+            <div onClick={props.onChecked(props.id)}>
+            <li>{props.todoItem}</li>
+            </div>
+        );
+
+    since everytime a function includes the () it is automatically triggered. This won't function as we'd expect. We can't therefore pass the props.id as above. Instead, we will create a function that will called when the function is called. We can use an anonymous function as below so our ToDoItem is as below:
+
+        function ToDoItem(props) {
+            function handleClick() {}
+
+            return (
+                <div
+                onClick={() => {
+                    props.onChecked(props.id);
+                }}
+                >
+                <li>{props.todoItem}</li>
+                </div>
+            );
+        }
+
+    This will ensure the function is not called until the DIV detects a click.
+
+    To remove the id, we then need to use the filter function to filter out the one with the passed id and leave the rest such that our function becomes:
+
+        function deleteItem() {
+            setItems((prevItems) => {
+                return prevItems.filter((item, index) => {
+                    return index !== id;
+                });
+            });
+        }
 
 
 
