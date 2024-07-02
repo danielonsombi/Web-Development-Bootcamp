@@ -7769,9 +7769,433 @@ However the above returns a warning that each child in a list should have a uniq
 
     This way we can use functional components al through without needing a class component.
 
+    Below list of FAQs:
+
+        https://legacy.reactjs.org/docs/hooks-faq.html#should-i-use-hooks-classes-or-a-mix-of-both
+
 181. Changing Complex
-    
+    In some cases we might be expected to implement components which are a bit complex, an example is where you want to update the first name and last name from a form component directly in a way that if the first name is changed, it gets updated without affecting the last name. Various approaches can be used.
+
+    1. Challenge trial:
         
+        function App() {
+            const [fName, setFName] = useState("");
+            const [lName, setLName] = useState("");
+
+            function handleOnChange(event) {
+                if (event.target.name == "fName") {
+                    if (event.target.value) {
+                        setFName(event.target.value);
+                    }
+                }
+
+                if (event.target.name == "lName") {
+                    if (event.target.value) {
+                        setLName(event.target.value);
+                    }
+                }
+            }
+            return (
+                <div className="container">
+                    <h1>Hello {fName + " " + lName}</h1>
+                    <form>
+                        <input
+                        name="fName"
+                        onChange={handleOnChange}
+                        placeholder="First Name"
+                        value={fName}
+                        />
+                        <input name="lName" onChange={handleOnChange} placeholder="Last Name" />
+                        <button>Submit</button>
+                    </form>
+                </div>
+            );
+        }
+
+    2. One can also opt to create different functions for each of the updates:
+     
+        function App() {
+            const [fName, setFName] = useState("");
+            const [lName, setLName] = useState("");
+
+            function updateFName(event) {
+                setFName(event.target.value);
+            }
+
+            function updateLName(event) {
+                setFName(event.target.value);
+            }
+
+            return (
+                <div className="container">
+                    <h1>Hello {fName + " " + lName}</h1>
+                    <form>
+                        <input
+                        name="fName"
+                        onChange={updateFName}
+                        placeholder="First Name"
+                        value={fName}
+                        />
+                        <input name="lName" onChange={updateLName} placeholder="Last Name" />
+                        <button>Submit</button>
+                    </form>
+                </div>
+            );
+        }
+
+
+    However the above seems a bit lengthy with lots of duplication. We therefore need a way to manage complex state so instead of usestate using a single value, it will instead take an object as:
+
+        function App() {
+            const [fullName, setFullName] = useState({
+                fName: "",
+                lName: ""
+            })
+        }
+
+        function handleChange(event) {
+            const newValue = event.target.value;
+            const inputName = event.target.name;
+
+            setFullName(prevValue => {
+                if (inputName === "fName") {
+                    return {
+                        fName: newValue,
+                        lName: prevValue.lName
+                    }
+                } else if (input === "lName") {
+                    return {
+                        fName: prevValue.fName,
+                        lName: newValue
+                    }
+                }
+            });
+
+        }
+
+        return (
+            <div className="Container">
+                <h1> Hello {fullName.fName} {fullName.lName}</h1>
+
+                <form>
+                    <input
+                        name="fName"
+                        onChange={handleChange}
+                        placeholder="First Name"
+                        value={fullName.fName}
+                    />
+                    <input
+                        name="lName"
+                        onChange={handleChange}
+                        placeholder="Last Name"
+                        value={fullName.lName}
+                    />
+                    <button>Submit</button>
+                </form>
+            </div>
+        )
+
+    The idea is that when either value of the input changes, it will call the same function.
+    Within the function, one should be able to get hold of the new value, compare with the previous value of the full name then add the parts that have been changed.
+
+    We then need to know which input triggered the change. We can then chack the input that triggered the change.
+
+    The update is not as direct as updating the individual properties as:
+
+        if (inputName === "fName") {
+            setFullName({fName: newValue})
+        } else if (inputName === "lName") {
+            setFullName({lName: newValue})
+        }
+    
+    The above code will show either of the two value depending on which one is being typed.
+
+    If you check the devtools, you will notice that by default the object shows both the fName and lName but as soon as you start typing or updating the value of one, the other is deleted.
+
+    The above will replace, what we want to do instead is get the previous value and add the parts that have been changed. So instead of calling the setFullname and adding the new value, we can instead pass in a function that accesses the previous value which if printed out will return the object with previous entries which if empty will show them as empty strings.
+
+        setFullName(prevValue => {
+            
+        });
+
+    And since react remembers the value of fullName state, then react can make the update. With this we can make the update as:
+
+        if (inputName === "fName") {
+            return {
+                fName: newValue,
+                lName: prevValue.lName
+            }
+        } else if (input === "lName") {
+            return {
+                fName: prevValue.fName,
+                lName: newValue
+            }
+        }
+
+    With this then you can make the needful changes.
+
+    The code can however be simplified as:
+
+        function App() {
+            const [fullName, setFullName] = useState({
+                fName: "",
+                lName: "",
+            });
+
+            function handleChange(event) {
+                const { value, name } = event.target;
+
+                setFullName((prevValue) => {
+                if (name === "fName") {
+                    return {
+                    fName: value,
+                    lName: prevValue.lName,
+                    };
+                } else if (name === "lName") {
+                    return {
+                    fName: prevValue.fName,
+                    lName: value,
+                    };
+                }
+                });
+            }
+
+            return (
+                <div className="Container">
+                <h1>
+                    {" "}
+                    Hello {fullName.fName} {fullName.lName}
+                </h1>
+
+                <form>
+                    <input
+                    name="fName"
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    value={fullName.fName}
+                    />
+                    <input
+                    name="lName"
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    value={fullName.lName}
+                    />
+                    <button>Submit</button>
+                </form>
+                </div>
+            );
+        }
+
+    Note: it is not advisable to use thje event.target within and set methods such as the setFullName(). Say instead of getting name, if one uses the event.target.name, it will return a syntetic event error which means when the input are passing events through events listener, it is not a real event but a syntentic event. Never use it within the methods. Best practice is to use destructuring.
+
+    More on synthetic Events:
+
+        https://legacy.reactjs.org/docs/events.html
+
+182. Javascript ES6 Spread Operator
+    There is a lot of duplication in the code above which might be a bit tedious when working with large forms hence the need for spread operators:
+
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+
+    Say we had an array:
+
+        const citrus = ["Lime", "Lemon", "Orange"];
+        const fruits = ["Apple", "Banana", "Coconut"]
+
+    If we wanted to merge the two so the citrus array is pushed to the fruits array, we can approach it by eitehr looping through coitrus then pushing each to the fruits array or use the spread operator to add the entire citrus array to the fruits array. This is done by:
+
+        const fruits = ["Apple", "Banana", "Coconut", ...citrus]
+
+    A console.log(fruits) will return:
+
+        ["Lime", "Lemon", "Orange", "Apple", "Banana", "Coconut"]
+
+    The array can be added anywhere in the array, say if you wanted the citrus array in between Apple and Banana, then:
+
+        const fruits = ["Apple", ...citrus, "Banana", "Coconut"]
+
+    Consider:
+
+        const fullName = {
+            fName: "James",
+            lName: "Bond"
+        }
+
+    If you create another object user to which you are to insert the full name object to the fullName object, then:
+
+        const user = {
+            ...fullName,
+            id: 1,
+            username: "jamesbond007"
+        }
+
+    This will contain  everything in the fullname object and any other new properties that will be added into the new object user.
+
+    The three dots are very key. If the fullname was added without the dots, then it will not show the respective object proiperties, they will be nested inside the user object as:
+
+        const user = {
+            fullName: {
+                fName: "James",
+                lName: "Bond"
+            },
+            id: 1,
+            username: "jamesbond007"
+        }
+    
+    Which is not the desired end result.
+
+    We can therefore revise our earlier code so it utilizes the spread operator functionality.        
+
+    We will use the spread operator to add the previous value, then add in a new value of whichever name of the input that was passed in as below:
+
+        setFullName((prevValue) => {
+            ...prevValue,
+            name: value
+        });
+
+    However if declared as above, it will add a new key and value since anything added will be considered to be a string. The key therefore must be within the array syntax as:
+
+        setFullName((prevValue) => {
+            ...prevValue,
+            [name]: value
+        });
+
+    For a better understanding of how the above works checkout:
+
+        https://stackoverflow.com/questions/11508463/javascript-set-object-key-by-variable?noredirect=1&lq=1
+    
+    The complete code is as below:
+    
+        function App() {
+            const [fullName, setFullName] = useState({
+                fName: "",
+                lName: "",
+            });
+
+            function handleChange(event) {
+                const { value, name } = event.target;
+
+                setFullName((prevValue) => {
+                    return {
+                        ...prevValue,
+                        [name]: value
+                    }
+                });
+            }
+
+            return (
+                <div className="Container">
+                <h1>
+                    {" "}
+                    Hello {fullName.fName} {fullName.lName}
+                </h1>
+
+                <form>
+                    <input
+                    name="fName"
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    value={fullName.fName}
+                    />
+                    <input
+                    name="lName"
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    value={fullName.lName}
+                    />
+                    <button>Submit</button>
+                </form>
+                </div>
+            );
+        }
+
+    And since we are only returning a single object, we can simplify it further to:
+
+        function App() {
+            const [fullName, setFullName] = useState({
+                fName: "",
+                lName: "",
+            });
+
+            function handleChange(event) {
+                const { value, name } = event.target;
+
+                setFullName((prevValue) => ({...prevValue,[name]: value}));
+            }
+
+            return (
+                <div className="Container">
+                <h1>
+                    Hello {fullName.fName} {fullName.lName}
+                </h1>
+
+                <form>
+                    <input
+                    name="fName"
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    value={fullName.fName}
+                    />
+                    <input
+                    name="lName"
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    value={fullName.lName}
+                    />
+                    <button>Submit</button>
+                </form>
+                </div>
+            );
+        }
+
+    At times, simplifying code may make it difficult to understand what it does. Prefer using approaches that will ensure there is clarity to you and any other user that may interact with your code in the future. So keep it to:
+
+        function App() {
+            const [fullName, setFullName] = useState({
+                fName: "",
+                lName: "",
+            });
+
+            function handleChange(event) {
+                const { value, name } = event.target;
+
+                setFullName((prevValue) => {
+                    return {
+                        ...prevValue,
+                        [name]: value
+                    }
+                });
+            }
+
+            return (
+                <div className="Container">
+                <h1>
+                    Hello {fullName.fName} {fullName.lName}
+                </h1>
+
+                <form>
+                    <input
+                    name="fName"
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    value={fullName.fName}
+                    />
+                    <input
+                    name="lName"
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    value={fullName.lName}
+                    />
+                    <button>Submit</button>
+                </form>
+                </div>
+            );
+        }
+
+
+
+
+
 
 
 
