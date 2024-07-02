@@ -8086,7 +8086,6 @@ However the above returns a warning that each child in a list should have a uniq
             return (
                 <div className="Container">
                 <h1>
-                    {" "}
                     Hello {fullName.fName} {fullName.lName}
                 </h1>
 
@@ -8192,6 +8191,62 @@ However the above returns a warning that each child in a list should have a uniq
             );
         }
 
+183. Javascript ES6 Spread Operator Practice:
+    Consider a scenario where you are working on a todo list. The to-do list includes an input button on which a user can type an item and on clicking the add button, the item is added to a list below it.
+
+    To implement such, one can make use of the useState component, the map() function and spread operator that will allow the user to get the already existing array of items and to it append the newly added item.
+
+    One will also be expected to clear the input so to allow the user to proceed with adding a new item. This can be done by resetting the input value to blank under the handleClick method:
+
+        import React, { useState } from "react";
+
+        function App() {
+            const [InputText, setText] = useState("");
+            const [items, setItems] = useState([]);
+
+            function handleChange(event) {
+                const value = event.target.value;
+                setText(value);
+            }
+
+            function handleClick(event) {
+                setItems((prevItems) => {
+                return [...prevItems, InputText];
+                });
+
+                setText("");
+            }
+
+            return (
+                <div className="container">
+                <div className="heading">
+                    <h1>To-Do List</h1>
+                </div>
+                <div className="form">
+                    <input
+                    type="text"
+                    onChange={handleChange}
+                    name="item"
+                    value={InputText}
+                    />
+                    <button onClick={handleClick}>
+                    <span>Add</span>
+                    </button>
+                </div>
+                <div>
+                    <ul>
+                    {items.length > 0 ? (
+                        items.map((listItem, index) => <li>{listItem}</li>)
+                    ) : (
+                        <li>A Item</li>
+                    )}
+                    </ul>
+                </div>
+                </div>
+            );
+        }
+
+        export default App;
 
 
 
