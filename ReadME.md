@@ -8410,7 +8410,143 @@ However the above returns a warning that each child in a list should have a uniq
             });
         }
 
+185. Managing a Component Tree practice
+    It is good practice to ensure that the functions and methods that are not related to the parent component are all created in their respective components. For instance, in the ToDoList project, the handleChange function is specific to the InputArea. It therefore should be moved from the App.js to the InputArea.js component.
 
+    One might opt to implement the project as:
 
+    1. App.js
 
+        function App() {
+            const [inputText, setInputText] = useState("");
+            const [items, setItems] = useState([]);
 
+            function handleChange(event) {
+                const newValue = event.target.value;
+                setInputText(newValue);
+            }
+
+            function addItem() {
+                setItems((prevItems) => {
+                return [...prevItems, inputText];
+                });
+                setInputText("");
+            }
+
+            function deleteItem(id) {
+                setItems((prevItems) => {
+                return prevItems.filter((item, index) => {
+                    return index !== id;
+                });
+                });
+            }
+
+            return (
+                <div className="container">
+                <div className="heading">
+                    <h1>To-Do List</h1>
+                </div>
+                <InputArea
+                    onChange={handleChange}
+                    inputText={inputText}
+                    addItem={addItem}
+                />
+                <div>
+                    <ul>
+                    {items.map((todoItem, index) => (
+                        <ToDoItem
+                        key={index}
+                        id={index}
+                        text={todoItem}
+                        onChecked={deleteItem}
+                        />
+                    ))}
+                    </ul>
+                </div>
+                </div>
+            );
+        }
+
+    2. InputArea.js
+
+        function InputArea(props) {
+            return (
+                <div className="form">
+                <input onChange={props.onChange} type="text" value={props.inputText} />
+                <button onClick={props.addItem}>
+                    <span>Add</span>
+                </button>
+                </div>
+            );
+        }
+
+    This will still work but for better functionality, the functions need to be moved around. Such that to the addItem function sitting in the parent component, the inputText is added as a parameter and the reset of the setInputText is also moved to the onClickButton within the InputArea.js file as below:
+
+    1. App.js
+
+        function App() {
+            const [items, setItems] = useState([]);
+
+            function addItem(inputText) {
+                setItems((prevItems) => {
+                return [...prevItems, inputText];
+                });
+            }
+
+            function deleteItem(id) {
+                setItems((prevItems) => {
+                return prevItems.filter((item, index) => {
+                    return index !== id;
+                });
+                });
+            }
+
+            return (
+                <div className="container">
+                <div className="heading">
+                    <h1>To-Do List</h1>
+                </div>
+                <InputArea addItem={addItem} />
+                <div>
+                    <ul>
+                    {items.map((todoItem, index) => (
+                        <ToDoItem
+                        key={index}
+                        id={index}
+                        text={todoItem}
+                        onChecked={deleteItem}
+                        />
+                    ))}
+                    </ul>
+                </div>
+                </div>
+            );
+        }
+
+    2. InputArea.js
+
+        function InputArea(props) {
+            const [inputText, setInputText] = useState("");
+
+            function handleChange(event) {
+                const newValue = event.target.value;
+                setInputText(newValue);
+            }
+
+            return (
+                <div className="form">
+                <input onChange={handleChange} type="text" value={inputText} />
+                <button
+                    onClick={() => {
+                    props.addItem(inputText);
+
+                    setInputText("");
+                    }}
+                >
+                    <span>Add</span>
+                </button>
+                </div>
+            );
+        }
+
+186. Keeper App Project - Part 3
