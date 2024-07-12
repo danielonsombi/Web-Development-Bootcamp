@@ -9,7 +9,7 @@ function App() {
     setItems((prevItems) => {
       return [...prevItems, inputText];
     });
-  }
+  } 
 
   function deleteItem(id) {
     setItems((prevItems) => {
