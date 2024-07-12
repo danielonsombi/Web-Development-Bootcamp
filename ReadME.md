@@ -5148,6 +5148,8 @@ SECTION 33: POSTGRESQL
         DELETE FROM visited_countries 
         where user_id = 1 AND country_code = 'FR'
 
+SECTION 34: Capstone Project - Book Notes
+
 SECTION 35: AUTHENTICATION & SECURITY - Hnadling Credentials and Designing a Secure Login
 151. Introduction to Authentication:      
     Why Authnticate?
@@ -8782,6 +8784,148 @@ However the above returns a warning that each child in a list should have a uniq
 
     Click on the background-image of the background of choice then from the Grab the CSS section copy the styling to your application as part of the body properties.
 
+188. How to Build your own product:
+    - Think through the product.
+    - What are the most core features of the product
+    - Map it out, drow it, get all functionality
+    - Get what is different and what will make it standout in the market
+    - Start small and then scale it out basing the scaling on the feedback received.
+    - Start with the core functionality and get feedback. The quicker you get to the feedback phase with tips on what things are working, what is not working well, what else they'd like to see, or what can improve the UX. This gets you into a development life cyle.
+
+SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
+189. What is Web3
+    As per the statistics in the 2022:
+        - 44.6% of 2834 voters upvoted the desire to learn Web3/blockchain
+        - 13.2% - A foreign Spoken Language
+        - 9.4% - Advanced Maths
+        - 32.8% - New Programming Language
+
+    This shows that web3 and blockchain is one of the technologies many developers are excited and interested in learning.
+    There was also:
+        - 33X growth in the number of job opportunities for Blockjchain developers
+        - 12X growth Machine Language Engineer
+        - 8X growth in Application Sales Executive
+        - 6X growth Machine Learning Specialist
+
+    Web3 is basically the new internet and there is massive investments into web3.
+    WEB 3.0 describes the 3rd iteration/stage of the web with 1.0 being in the 90s when browsing with netscape and could go through sites that were read only.
+
+    WEB 2.0 was abit interactive. Leting you as a user to interact with them. We build the content for the sites such as FB, TikTok etc
+
+    Ever since 2018 people have been developing sites on the blockchain. The focus in this case is not on cryptocurrency but as devs we can control the future and can build what web3 can become.
+
+    For example Helium is a popular web 3 project providing wireless internet to out of the way places through individual people hosting their 5G network and earning crypto currency.
+
+    Other examples being:
+        - https://pooltogether.com/ - Lets you participate in lotery
+        - Can also build games in block chain such as axie infinity - https://axieinfinity.com/ a pookieman like game that allows you buy and sell you axies.
+
+190. How does the Blockchain actually wor?
+    A blockchain is just a ledger. Say you go out on lunch with a friend who then pays for it then in your ledger you owe the friend 100 bob, if you then buy for another friend coffee then the friend owes you 50 bob.
+
+    The ledger will continue growing as you transact daily.
+
+    A ledger is then a record of who owes who what amount and just a bunch of data. From the ledger you can check how much one owes the other.
+
+    The parties must agree how much they awe each other and they also must trust whoever holds/keeps the ledger. Paper ledgers are prone to tamparing and there is need to make history immutable by locking it by encryption.
+
+    The simplest option is the ceasar Cipher - If ceasar wanted to communicate to his generals he changed his messages so they could not be to work them out unless they knew how to descrypt them. Below is a demo of the ceasar cipher:
+
+        https://csis.gmu.edu/albanese/labs/caesar_cypher.php
+
+    It includes a shift number by which the letters are to be shifted and if DANIEL and a shift of 4 then the result would be HERMIP
+
+    If one then knew the shift number, they could easily descrypt the message.
+
+    Ceasar Cipher is one means of encryption.
+
+    With encryption, you should be able to go forward and backwards. This makes encryption less secure since it could be easily broken such as that of the Germany Enigma in world war 2.
+
+    Instead of encryption, blockchain uses hashing - a mathematical formula that allows you turn a message into a Hash code by passing the message through a hash function. A hash however alway generates the same number of characters. Here is a demo for hashing:
+
+        https://www.movable-type.co.uk/scripts/sha256.html
+    
+    Notice that as you type in the message, the same number of characters will be generated which changes everytime you type anumber or space.
+
+    How can we turn an input an hash and not be able to work it backward. An example is working the factors of a number. Working forward would be easy say:
+
+        3 * 19 = 57
+
+    But given 57, it is never easy to work it backwards.
+
+    If you were given a hash you have to bruteforce to work back the original message especially when working with a long number. This is the secret of cryptography. Working forward is easy but working backwards will take several computing years to decode.
+
+    You can also encode a bunch of things together and hash them together, could include the message, the date and the author. This will then generate a single hash for all the info. This is how a block in the blockchain is formed. Can try it out under the hash and block chain sections of the demo below:
+
+        https://guggero.github.io/blockchain-demo/#!/block
+
+    So say if Dan owes Onsombi 100 bob: In the ledger a statement can be added:
+
+        Dan owes Onsombi 100 bob
+    
+    A hash will be generated for the block above. And more blocks will be generated for the rest fo the transactions.
+
+    For a block to be added to the blockchain, it has to satisfy some predefined requirements and the requirements could be:
+
+        - The hash has to start out with 3 zeroes - To meet this requirement then we either keep modifying the data or change the Nonce. A Nonce is a number that is combined with the block of data to generate the hash. Keep changing the number until you find a nonce that generates a hash that begins with 3 zeros. On the demo, instead of having to keep guessing the number, you can click the mine button so to generate the unique nonce that meets this requirement. See Snips > Blockchain - Block Demo.png for data with 5 leading zeroes. This makes the block valid and it is set to green to show it is valid to add to the block chain.
+        - The Nonce only works to produce the hash with 5 leading figure for that specific message. If someone therefore alters the message and maybe claim that he is owed more money, then the hash becomes invalid and indicates the block has been modified.
+        - So we are taking the data to be added to the ledger and puttingit to each of the block by hashing the data with the nounce.
+
+    The above describes where the block comes from.
+
+    The CHAIN part however shows several blocks with each having a previous section that shows the hash generated in the previous block. See Snips > Blockchain - Chain Demo.png
+    You will notice the genesis block (does not have a previous block attahced to it) has 64 zeroes.
+         - For each of the block we can use the mine button to generate the respective hashes and if valid it changes to green and updates the prev: section of the next block.
+         - The Nounce, data and prev hash form the hash of the second and subsequent blocks.
+         - If the genesis block is changed, then it invalidates the rest of the blocks. A change invalidates all the hashes and will no longer satisfy the requirements.
+         - This concept makes the block chain immutable and if changed then everyone will know it has been tampared with.
+         - If one does not alter the genesis, but instead alters the second or subsequent blocks, the genesis remains valid while the rest are flagged.
+         - If the change is necessary, then we will have to remine the root and its subsequent blocks which takes alot of time.
+         - This is how we ensure the integrity of the block chain.
+    
+    Blockchain goes one step further to assure that the data is absolutely correct and not tampered with. This is the distributed part of the blockchain. How will the parties agree on what is on the ledger?
+        - Say we have three people with three computers.
+        - Everytime a new miner joins the blockchain, they get a full copy of the blockchain.
+        - Each of the block chains will be similar.
+        - Three people have the same blockchain that they hold. 
+        - If person A decides to be cheeky and changes their block, and remines, there blockchain will be different from that of the rest and since the hashes will not be similar of the other two, we can know who is tamparing with the data.
+        - We have a distributed trustless ledger. We do not need to trust anyone. Block chain encodes all the transactions and we can trust in the technology that our ledger is always going to be accurate and no one can tamper with it.
+        - This applies to bitcoin but the cherry ontop was when ethereum was conceptualized. The breakthrough is that not only can we store data inside this blocks, but can create smart contracts by storing code into the blocks.
+        - E.g., if total_amount > 5000 { } transfer money etc. The code then gets into the block and into the hash then saved to etherium into blockchain. So instead of having a crowdfunding company to do transfers to project owner, all that can be encapsulated into some code. The code in the blockchain gets activated and the money is transfered to the owner.
+
+191. What are DApps (Decentralised Apps) and how do you develop them?
+    DApps are the backbone of web3 and is how we will be=ring about the next iteration of the internet.
+    In the old way one could build a startup, the technology deploy it -> Raise VC Funding -> IPO then cash out.
+    In the Web3 way 
+         - Build start-up -> build the technology -> Release Tokens to public and can be selling tokens to people to use and interact with technology and can start raising money for the DApp from day one.
+         - How you run the company also changes since you can replace the board of directors and the org chart with Decentralized autonomous organization (DAO) by creating governance tokens that allow you vote on what the DApps should do in the future.
+         - Can then control how the company functions and users can contribute to the roadmap of the DApp. And everyones incentives are alligned since if the App does well it becomes more valuable and everyone in DAOs is incentivised to participate and help the organization along.
+
+    An example is Dropbox which could raise upto $6,000,000
+    A web 3 version of Dropbox Filecoin which allows you store files in a decentralized way in the cloud but instead of the files being stored by one company it is hosted in millions of computers across the world ensuring redudancy and access from wherever you are with internet access. They did an initial coin offering of upto $257,000,000 which is way higher than dropbox.
+
+    With DApps you are able to raise finances earlier and raise much more making the technology much exciting. E.g can have racing games on the internet and everybody puts in a dollar then have cash prices going to the winners.
+
+    Check out the Rari Capital DApps for landing, borrowing & yield for Defi. The enterpreneurs started working on it at age of 16.
+
+    To get started, you have to pick a chain to build on. How do you choose?
+    Currently, the largest number of DApps is built on Etherium just because it was the first one around and was the first one that had small contracts and can write code that can be implemented into the blockchain. It however has a number of problem preventing it from being the best choice for DApps in web3:
+        - Scaling - you can't store data on etherium and it is costly to perform computation on the etherium network. For example NFTs on etherium are not even stored on the blockchain, instead you get the url and the actual data. The actual image is stored somewhere else checkout:
+
+            https://docs.opensea.io/docs/metadata-standards
+
+        - The biggest problem to do DApps on etheriums is it is very costly to do computations, store anything and almost impossible to have a proper backend with a database which is the reason most DApps on Etherium are made up of a patch work of different services. 
+        - This is where the INTERNET COMPUTER comes in. It has all the benefits of a trustless decentralized system but also allows perform fast computations, store data directly on the blockchain and be able to create fully fledged applications on chain.
+        - Checkout:
+
+            Snips > Ethereum, Solana & Internet Computer Comparison.png
+            Snips > Scale Infinitely.png
+            Snips > World Computer.png
 
 
+
+
+
+
+    
 
