@@ -8550,3 +8550,238 @@ However the above returns a warning that each child in a list should have a uniq
         }
 
 186. Keeper App Project - Part 3
+    The App shows how to create different components, passing properties from the parent to the child component and back. Including how to pass both objects and functions to and fro.
+
+187. React Dependencies & Styling the Keeper App
+    For styling, we can make use of different dependencies one of them being material-ui both the core and icons.
+
+    Material-ui are prebuilt components for faster and easier web development using google material concept called material design. Can check out the documentation below:
+
+        https://mui.com/material-ui/getting-started/
+    
+    Note that the following libraries must be installed for the application to work:
+
+        npm install @mui/material @emotion/react @emotion/styled
+
+    The documentation highlight various components that one can use. An example is the icon component below:
+
+        https://mui.com/material-ui/material-icons/
+
+    The documentation also shows how one can use the Icon in a React project. Consider the Keeper project Note.jsx component:
+
+        import React from "react";
+
+        function Note(props) {
+            function handleClick() {
+                props.onDelete(props.id);
+            }
+
+            return (
+                <div className="note">
+                <h1>{props.title}</h1>
+                <p>{props.content}</p>
+                <button onClick={handleClick}>DELETE</button>
+                </div>
+            );
+        }
+
+        export default Note;
+
+
+    We can follow the steps below to change the button name to an icon:
+
+        1. In the Icons docs, search for the Icon of interest say delete.
+        2. Select the preferred icon then select the associated code such as:
+    
+            import DeleteIcon from '@mui/icons-material/Delete';
+        
+        3. Then add the code to your component then use it within the button. The code then becomes:
+
+            import React from "react";
+            import DeleteIcon from "@mui/icons-material/Delete";
+
+            function Note(props) {
+                function handleClick() {
+                    props.onDelete(props.id);
+                }
+
+                return (
+                    <div className="note">
+                    <h1>{props.title}</h1>
+                    <p>{props.content}</p>
+                    <button onClick={handleClick}>
+                        <DeleteIcon />
+                    </button>
+                    </div>
+                );
+            }
+
+            export default Note;
+
+        The benefits of the components over other things like bootstrap and fab icons of using prebuiilt components is that in React we have JS, CSS and HTML combined to one in each of this components. We can even add components which we don't have to code.
+
+        We might also want to beef up your UI a little bit. So instead of using a button, we can utilize the floating action button that comes from the material ui package. Such can be copied from the material-ui buttons section from which you can select one from the many available. Consider:
+
+            import React, { useState } from "react";
+            import AddIcon from "@mui/icons-material/Add";
+
+            function CreateArea(props) {
+                const [note, setNote] = useState({
+                    title: "",
+                    content: "",
+                });
+
+                function handleChange(event) {
+                    const { name, value } = event.target;
+
+                    setNote((prevNote) => {
+                    return {
+                        ...prevNote,
+                        [name]: value,
+                    };
+                    });
+                }
+
+                function submitNote(event) {
+                    props.onAdd(note);
+                    setNote({
+                    title: "",
+                    content: "",
+                    });
+                    event.preventDefault();
+                }
+
+                return (
+                    <div>
+                    <form className="create-note">
+                        <input
+                        name="title"
+                        onChange={handleChange}
+                        value={note.title}
+                        placeholder="Title"
+                        />
+                        <textarea
+                        name="content"
+                        onChange={handleChange}
+                        value={note.content}
+                        placeholder="Take a note..."
+                        rows="3"
+                        />
+                        <button onClick={submitNote}>
+                        <AddIcon />
+                        </button>
+                    </form>
+                    </div>
+                );
+            }
+
+            export default CreateArea;        
+        
+        For floating button see below:
+
+            https://mui.com/material-ui/react-floating-action-button/
+        
+        One has to import the various components from @mui and format the code so to activate the floating buttons. Once added to the component, the button element should then be renamed from button to Fab. With this change on hover, the button changes color.
+
+        FABs come in two types: regular, and extended.
+
+        Only use FAB if it is the most suitable way to present the screen's primary action. Only one component is recommended per screen to represent the most common action.
+
+        The FAB can be wrapped within a zoom component. To use it import:
+
+            import Zoom from '@mui/material/Zoom';
+        
+        If true it will zoom in if not then it will not. The code becomes:
+            
+            <Zoom in={true}>
+                <Fab onClick={submitNote}>
+                    <AddIcon />
+                </Fab>
+            </Zoom>
+
+        and everytime the page is refreshed the button will zoom in.
+
+
+    We might want to change the application so only the content is visible upon loading and one can only see the title and button when content is clicked. This can be achieved using the steps below:
+
+        - This can be achieved using conditional rendering. Where it check whether the state is set to true or not. Our content area showld be a little small at the beginning so that at the beginning it is only a single row then take it to 3 rown when clicked.
+        - The zoom in by default will be false and on click will change to true when clicked.
+        - The code becomes:
+
+            import React, { useState } from "react";
+            import AddIcon from "@mui/icons-material/Add";
+            import Fab from "@mui/material/Fab";
+            import Zoom from "@mui/material/Zoom";
+
+            function CreateArea(props) {
+                const [isExpanded, setExpanded] = useState(false);
+
+                const [note, setNote] = useState({
+                    title: "",
+                    content: "",
+                });
+
+                function handleChange(event) {
+                    const { name, value } = event.target;
+
+                    setNote((prevNote) => {
+                    return {
+                        ...prevNote,
+                        [name]: value,
+                    };
+                    });
+                }
+
+                function submitNote(event) {
+                    props.onAdd(note);
+                    setNote({
+                    title: "",
+                    content: "",
+                    });
+                    event.preventDefault();
+                }
+
+                function expand() {
+                    setExpanded(true);
+                }
+
+                return (
+                    <div>
+                    <form className="create-note">
+                        {isExpanded && (
+                        <input
+                            name="title"
+                            onChange={handleChange}
+                            value={note.title}
+                            placeholder="Title"
+                        />
+                        )}
+                        <textarea
+                        name="content"
+                        onClick={expand}
+                        onChange={handleChange}
+                        value={note.content}
+                        placeholder="Take a note..."
+                        rows={isExpanded ? 3 : 1}
+                        />
+                        <Zoom in={isExpanded}>
+                        <Fab onClick={submitNote}>
+                            <AddIcon />
+                        </Fab>
+                        </Zoom>
+                    </form>
+                    </div>
+                );
+            }
+
+            export default CreateArea;
+
+    We are need to change the background to a transparent texture. Can pick one from the site:
+
+        https://www.transparenttextures.com/
+
+    Click on the background-image of the background of choice then from the Grab the CSS section copy the styling to your application as part of the body properties.
+
+
+
+
