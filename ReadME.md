@@ -8892,6 +8892,10 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
         - We have a distributed trustless ledger. We do not need to trust anyone. Block chain encodes all the transactions and we can trust in the technology that our ledger is always going to be accurate and no one can tamper with it.
         - This applies to bitcoin but the cherry ontop was when ethereum was conceptualized. The breakthrough is that not only can we store data inside this blocks, but can create smart contracts by storing code into the blocks.
         - E.g., if total_amount > 5000 { } transfer money etc. The code then gets into the block and into the hash then saved to etherium into blockchain. So instead of having a crowdfunding company to do transfers to project owner, all that can be encapsulated into some code. The code in the blockchain gets activated and the money is transfered to the owner.
+    
+    See:
+
+        https://guggero.github.io/blockchain-demo/#!/blockchain
 
 191. What are DApps (Decentralised Apps) and how do you develop them?
     DApps are the backbone of web3 and is how we will be=ring about the next iteration of the internet.
@@ -8922,6 +8926,153 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
             Snips > Scale Infinitely.png
             Snips > World Computer.png
 
+192. What is the Internet Computer (ICP)?
+    The goal of ICP is to reach blockchain singularity. The idea is to have a powerful secure blockchain capable to run the entire base layer of the web from hosting, storage, services etc in one secure protocol.  
+
+    Todays DApps are partially decentralized. They have small amount of login on small blockchain but the majority of the logic and data are stored/hosted on large web 2 companies like Amazon AWS or Microsft Azure etc.
+
+    If the majority of the DApp is not on the chain then they are not really decentralized and have no benefit of trully decentralized apps since the companies can shut down your applications.
+
+    Etherium was meant to act as a ledger not to handle alot of computation and data storage. For instance there are almost 500M tweets sent daily and about 95M photos uploaded on Instagram. And with the cost of storing 1GB being around $350M, $800K and $55 on Ethereum, Solana and Internet Computer respectively, it can be quite expensive to host everythin on blockchain. With this not so many store full fledged applications on the chain.
+
+    Each block has transaction data that updates the blockchain. The rate at which transacs can be processed determines how fast an app can run and how it can scale. Each post is a trasnaction per second will limit the number of posts users can make. The TPS determines how fast your app can update itself. Currently takes about 14 seconds to update a block in the etherium block chain.
+
+    Etherium has increased block size so more data can be updated to a single block. But the current one we are limited to 15 transactions per second(TPS). Imagine a twitter completely on blockchain and will only allow 4 users to post per minute and will cost them like $100 for a single tweet cause it is very expensive and slow.
+
+    See:
+        Snips > Blockchain - Time, finality, TPS and Validator comparisons.png
+
+    Reasearch has been ongoing since 2015 to try to address the slowness and cost of running blockchains. They came up with a novel consesus algorithm called Threshold Relay and Network Scalability to allow computers reach much faster speeds compared to other major layer one blockchain:
+
+        https://dfinity.org/pdf-viewer/pdfs/viewer?file=../library/dfinity-consensus.pdf
+
+    How then does it work:
+    Internet Computer - Aggregates the compute capacity of a large number of independent datacenters and it takes all this data centers around the world and combines them using the internet computer protocol to a large single decentralized world computer. The decentralized computer is uorganized to individual canister Smart Contracts that can run processes, execute codes and store data fro the programs and as user you can tap to the cansters using http requests but as a developer, realize that internet computer is a whole bunch of canisters where the canisters where each can hold programs and program states through a web assembly module and a flat memory module called a memory pages.
+
+    So, you as a dev can write code that compiles into a way that can use web assembyl using languages like Rust, dfinity's motoko. Content of variable, arrays etc can be stored within a canister which acts as a code sandbox and similar to containers in docker.
+
+    Your canister acts as if it runs forever. All you data can always be kept in variables and they never get wiped. You don't have to think of storing data in databases since your program is never terminated. Several apps have already been developed e.g., the decentralized version of tiktok called cacan. Here you can post a video and it can check who were the first ten to like it and they are gifted.
+
+193. Installation and setup for Web3 Development
+    For web3 development, in Windows, there is need to install the Windows Subsystem for Linux (WSL). This can be installed either using the command line or manually using the below guides respectively:
+
+        1. https://learn.microsoft.com/en-us/windows/wsl/install
+        2. https://learn.microsoft.com/en-us/windows/wsl/install-manual
+     
+    
+    Once installed run the command: wsl --list --verbose to confirm whether the installation was successful.
+
+    On VSCode install the motoko extension from definity to be used during development and Remote WSL extension toi allow access WSL terminal on vscode.
+
+    Then install node on wsl. This can be installed using the homebrew link in:
+
+        https://brew.sh/
+
+    This will install homebrew and also highlight the rest of the steps that need to be followed.
+    
+    The next steps are highlighted and should be installed manually. Do this by copying the links and pasting them to the new command line then enter.
+
+    Once installed, and see the below error:
+        node@16 is keg-only, which means it was not symlinked into /home/linuxbrew/.linuxbrew
+
+    The above means that there is another node version installed. We therefore need to run the command  brew link node@16 to link the two.
+
+    Using node --version should return the version of the node version on WSL and if 16 and above then good to go.
+
+    The next step is to install DFx using the command:
+        DFX_VERSION=0.9.3 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+
+    After this, we can then find where the location of our dfx directory. We can do this using the command:
+
+        which dfx
+
+    Then with the path, do an export using the command:
+
+        export PATH=$PATH:/home/danielonsombi/.local/share/dfx/bin/dfx
+
+    Then use the command below to check whether the url has been added to the paths.
+
+        echo "${PATH//:/$'\n'}"
+
+    The check the version as:
+
+        dfx --version
+
+    With this the installation process is done and with this you can create the first dfx.
+
+    To create the first project, click on the Remote window button on the bottom left of VSCode then click on Connect to WSL. With this, confirm that on the bottom left it shows WSL:Ubuntu or Running in Ubuntu (WSL 2).
+
+    From ubuntu make directory:
+        mkdir ic-projects
+
+    The change directory into the created directory:
+        cd ic-projects
+
+    Then write the command:
+        dfx new hello
+
+    This will build a sample internet computer application called hello. Once built, the difinity logo with show up and we can see where our files are using the command:
+
+        explorer.exe .
+    
+    If logged in using the admin accounts while using WSL, the directory created should be accessed in vscode accessed as admin.
+
+    In VSCode navigate to the location of your project, select the project and click ok.
+
+    The src folder includes a main.mo file that currently has no syntax highlight which is what the motoko extension is suppossed to do.
+
+    Navigate to Extensions and to motoko and click on Install in WSL:Ubuntu ..  to install it.
+
+    The source also includes html and js files.
+
+    Once the motoko extension is installed, we are now ready to deploy the application.
+
+    To deploy, go to Terminal > New terminal. Use the command:
+
+        dfx start
+
+    to start the local internet computer.
+
+    Then on a split terminal, run the command:
+
+        dfx deploy
+
+    inorder to deploy the hello project to the local dfx that we have started.  This will create multiple other directories and files.
+
+    Then type in npm start to start your server
+
+    If you encounter an errow similar to the one below:
+
+        No production canister_ids.json found. Continuing with local
+        [webpack-cli] TypeError: cli.isMultipleCompiler is not a function
+        at Command.<anonymous> (/home/danielonsombi/ic-projects/hello/node_modules/@webpack-cli/serve/lib/index.js:146:35)
+        at async Promise.all (index 1)
+        at async Command.<anonymous> (/home/danielonsombi/ic-projects/hello/node_modules/webpack-cli/lib/webpack-cli.js:1672:7)
+
+    This implies the webpack in your webpack is outdated and needs to be updated. To update them run the commands:
+
+        npm install webpack@latest webpack-cli@latest @webpack-cli/serve@latest
+
+    If successful, rereun:
+        
+        npm start
+
+    This will start the application which by default can be accessed on port 8080 as:
+
+        http://localhost:8080/
+
+    If successful, it should prompt you to submit your name and on enter show it below the form.
+
+    The Steps have been summarized in the document:
+        Snips\Installation+and+Setup+for+Windows.pdf.
+
+    The project here after will be running on WSL and for purposes of unifomity we will have them moved to this web development folder so they can be pushed to github.
+
+194. 
+
+
+
+    
 
 
 
