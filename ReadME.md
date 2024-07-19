@@ -9068,7 +9068,283 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
 
     The project here after will be running on WSL and for purposes of unifomity we will have them moved to this web development folder so they can be pushed to github.
 
-194. 
+194. Build your First Defi (Decentralized Finance) DApp - DBANK
+    In the process we will learn how to program for the internet computer using the motoko language.
+
+    The project is somewhat inspired by the compound protocol a.k.a money market protocol. People can supply their ether and earn some interest on it or people can borrow a token say chainlink token and bet that the price would have gone down by the time they pay their loan.
+
+    Compound will collect interest by borrowers and pay it to the renders of that token.
+
+    What is motoko?
+        A language designed and created by the difinity team led by Andreas Rossberg, one of the cocreators of web assembly. A language you can use to specifically create internet computer smart contracts.
+
+        It is close to other languages such as JS, SWIFT, Typescript, C# or Java. It is pretty easy to switch from any language that you have learnt before.
+
+195. Introduction to the Motoko Language
+    For introduction, there is need to create a new project. In a VSCOde running WSL Ubuntu, open a terminal and create a new project using the command:
+
+        dfx new dbank.
+
+    The default files are automatically created. If the project is part of a larger project, remove the .git file so you can add it to the existing repository. Can remove it using the command:
+
+        rm -rf ./.git
+
+    Can read more on the likely error on:
+        
+        https://medium.com/@cryptobeastchain/error-filename-does-not-have-a-commit-checked-out-fatal-github-commit-error-07f28ca215b7#:~:text=Check%20for%20Existing%20Git%20Repositories,find%20.
+    
+    Once installed, you will also notice there is a main.mo which is the motoko file that we are going to work with. We will delete the default code so we can then write our own.
+
+    The first thing to do is create a file that is going to hold our canistar as below:
+
+        actor DBank {
+        
+        }
+
+    Inside we can use all the code that we already know such as variables etc.
+
+    The naming convention in motoko is to use UpperCamelCase for type names such as classes or type parameters, module names, and actor names and lowerCamelCase for all other names including constants and variables. More highlighted in the site below:
+
+        https://internetcomputer.org/docs/current/motoko/main/reference/style#style
+
+    And the code is as below:
+
+        actor DBank {
+            var currentValue = 300;
+        }
+
+    Its variables work similar to the ones we have worked with before.
+    We can change the value of the variable but this is achieved using a different operator (:=)
+
+    So to change it we update the code as:
+
+        actor DBank {
+            var currentValue = 300;
+            currentValue := 100
+        }
+
+    To printout we can checkout the details on:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/Debug/
+
+    We must fast import Debug as:
+
+        import Debug "mo:base/Debug";
+
+        actor DBank {
+            var currentValue = 300;
+            currentValue := 100;
+
+            Debug.print("Hello")
+        }
+
+    The Hello string will be printed on the terminal on which the command;
+
+        dfx start
+
+    is actively running.
+
+    The text can only be printed after running the 
+        dfx deploy
+
+        npm start
+
+    commands respectively on a different terminal.
+
+    Notice that we are currently printing out a text. However, if we were to print the <currentValue> the system will through an error. This is because the print method expects a text and not a number which in motoko is of type <nat> i.e., natural number.
+
+    We then have to use another function:
+    
+        debug_show(currentValue) 
+    
+    so to print out the number:
+
+
+        import Debug "mo:base/Debug";
+
+        actor DBank {
+            var currentValue = 300;
+            currentValue := 100;
+
+            Debug.print("Hello");
+            
+            Debug.print(debug_show(currentValue));
+        }
+
+    In addition to var is let.
+
+    Let is similar to that in JS and should hold a value that should not change or reassigned. It is an immutable constant:
+
+        actor DBank {
+            let id = 2345098
+            id := 7654 //Will throw an error since the id is immutable.
+        }
+
+    If you do a Debug.print(debug_show(id)) you will notice that when printed out, they will include underscores to show the thousands, millions etc, similar to how one can use a comma to separate them in a number.
+
+196. Motoko Functions and the Candid User Interface
+    The goal for this module is to add more functionality to our canister. As we build the dbank app, we must let people deposit their cryptocurrency into our application.
+    Functions are created using the func keyword as:
+
+        func topUp() {
+            currentValue += 1;
+
+            Debug.print(debug_show(currentValue));
+        }
+
+    We can then call the function as:
+
+        topUp()
+
+    Notice that with the code above, the application will throw an error. The reason is in this programming language,  each function expects a semicolon at the end of the function. So the code should be:
+
+        func topUp() {
+            currentValue += 1;
+
+            Debug.print(debug_show(currentValue));
+        };
+
+        topUp();
+
+    So if we redeploy dfx, the value printed out will be incremented by 1.
+
+    The entire code is:
+
+        import Debug "mo:base/Debug";
+
+        actor DBank {
+            var currentValue = 300;
+            currentValue := 100;
+
+            let id = 09765;
+
+            // Debug.print("Hello");    
+            // Debug.print(debug_show(currentValue));
+            // Debug.print(debug_show(id));
+
+            func topUp() {
+                currentValue += 1;
+
+                Debug.print(debug_show(currentValue));
+            };
+
+            topUp();
+        }
+
+    The function is what we'd call a private function siunce it is only accessible within the actor DBank curlybraces.
+    We can also call functions from outside the canister. Consider the hello example:
+
+        https://github.com/dfinity/examples/tree/master/motoko/hello
+
+    This can call a specific function within a particular canister as:
+        
+        dfx canister call hello greet '("everyone)'
+
+    The above also includes arguments passed to the greet function. Our topUp function does not have any parameters and so no arguments are to be passed when calling it.
+
+    We can try accessing the function as:
+
+        dfx canister call dbank topUp
+
+    However, this will return an error since it is a private function and can only be accessed from within the DBank canister.
+
+    If we then wanted to call the function, we have to add a modify keyword called public so to expose it to the public:
+
+        import Debug "mo:base/Debug";
+
+        actor DBank {
+            var currentValue = 300;
+            currentValue := 100;
+
+            let id = 09765;
+
+            public func topUp() {
+                currentValue += 1;
+
+                Debug.print(debug_show(currentValue));
+            };
+
+        }
+
+    On change use dfx deploy to effect the changes. With this the function can now be accessed using the function:
+
+        dfx canister call dbank topUp()
+
+    We can also be able to create buttons that when clicked will call the public functions within the canister. This can be done using the Candid UI, It is an interface description lanfhttp://127.0.0.1:8000/?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai&id=rrkah-fqaaa-aaaaa-aaaaq-caiuage which is kindof like the API languages that are interactive that includes a section that allows one to try them out using Try out sections similar to Gitlabs:
+
+        https://gitlab.com/gitlab-org/gitlab/-/blob/master/doc/api/openapi/openapi.yaml
+
+    Candid provides an easy way to interact with our canisters it doesn't matter whether in Motoko or Rust. Basically instead of dfx command lines, we can use candid to specify input or generate random numbers or display return values from canister methods.
+
+    To get the Candid UI id use the command:
+
+        dfx canister id __Candid_UI
+
+    With the generated id, we can then access the  currently running localhost then to it append a question mark followed by the canisterId key and the value of the id returned after execution of the above command as:
+
+        http://127.0.0.1:8000/?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai
+
+    Note: The URL is the one generated on running the <dfx start> command and not the <npm start> command.
+    Then hit enter to  run. It will show a form prompting for another canister id which in this case is the id for the dbank project. We can generate the second id using the  command:
+
+        dfx canister id dbank
+
+    where dbank is the name of the targeted canister. Then paste the id to the Procvide a canister ID field then click the go button. This then automatically creates a Candid UI with absolutely zero frontend code. It will show a single function which in our dbank canister is topUp().
+
+    The UI has two buttons CALL & Random. Instead of having to type:
+
+        dfx canister call canister_name function_name,
+
+    we can simply tap the call button and it will run the same command and we can see the output on the terminal.
+
+    Another easier applroach is to run the <dfx deploy> this will generate the entire url with both the ids as below:
+
+        http://127.0.0.1:8000/?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai&id=rrkah-fqaaa-aaaaa-aaaaq-cai
+
+    If pasted on the browser it should redirect you to the Candid_ui.
+
+    Incase the above returns an error:
+
+        Error: Server returned an error:
+        Code: 400 (Bad Request)
+        Body: Specified ingress_expiry not within expected range:
+        ------
+
+    Check and ensure the Set time zone automatically is enabled and this is only posible if the pc is location enabled. Then ensure you click on the sync now option for syncronization of time zones.
+
+    On clicking the CALL butotn, the number will be incremented from 102 to 103 and logged in the terminal.
+
+    The functions can also be set to allow input. To add an input, we have to fill some stuff in the brackets i.e name for the input i.e the amount and the type which in this case is nat -natural number, this is so we can increment the value by the submitted amount.
+
+    The new function becomes:
+
+        public func topUp(amount: Nat) {
+            currentValue += amount;
+            Debug.print(debug_show(currentValue))
+        };
+
+    With the change, rerun the deploy command then the UI. With the parameters, the Candid UI will also show that the function is expecting a nat value.
+
+    Notice that the number submitted  will be added to the initialized variable as opposed to the last incremented number. This is attributed to the Orthogonal Persistence. So everytime you re-run the deploy command after changing the base code, all the variables are wiped and reset to the inital values.
+
+    With the code as is, if one withdraws more than is available, currently the system throws an error. We however need to use conditionals to ensure that no errors as a result.
+
+197. Motoko Conditionals and Types Annotations
+    
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
 
 
 
