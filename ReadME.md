@@ -9330,8 +9330,59 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
     With the code as is, if one withdraws more than is available, currently the system throws an error. We however need to use conditionals to ensure that no errors as a result.
 
 197. Motoko Conditionals and Types Annotations
-    
+    As already indicated, if we subtract more than we have, then it is going to be an underflow and this is not allowed in the current data type. To prevent this, we add an if statement as:
 
+         public func withdraw(amount: Nat) {
+            if ((currentValue - amount) >= 0) {
+                currentValue -= amount;
+                Debug.print(debug_show(currentValue))
+            }
+        }
+
+    However, the (currentValue - amount) will show a warning <operator may trap for inferred type>. This is because the operation is unsure what the resulting datatype will be and will lead to problems down the line. We then must explicitly say what is the datatype of the final calculation. We can either use an inline approach or split it out as a separate line:
+
+        public func withdraw(amount: Nat) {
+            let tempValue: Int = currentValue - amount; //This makes the data type clear as opposed to the earlier that was inferred.
+
+            if (tempValue >= 0) {
+                currentValue -= amount;
+                Debug.print(debug_show(currentValue))
+            } else {
+                Debug.print("You can not withraw more than your current balance: ", debug_show(currentValue))
+            }
+        }
+
+198. Query vs. Update Methods
+    One thing to notice is that the topup and withdrwals take alot of time to execute or return a value and one could ask why take 3 seconds to do a simple subtraction. A simple reason is that this are update functions i.e they are updating what is in the currentValue and have to write to the blockchain which is a expensive blockchain.
+
+    If working on a game or something that requires live update, we don't have time to wait for it. In the ICP canisters they differentiate query and update calls:
+
+        - Query Calls - Allow the user to query the current state of a canister or call a function that operates on the canister's state without changing it. They are asyncronous and are answered immediately.
+        -Update calls are much slower and use update calls. Can read more:
+
+            https://internetcomputer.org/docs/current/concepts/canisters-code/
+
+    We can then create query call as:
+
+        public query func checkBalance() {
+
+        };
+
+    Inside our query we want to check inside our container and tell us what is the value of our variable. To show it will have a return value we add a collon and Nat number. Whenever there is a function with an output is it should come out asyncronously.
+
+        public query func checkBalance(): async Nat {
+
+        };
+    
+    A good analogy for syncronous and asyncronous is asyncronous can be considers as trains on a single track. The first has to move before the second moves. For asyncronous, we have multipole tracks and the trains can move at their own pace. None is hindering the other.
+
+    In web development, syncronous is where while a website is loading you cannot interact with it or click away until it is done loading. Asyncronous, is where the different component of the website are loaded at their own time and in no particular order and one can click on them. The return from the canister should be asyncronously returned.
+
+    So our final code is a read only operation that returns the value without changing the state:
+
+        public query func checkBalance(): async Nat {
+            return currentValue;
+        };
 
 
     
