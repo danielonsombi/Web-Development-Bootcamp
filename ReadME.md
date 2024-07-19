@@ -9384,6 +9384,81 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
             return currentValue;
         };
 
+199. Orthogonal Persistence
+    The idea of persistence is being able to hold on to state over many different cycles and updates. Consider:
+
+        var a = 42
+        a += 5
+
+    If you rerun the canister, the variable a is going to be reset to the former state. The reason it is called orthogonal is we as developers don't have to think about it but will happen in the background.
+
+    In JS:
+
+        var a = 15:
+        console.log(a) // Will print out 15
+        a += 5;
+        console.log(a) // Prints out 20
+
+    If the increment is commented as below and then the page refreshed, a goes back to the initial value which is 15.
+
+        var a = 15:
+        console.log(a) // Will print out 15
+        //a += 5;
+        //console.log(a) 
+
+    So to hold the value of a, there is need for data persistence which involves databases etc.
+
+    Here is what we can do using orthogonal persistence:
+
+        While working with canisters, so far if a topup or a withdrawal is made then someone adds in a comment to the code and thereafter redeploys the application, upon refreshing, a checkBalance will return the initial value of the variable.
+
+        This is always the case for any other programming language.
+
+        However, we can add in persistence to our code to prevent the default behavior using a single keyword stable.
+
+        Without the stable keyword we have a flexible variable:
+
+            var currentValue: Nat = 300;
+
+        For persistence it becomes:
+
+            stable currentValue: Nat = 300;
+
+        Our code becomes:
+
+            import Debug "mo:base/Debug";
+
+            actor DBank {
+                stable var currentValue: Nat = 300;
+                //currentValue := 100;
+
+                let id = 09765;
+
+                public func topUp(amount: Nat) {
+                    currentValue += amount;
+                    Debug.print(debug_show(currentValue))
+                };
+
+                public func withdraw(amount: Nat) {
+                    let tempValue: Int = currentValue - amount; //This makes the data type clear as opposed to the earlier that was inferred.
+
+                    if (tempValue >= 0) {
+                        currentValue -= amount;
+                        Debug.print(debug_show(currentValue))
+                    } else {
+                        Debug.print("You can not withraw more than your current balance");
+                        Debug.print(debug_show(currentValue));
+                    }
+                };
+
+                public query func checkBalance(): async Nat {
+                    return currentValue;
+                };
+            }
+
+    Note that the code <currentValue := 100> is commented because it is a replace operator and it doesn't matter whether the currentvalue is meant to persist or not. It will still update it. For persistence, we do not need to reset. This is a magical way of programming and a goodway to ensure our values persist without using databases.
+
+
 
     
 
