@@ -9458,6 +9458,158 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
 
     Note that the code <currentValue := 100> is commented because it is a replace operator and it doesn't matter whether the currentvalue is meant to persist or not. It will still update it. For persistence, we do not need to reset. This is a magical way of programming and a goodway to ensure our values persist without using databases.
 
+200. Tracking Time and Calculating Compound Interest
+    What is compounding interest - Compounding interest is reinvesting money you earned from initial investment.
+
+    Eaistein said, "The most poerful force in the universe is compound interest"
+
+    The cycle is:
+
+        Invest -> Earn -> Reinvest -> Earn More -> Reinvest & Earn Again.
+
+    Then repeat the above process. See:
+
+        Snips > Compound Interest.png
+    
+    The idea is you end up with more and more money to invest and hence more in return. The interest compound in each other hence the name. Seeformula:
+
+        Snips > Compound Interest Formula.png
+    
+    The formula in this case will consider:
+
+        A = p(1+(r/n))^nt
+
+    where
+        A = Amount
+        p = Principal
+        r = Interest Rate (decimal)
+        n = Number of times interest is compounded per unit (t)
+        nt = time
+
+    For most bank it is compounded every year so our n will be 1
+    If investing for 5 years at an interest of 5 percent then the formula becomes:
+
+        A = p(1 + (0.05/1))^(1*5)
+
+    Which then equals to:
+
+        A = p(1.05)^5
+
+    Then Replace the P with the principle amount.   
+
+    So we can transform our code to allow the users to earn everysecond. For us to achieve this, there is need for us to track time. We track time using the time module which is in the base library:
+
+        let startTime = Time.now();
+        Debug.print(debug_show(startTime));
+
+    If printed out as above, and the dfx is deployed, it will show how many nanoseconds have elapsed since 1st Jan 1970 which for our case on the 21st July 2024 12:20pm it is:
+
+        +1_721_553_481_265_586_880
+
+    We can then use it to track how much time has elapsed so to earn interest. To get the amount of time that has elapsed, we can first calculate the moment that this compound interest is being calculated.
+
+    To raise a number to a specific value in motoko, we use two asterics. So if we wanted to calculate the compund interest at a rate of 1% and raised to the time elapsed since start to current time we will do a function:
+
+        public func compound() {
+            let currentTime = Time.now();
+
+            //Get time elapsed in Nano seconds
+            let timeElapsedNS = currentTime - startTime;
+
+            //Get the time elapsed in Seconds by diving NS by 1billion:
+            let timeElapsedS = timeElapsedNS / 1000000000;
+
+            //We can then use the compound interest formula to calculate the current value (r = 1):
+            currentValue := currentValue * (1.01 ** timeElapsedS);
+        }
+
+    The above will however return an error due to type mismatch since timeElapsed is going to be a whole number and we are trying to make it work with one with decimal places. We can therefore change it to a float by importing the float module and converting the timeElapsed to float.
+
+    We also have to change the currentValue from Nat to Float so the error can be fully handled. However, it is not easy to currently convert a Nat to a float in motoko. So from the onset we can change the currentValue to a floating point number. Also since the start time is set at the beginning, there is need to reset it so we don't use the same start time even for the period whose interest has already been compounded. Since the startTime will be updated then the variable should be changed from let to var and because we want the start time to hold its date (Persistence) we will change it to a stable var. The complete code becomes:
+
+        import Debug "mo:base/Debug";
+        import Time "mo:base/Time";
+        import Float "mo:base/Float";
+
+        actor DBank {
+            stable var currentValue: Float = 300;
+            //currentValue := 100;
+
+            let id = 09765;
+
+            stable var startTime = Time.now();
+            Debug.print(debug_show(startTime));
+
+            public func topUp(amount: Float) {
+                currentValue += amount;
+                Debug.print(debug_show(currentValue))
+            };
+
+            public func withdraw(amount: Float) {
+                let tempValue: Float = currentValue - amount; //This makes the data type clear as opposed to the earlier that was inferred.
+
+                if (tempValue >= 0) {
+                    currentValue -= amount;
+                    Debug.print(debug_show(currentValue))
+                } else {
+                    Debug.print("You can not withraw more than your current balance");
+                    Debug.print(debug_show(currentValue));
+                }
+            };
+
+            public query func checkBalance(): async Float {
+                return currentValue;
+            };
+
+            public func compound() {
+                let currentTime = Time.now();
+
+                //Get time elapsed in Nano seconds
+                let timeElapsedNS = currentTime - startTime;
+
+                //Get the time elapsed in Seconds by diving NS by 1billion:
+                let timeElapsedS = timeElapsedNS / 1000000000;
+
+                //We can then use the compound interest formula to calculate the current value (r = 1):
+                currentValue := currentValue * (1.01 ** Float.fromInt(timeElapsedS));
+                startTime := currentTime;
+            }
+        }
+
+    With this we can then query the app and be able to increment with the compounding functionality.
+
+201. Adding HTML and CSS to Create the Frontend for DBANK
+    Every single project you create for a motoko project, by default it creates a set of assets including the difinity logo, index.html and index.js.
+
+    However, this does not allow us top use any of the things we have created in the back end. We therefore need to do away with the default template and replace it with our very own.
+
+    First clear everything in the index.html, index.js and main.css. Get the DBANK DApp files from the resources. Copy and paste the index and main file text to the respective index.html and main.css files.
+
+    To have the application visible while you develop, use the npm install command to install the required packages. This will install all the packages in the package.json file.
+
+    Once installed, run the 
+    
+        dfx start
+
+    This means we have the simulated internet computer running locally.
+
+    In a new terminal run the
+
+        dfx deploy 
+
+    Then run the 
+
+        npm Start
+
+    To allow us view what our current website looks like by accessing it via:
+
+        http://localhost:8080/
+    
+    For the logo, ensure it is uploaded into the assets folder so it can be loaded in the website.
+
+
+
+    
 
 
     
