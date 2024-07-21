@@ -9607,6 +9607,10 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
     
     For the logo, ensure it is uploaded into the assets folder so it can be loaded in the website.
 
+    If you want to create your own logo, You can use the free logo maker where you can choose the fonttype size , color, icons etc then it will show a bunch of AI generated logos and once done you can download it by signing up or taking a screenshot of the application and then you can resize it to your liking:
+
+        
+
 
 
     
