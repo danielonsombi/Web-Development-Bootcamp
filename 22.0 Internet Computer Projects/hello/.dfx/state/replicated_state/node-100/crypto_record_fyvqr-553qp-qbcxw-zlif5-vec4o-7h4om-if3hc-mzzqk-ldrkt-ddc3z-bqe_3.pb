@@ -1,2 +1,0 @@
-	0‘OB\‡¯¨_0vÎè#7±ÐŽ"r^dZèÍ$š¬Çš¼¹‘ry2/›Öç!"°
-­¡xGroth20WithPop_Bls12_381£gpop_keyX0¶<1"Ãç•ù:eR*vmyÃCF+%t#è§DþpN½æ!õÞW!ëË©=8„	ichallengeX ,ÖÑ<à\ÌB‡Ç¦è´£ˆÑi'û8Ý8wEä2Õw•*hresponseX (#iÔ7ÉAíQs7ls´z*†J¤o·6t‹!°.HAþ
