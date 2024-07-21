@@ -9609,8 +9609,163 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
 
     If you want to create your own logo, You can use the free logo maker where you can choose the fonttype size , color, icons etc then it will show a bunch of AI generated logos and once done you can download it by signing up or taking a screenshot of the application and then you can resize it to your liking:
 
-        
+        https://www.namecheap.com/logo-maker/app/new/
 
+202. Connecting the Motoko Backend to our JS Frontend
+    With Frontend and motoko code done we need to do JS code to interlink the two.
+    We need to expose the important parts of the motoko code to our index.js. we do this by importing the dbank module we will use the relative path to access it as:
+
+        import { dbank } from "../../declarations/dbank"
+
+    Redirects us back to the debank folder within the declarations directory. The files here basically exposes our motoko code to our js in a way that JS will be able to understand. Acts as a bridge between the two.
+
+    With this we can access all the functions.
+
+    We'd like to first get the current balance  by tapping to the checkBalance() function. The balance should be updated everytime the page loads.
+
+    We will tap to the windows.addEventListener method and check if it is a load event then execute the code.
+
+    Our intention is using the event listener, to update the span in our index.html with the value from out checkBalance() method. This can be achieved by the code below:
+
+         import {dbank} from "../../declarations/dbank";
+
+        window.addEventListener("load", function() {
+            //console.log("Loaded");
+            const currentAmount = dbank.checkBalance();
+
+            this.document.getElementById("value").innerText = currentAmount;
+        })
+
+    This will however return an error and on the page printout [object Promise]
+    This is because the current value is returned asyncronously. We don't have to wait for it to be returned. To get it right we must then turn our JS function to async and use the await keyword when calling the function as:
+
+        window.addEventListener("load", async function() {
+            //console.log("Loaded");
+            const currentAmount = await dbank.checkBalance();
+
+            this.document.getElementById("value").innerText = currentAmount;
+        })
+
+    We can then round it off to only have two decimal places: You might encounter A TIMESTAMP error. To address it there is need to use specific versions:
+
+        https://stackoverflow.com/questions/78505989/why-am-i-getting-timestamp-not-found-error-while-using-motoko-query-function-i
+
+    
+    We can also implement the topup and withdrawal functionalities using the querySelector method which can help select the form then through it access the rest of the elements.
+
+    Remember the declaration topUp function expects a float. However the values from the form are by default integers and we must convert them to float numbers. Also take note of the step="0.01" property in the form fields. The form expects upto 2 decimal places for each of the numbers.
+
+    can easily convert the value to float using the parseFloat method.
+
+    On topUp we then have to call the checkbalance and update the span with the new value after topup.
+
+    Update calls take some bit of time before they are executed. It is therefore good practice to show the user that the button is actually processing the event to avoid multiple clicks that may result into inconsistent updates.
+
+    On click we can tap into our button and set the disabled attribute to true so once the new balance is returned we can remove the disabled attribute to activate the button.
+
+        const button =  event.target.querySelector("#submit-btn");
+
+        button.setAttribute("disabled", true);
+
+        button.removeAttribute("disabled");
+
+    The three commands will allow achieve this.
+
+    We also should remove the value once done. We can get element by id and set it to empty string:
+
+        document.querySelector("form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const button =  event.target.querySelector("#submit-btn");
+
+            const inputAmount = parseFloat(document.getElementById("input-amount").value);
+            const outputAmount = parseFloat(document.getElementById("withdrawal-amount").value);
+
+            button.setAttribute("disabled", true);
+
+            await dbank.topUp(inputAmount);
+            const currentAmount = await dbank.checkBalance();
+            document.getElementById("value").innerText = Math.round(currentAmount * 100)/100;
+            
+            document.getElementById("input-amount").value = "";
+            button.removeAttribute("disabled");
+        })
+
+    The next bit is to handle withdrawals. If we left both the Amount to Top up and Amount to Withdraw sections blank and clicked the finalise transaction, it will mess up the current balance and return $NaN. It will also show the same on the console debug.
+
+    If we don't add a value it has not a number value. We then need to add a condition that we can only topup or/and withdraw if a user typed something. Finaly we will compound the value by the interest using the compound function. The complete code with both the topUp and Withdrawal functionality becomes:
+
+        document.querySelector("form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const button =  event.target.querySelector("#submit-btn");
+
+            const inputAmount = parseFloat(document.getElementById("input-amount").value);
+            const outputAmount = parseFloat(document.getElementById("withdrawal-amount").value);
+
+            button.setAttribute("disabled", true);
+
+            if (document.getElementById("input-amount").value.length != 0) {
+                await dbank.topUp(inputAmount);
+            }
+
+            if (document.getElementById("withdrawal-amount").value.length != 0) {
+                await dbank.withdraw(outputAmount);
+            }
+
+            await dbank.compound();
+
+            const currentAmount = await dbank.checkBalance();
+            document.getElementById("value").innerText = Math.round(currentAmount * 100)/100;
+            
+            document.getElementById("input-amount").value = "";
+            document.getElementById("withdrawal-amount").value = "";
+            button.removeAttribute("disabled");
+        })
+
+    There is also need to handle repetition of the checkbalance function which is currently on the load event as well as in the submit events by creating an update function. The final code becomes:
+
+        import { dbank } from "../../declarations/dbank";
+
+        window.addEventListener("load", async function() {
+            try {
+                update();
+            } catch (error) {
+                console.error("Error calling checkBalance:", error);
+            }
+        })
+
+        document.querySelector("form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const button =  event.target.querySelector("#submit-btn");
+
+            const inputAmount = parseFloat(document.getElementById("input-amount").value);
+            const outputAmount = parseFloat(document.getElementById("withdrawal-amount").value);
+
+            button.setAttribute("disabled", true);
+
+            if (document.getElementById("input-amount").value.length != 0) {
+                await dbank.topUp(inputAmount);
+            }
+
+            if (document.getElementById("withdrawal-amount").value.length != 0) {
+                await dbank.withdraw(outputAmount);
+            }
+
+            await dbank.compound();
+
+            update();
+            
+            document.getElementById("input-amount").value = "";
+            document.getElementById("withdrawal-amount").value = "";
+            button.removeAttribute("disabled");
+        })
+
+        async function update() {
+            const currentAmount = await dbank.checkBalance();
+            document.getElementById("value").innerText = Math.round(currentAmount * 100)/100;
+        }
 
 
     
