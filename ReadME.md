@@ -9768,6 +9768,328 @@ SECTION 37: Web3 DECENTRALIZED APP(DApp) DEVELOPMENT WITH THE INTERNET COMPUTER
         }
 
 
+    For help on internet computer projects checkout:
+        1. https://forum.dfinity.org/
+        2. https://smartcontracts.org/docs/introduction/welcome.html
+        3. https://smartcontracts.org/docs/developers-guide/cli-reference.html
+        4. https://discord.com/invite/cA7y6ezyE2
+
+SECTION 39: DEPLOYING TO THE ICP LIVE BLOCKCHAIN
+203. What are Cycles and the ICP Token?
+    So far we have been doing local development using the simulated version of internet computer. Once done, we need to deploy our apps on the internet so it can be accessed by everyone on the network.
+
+    When the App is online it will start using/conusoming computation resources from across the world. The most common way is to use the ICP tokens.
+
+    1. The easiest and simplest one is to purchase them or exchange another it with another crypto currency e.g., for a large exhange like coinbase you can do the exchange.
+
+    2. The other approach is through the Network Nervous System - The ICP is controlled by the NNS which is a governing system that controls all aspects of ICP that allows you to create a neuron and then you can earn rewards by voting on the proposals. For you participation, you get rewarded with ICP tokens.
+
+    3. Grant from the difinity foundation - As a developer you can submit a proposal so to get a grant of between $25k to $100k in ICP tokens to help develop your next creation. They don't get a %ge of your company, just a straight forward grant.
+
+    4. The other option is to act as a data center. Anyone who can supply the data center can be able to purchase the infra and supply electricity to keep the data center running will get the tokens. 
+
+    With all this you end up with the ICP tokens and you can burn them and exchange them for computation cycles.
+    You can preload you canisters with this Stored computation potentials/cycles. As long as you have enough cycles for the canisters to continue computations it will stay up. Every now and then you may run low and need to top them up.
+
+    There is a way to do them for free. They can give you free cycles. A free $20 worth of cycles as long as you github account is more than 90 days old.
+
+    WARNING: Remember this are treated as money when you deplete the $20 of cycles you won't be able to recharge unless you decide to buy some ICP tokens and convert them to cycle. Need to be careful when deploying to the live network.
+
+    Different computations on ICP come with different costs. Creating a canister cost in 2021 costed 100,000,000 teracycles to depoly a canister.
+
+    Can  read more here:
+
+        https://internetcomputer.org/docs/current/developer-docs/gas-cost/#storage
+
+204. How to Claim Free Cycles from Dfinity
+    1. Head over to the DFInity Cycles Faucet:
+
+        https://anv4y-qiaaa-aaaal-qaqxq-cai.ic0.app/
+    
+    2. On the faucet page, click on REQUEST CYCLES and then click on ACCEPT INVITE to join the ICP Developer Community official Discord channel.
+
+    Note: If it says UNABLE TO ACCEPT INVITE you might not be logged in to Discord, log in first before you try to accept the invite. If you don't have a Discord account, you will need to first sign up for one.It's free and you can do it here: 
+        
+        https://discord.com/register
+    
+    3. Once in the ICP developer community on Discord, head over to the #cycles-faucet channel.
+    4. Click on the Complete button to agree to the community rules.
+    5. Now type /request in the message box and hit send. This will activate the request bot. This will prompt you or redirect you to your github page and complete the prompted steps.
+    6. Choose from the drop down lists and complete the survey. (You can chose Motoko if you're asked which programming language you will use). Your responses in this survey does not affect the result. Chose any response that feels right to you.
+    7. Once you've submitted the form, you should receive a DM fro the faucet bot with your coupon code. If you get any errors from the form, try again and if that doesn't work try  asking for help in that channel.
+    Note: Make sure your Discord settings allow you to receive private messages.
+
+    8. Now go back to the Cycles Faucet page and click Next, then paste in your coupon code you got from the faucet bot.
+    9. Go into your Terminal and check that you have at least dfx 0.12.0 installed.
+    
+    You can run this command to check your version: dfx --version
+    If your version is lower than 0.12.0 then you can upgrade to the latest version using the command: sudo dfx upgrade
+
+    10. Click next and you'll see the command you need to run in the Terminal to claim the free cycles using the coupon code you got earlier from the Discord Faucet Bot.
+
+    Command: dfx wallet --network ic redeem-faucet-coupon <YOUR COUPON CODE FROM FAUCET BOT>
+
+    IMPORTANT: Make a note of the id of the wallet that gets created from this step. Keep it safe, you will need it very soon.
+
+    11. Finally you're on the last step of the cycles faucet page, you can copy and run the command  from the Cycles Faucet page to verify that you got your cycles.
+
+    12. From the Terminal change directory (cd) into your DBANK project and set the new wallet id to act as the source of cycles for the DBANK project using the following command:
+
+        dfx identity --network ic set-wallet --force <YOUR WALLET ID>
+
+    13. Register your device on ICP in order to view your wallet and cycles online. In the Terminal run the command: dfx identity get-principal
+
+    Once you get the principle id of your device, run the following command, replacing wallet id and principle id with your own ids.
+
+    dfx canister --network ic call "<wallet id>" authorize '(principal"<principal id>")'
+    
+    Can read more here:
+
+        https://internetcomputer.org/docs/current/developer-docs/getting-started/cycles/cycles-faucet
+
+
+    Can revisit later. Did not deploy since the motoko team never shared the token to assist with the deployment.
+
+    However, to deploy to the live network, on the vscode terminal run the command:
+
+        dfx deploy --network ic
+
+    With this we can now view the site on the network. First you can get the id using the command:
+
+        dfx canister --network ic id dbank_assets
+
+    You can then paste the returned canister id on the search bar as:
+
+        https://<canisterid>.ic0.app
+
+    This is almost like a web url and you can now view your live deployed debank application. With this you can send it to anyone in the world and computations can be done live on the internet computer.
+
+    If you head back to your cycles wallet and refresh it, the initial balance would have dropped. The deployment is the most expensive when deploying difinity.
+
+    An update/upgrade does not cost as much as the initial deployment.
+
+
+205. How to Convert ICP into Cycles:
+
+    Cycles can run out because you have created many canisters, or hosted too large files, you have to keep working with local development or get new ICP tokens from:
+
+        https://coinmarketcap.com/rankings/exchanges/
+
+    You can however get ICP for free using the coinbase Learn and earn section:
+
+        https://www.coinbase.com/earn
+    
+    For each of the available resources, there is an amount that you earn for learning it.
+
+    One can also learn more on web 3 on the sites:
+
+        https://www.coinbase.com/wallet/learn-web3
+
+    On the learn and earn one can select the module, go through it then answers some quizes after which they can then earn the amount in the selected currency.
+
+    Once earned, you can go to the portal and click on the Buy/sell button and convert the earned currency to ICP tokens then click the Convert All then Convert Now to convert.
+    
+    Once we have the ICP we can then convert to cycles. To do this we have to go to the Network Nervous System, clcik on ICP. Thi swill show the account and the balance attached to it.
+
+    Copy the code and then go back to coinbase. Click on the Send/Receive button the select ICP to pay with then paste the address under the to field.
+
+    Then Send now which will notify you whether sent or not. If you refresh the NNS it will show you the balance.
+
+    Now we have ICPs in our NNS. On the Canisters tab, click the create or link canister and link it to your wallet. you can also use the command:
+
+        dfx identity --network ic get-wallet.
+
+    Copy the id of our wallet then on the wallet click the attach canister. This will take some time but will still execute.
+
+    We can add the cycle where the minimum is usually 2 cycles. If we go back to our cycles/wallet we can see the 2 cycles and balance updated with the 2TCs.
+
+206. How to Deploy a Static Website onto the ICP Blockchain for Hosting:
+    Instead of getting a hosting company or github we can host a simple website on the internet computer.
+
+    For instance if we were to host a site whose structure includes a css folder, Images folder, and an index.html file, fist we will bundle all this files and folders into a new folder called assets.
+
+    This is equivalent to the dbank app's dbank_assets folder that contains the index.html file that has the logo, css, index.js etc files.
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Some Exiting References for practicea and explaining different langugaes.
+1. https://projecteuler.net/
+2. https://codefight.in/
+3. https://hippocreative.com.au/if-programming-languages-were-weapons/
+4. https://toggl.com/blog/save-princess-8-programming-languages
+
+
+Freelance Sites:
+1. https://www.fiverr.com/
+2. https://www.upwork.com/
+3. https://www.odeskwork.com/
+
+Do walking meetings helps with productivity. Sitting meeting are usually very slow.
+
+Tools that make a Developer's life easier:
+1. Product hunt - for inspiration
+2. https://www.duetdisplay.com/ - Allows setup a separate screen using Ipad or phone and helps have dual screen
+3. https://www.alfredapp.com/ - Much faster at indexing. For mac
+4. https://momentoapp.com/ - Journaling app for Mac
+5. https://cheatsheet-mac.en.softonic.com/mac
+
+Ask Angela Anything Quotes:
+Competition is just a way of life.
+So good that they cannot ignore you.
+Whenever you want to achieve some sort of goal that involves other people is to think from the other persons point of view.
+It is much better to learn things as when you need to.
+Opportunities come to those who are prepared.
+Everytime you see someone as if they just had overnight success, it is never overnight. You never see the hours and days they poured into doing something successful or not until they got to the point where they are prepared enough to be hit by that opportunity.
+For startups there will be wins and loses. Try to always think about the wins and not the loses.
+Always start of simple.
+
+
+
     
 
 
