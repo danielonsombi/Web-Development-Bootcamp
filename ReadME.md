@@ -10114,8 +10114,90 @@ SECTION 40: Building DApps on ICP with a React Frontend
             return [newNote, ...prevNotes];
             });
         }
+210. Deleting and Persistance
+    Currently, one can delete a note but upon refreshing the note reappears. This is because at the moment the delete button is only deleting the note at the frontend.
 
+    At the moment it is using the filter method to filter out the deleted note. We however need to call the main.mo so to delete the item from the backend.
+
+    To delete the item from a list we need to do somebit of work since it is not direct. We have to figure out how to achieve this using the available functions. To delete from a motoko list we can use the take method as a workaround. An example is where we have the code:
+
+        import List "mo:base/List";
+
+        actor {
+
+            var notes: List.List<Text> = List.nil<Text>();
+
+            notes := List.push("A", notes);
+            notes := List.push("B", notes);
+            notes := List.push("C", notes);
+            notes := List.push("D", notes);
+
+            public query func getNotes(): async List.List<Text> {
+                return notes;
+            };
+
+            public func take(index: Nat) {
+                notes := List.take(notes, index);
+            };
+
+            public func drop(index: Nat) {
+                notes := List.drop(notes, index);
+            };
+        }
+
+    The push will push A, B, C, D but when queried, it will be returned in reverse order as D, C, B, A. If you call the take function as:
+
+        take(2)
+
+    then the code will return D, C since it will cut the first 2. 
+
+    We can then use the drop method which drops the first n elements from the list:
+
+        drop(2)
     
+    will drop D, & C and we will remain with B, A.
+
+    But since our intention is to delete b from our list, we will then approach it using the methods below:
+
+        take(2) => [D, C];
+        drop(3) => [A];
+
+        Append([D, C], [A]);
+
+    The append allows join two lists together. It will allow join the take(2) and drop(3) so to get [D, C, A].
+
+    The motoko code becomes:
+
+        public func removeNote(id: Nat) {
+            var listFront = List.take(notes, id);
+            var listBack = List.drop(notes, (id+1));
+
+            notes := List.append(listFront, listBack);
+        }
+
+    The React code for deletion becomes:
+
+        function deleteNote(id) {
+            dkeeper.removeNote(id);
+            setNotes(prevNotes => {      
+            return prevNotes.filter((noteItem, index) => {
+                return index !== id;
+            });
+            });
+        }
+     
+    Remember to run the dfx deploy code before calling the dkeeper.removeNote(id) function. This is so it can be included in the dkeeper.did as public function.
+
+    Finally, we can turn the notes variable as stable to ensure our notes persist even during upgrades:
+
+        stable var notes: List.List<Note> = List.nil<Note>();
+
+    This is an incredible way of writing code and persisting data without having to think about databases.
+
+SECTION 41: CREATE YOUR OWN CRYPTO TOKEN
+211. Tokens and Coins: What are they and how are they used?
+
+
     
 
 
