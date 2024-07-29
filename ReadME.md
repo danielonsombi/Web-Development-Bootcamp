@@ -9910,6 +9910,29 @@ SECTION 39: DEPLOYING TO THE ICP LIVE BLOCKCHAIN
 
     This is equivalent to the dbank app's dbank_assets folder that contains the index.html file that has the logo, css, index.js etc files.
 
+    We then need to create a new file called dfx.json by simply openning up the project which in this case is 22.0/Internet Computer Projects/CSS - My Site then adding the file.
+
+    Inside the dfx.json we will describe how our canister looks to the internet computer.
+
+    One thing to notice is that on deploying, the deployment process will collapse our file structure and put them in the same level as our favicon and index.html files.
+
+    We therefore have to do away with our references, i.e any files that are within a folder. For instance, change the css/styles.css to style.css
+
+    With this we can run the dfx deploy command to deploy it to the network. This will use some of our cycles to deploy the newly created canister.
+
+SECTION 40: Building DApps on ICP with a React Frontend
+207. How to configure a DFX Created Project to Use React
+    For new application cd into the project directory then use the command:
+
+        dfx new dkeeper
+    
+    to create the new application On enter, select the language and the frontend to be used in your application. For frontend select React then select difinity
+
+    
+
+
+
+
     
 
 
