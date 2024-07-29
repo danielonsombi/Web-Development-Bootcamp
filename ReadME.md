@@ -9928,7 +9928,210 @@ SECTION 40: Building DApps on ICP with a React Frontend
     
     to create the new application On enter, select the language and the frontend to be used in your application. For frontend select React then select difinity
 
+    To follow through the course, you might need to downgrade dfx to version 0.9.3. Use the command:
+
+        DFX_VERSION=0.9.3 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+
+    Then copy the keeper app components, index.html and index.js files to the src folder of the dkeeper app.
+    Then move the styles.css into the dkeeper_assets > assets folder.
+
+    Once the files are moved, run:
+        dfx start
+        npm install
+        dfx deploy
+        npm start
+
+208. Storing Data on a Canister
+    For data persistence, we will create a new canister by the name DKeeper. Within it we will create a variable of Type Note to which we can store our notes and for it open a set of curlybraces.
+
+        actor DKeeper {
+            type Note = {
+                title: Text;
+                content: Text;
+            }
+        }
+
+    Since we will be accessing the notes on JS we then need it set to public
+
+    We then need to create variable notes that will have a datatype of type List. The list will contain note type as:
+
+        var notes: List.List<Note> = List.nil<Note>()
+
+    The above will create a new note object initialized to nill.
+
+    In order to use some of this functionalities they must be imported from the motoku base library and list module and the code so far becomes:
+
+        import List "mo:base/List";
+
+        actor DKeeper {
+            public type Note = {
+                title: Text;
+                content: Text;
+            };
+
+            var notes: List.List<Note> = List.nil<Note>();
+        }
+
+    We then will create a public function that will allow us send over some title text and content text as submitted by the user:
+
+    public func createNote(titleText: Text, contentText: Text){
+        let newNote: Note = {
+        title = titleText;
+        content = contentText;
+        }
+    }
+
+    Finally we need to add the new note to the initialized list using the push method. Can read more below:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/List/#type-list
+
+    Using the syntax:
+
+        func push<T>(x : T, l : List<T>) : List<T>
+
+    There is need to specify two things i.e the item to be pushed into th elist and the second the list you want to push it on.
+
+    We then have to first tap into the list module then use the .push then add the item and the list we want to push it into:
+
+        notes := List.push(newNote, notes);
+
+    We can then use the debug method to printout our list.
+
+        import List "mo:base/List";
+        import Debug "mo:base/Debug";
+
+        actor DKeeper {
+            public type Note = {
+                title: Text;
+                content: Text;
+            };
+
+            var notes: List.List<Note> = List.nil<Note>();
+
+            public func createNote(titleText: Text, contentText: Text){
+                let newNote: Note = {
+                title = titleText;
+                content = contentText;
+                };
+
+                notes := List.push(newNote, notes);
+                Debug.print(debug_show(notes));
+            }
+        }
+
+    We then need to linkup our motoko code to our React Frontend currently sitting in the components directory in src folder. 
+    On the App.jsx is an addNote function that gets triggerred when trying to add a new note. To get hold of anything in the main.mo module we must import into jsx.
+
+    The canister name is specified within the dfx.json and is often the same to the project folder name which in our case is dkeeper. In app.jsx we will import it as:
+
+        import { dkeeper } from "../../declarations/dkeeper";
+
+    Once added we can rerun the dfx deploy this will update the dkeeper.did file within decalrations folder to include the createNote public function created in main.mo.
+
+    This will allow our JS code to call it once the importation is done. We will then update our App.JSX addNote() function to call the createNote() function and the order of the arguments should be similar to that in the motoko side starting with the title then the content.
+
+        function addNote(newNote) {
+            setNotes(prevNotes => {
+            dkeeper.createNote(newNote.title, newNote.content);
+            return [...prevNotes, newNote];
+            });
+        }
+
+    With this both the frontend and the backend will be updated and the note printed out on the dfx start console. This completes the Create of the CRUD.
+
+209. Retrieving Data from a canister
+    After inserting the notes, we should be able to take the notes that we have stored and be able to serve it back up to the frontend so we can persist it over time.
+
+    We will have to create a new function in our backend. And since we are not modifying, our function will include the query keyword.
+
+        public query func readNotes(): async [Note] {
+        
+        }  
+
+    The function is to return an array of notes. The array is one of the data types in motoko which is alot similar to the array. Why are we storing them in lists and not arrays.
+
+    Working with something serialized is not very efficient on a block chain. We will return notes but we must convert the list to an array before passing it back using the code:
+
+        func toArray<T>(xs : List<T>) : [T]
+
+    It takes one argument which is the list that you want to convert and return it in the format of an array.
+
+        public query func readNotes(): async [Note] {
+            return List.toArray(notes);
+        } 
     
+    To read the updated notes, we will use the useHook method which is called everytime the render method is called in React. Everytime the React method rerenders, it will also be triggered.
+
+    This will allow call a function everytime the re-render happens.It takes no input and no outputs. It takes a function as the first parameter called whenever the re-render happens. The syntax is:
+
+        useEffect(() => {
+            console.log("useEffect is triggered")
+        });
+
+    useEffect should also be imported.
+    In the moment it should be greate if we pull the array of notes from motoko.
+    We can use the fetchData(); method which should be an async function since useEffect cannot be made async by itself.
+
+    So we will wait for the readNotes() to complete executing before we continue. The two functions in App.jsx are:
+
+        useEffect(() => {
+            console.log("useEffect is triggered");
+            fetchData();
+        });
+
+        async function fetchData() {
+            const notesArray = await dkeeper.readNotes();
+        }
+
+    To trigger a re-render due to an update on state. We will call the setNotes from within the fetchData() function. We can get ourselfs in an indefinite loop by this. This could go on forever hence the second parameter which is an array where we set a specific variable to check whether there is a change before use effect is executed.
+
+    After the first argument, add a comma followed by an empty array to ensure it stops after the useEffect has executed. The App.jsx file is therefore to be updated with the code below:
+
+        function addNote(newNote) {
+            setNotes(prevNotes => {
+            dkeeper.createNote(newNote.title, newNote.content);
+            return [...prevNotes, newNote];
+            });
+        }
+
+        useEffect(() => {
+            console.log("useEffect is triggered");
+            fetchData();
+        },[]);
+
+        async function fetchData() {
+            const notesArray = await dkeeper.readNotes();
+            setNotes(notesArray);
+        }
+    
+    Since the notes are now saved in the motoko code, a refresh does not clear them from the front end. Because of the way the List.push() works, the new nots are pre-pended to the list the order seems to be a bit messy everytime you refresh in that when adding it, it appears at the end but upon refresh it appears as the first item.
+
+    It is a good thing that new notes are added to the beggining since this is how the google keeps works. We then need to update our frontend in such away that new notes are added to the top of the array as oppossed to at the end of the array. We can do this by reversing the array as below:
+
+        function addNote(newNote) {
+            setNotes(prevNotes => {
+            dkeeper.createNote(newNote.title, newNote.content);
+            return [newNote, ...prevNotes];
+            });
+        }
+
+    
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
 
 
 
