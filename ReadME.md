@@ -10196,7 +10196,35 @@ SECTION 40: Building DApps on ICP with a React Frontend
 
 SECTION 41: CREATE YOUR OWN CRYPTO TOKEN
 211. Tokens and Coins: What are they and how are they used?
+    Some of the tokens include doge coin, etherium, bitcoin etc. We will be creating our own tokens so to see the process of creating such on the blockchain.
 
+    What is the difference between the coin and a token?
+
+    A coin requires their own blockchain and you have to build the blockchain from scratch. Whereas with Tokens, you can take advantage of an existing blockchain. One common coin is doge and a Token is the SHIBA token.
+
+    The doge coin has its own blockchain and is basically a copy of the bitcoin blockchain. Someone created a fork to the lucky coin then from it doge coin was created.
+
+    SHIBA token which many refer to as a coin is basically built on the etherium blockchain. The market price is behind doge.
+
+    To create a coin you must first create a blockchain. For it to work you must create a lot of miners who want to mine your coin. For bit coin and doge it means using alot of energy and resources and also find people willing to spend energy to mine your coin. See:
+
+        https://etherscan.io/chart/address'
+
+    Read the story of SHIB token and the founder of Ethereum - Vitalik Buterin.
+
+        https://cryptonary.com/vitalik-buterin-burns-6-7-billion-in-shiba-inu-shib-tokens/
+    
+    What are tokens used for?
+    1. Payment -  can exchange one for another token, or for products.
+    2. Equity - Can give some of them tokes so they can vote for the future and you can be rewarded for doing that and similar to how you can own shared. Token is the most used and is often used interchangeably with coin.
+    3. Utility purposes - Some of the tokens can be used for utility purposes e.g., the cycles from the facet when deploying decentralized apps. They cycles are used as token and can be used to be able to interact with a specific app or functionality with blockchain.
+    wepower token also allows small providers to directly exchange energy for this tokens
+    Axie infinity games that can be used for voting and governance.
+
+    With this we can create our own tokens on ICP.
+    
+
+    
 
     
 
