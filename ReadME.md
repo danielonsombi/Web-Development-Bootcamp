@@ -10223,8 +10223,12 @@ SECTION 41: CREATE YOUR OWN CRYPTO TOKEN
 
     With this we can create our own tokens on ICP.
     
+212. Download and Configure the Skeleton Project.
+    The project was inspired by Curve:
 
-    
+        https://curve.fi/#/ethereum/swap
+
+    Used mostly by people in the web3 communicty. The starting files include the various needful components for the implementation.
 
     
 
