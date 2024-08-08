@@ -3,19 +3,27 @@ import logo from "../../assets/logo.png";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from "../../../declarations/nft";
 import { Principal } from "@dfinity/principal";
+import Button from "./Button";
+import { opend } from "../../../declarations/opend";
 
 function Item(props) {
   const [name, setName] = useState();
   const [owner, setOwner] = useState();
   const [image, setImage] = useState();
+  const [button, setButton] = useState();
+  const [priceInput, setPriceInput] = useState();
 
   const id = props.id;
 
   const localhost = "http://localhost:8080";
   const agent = new HttpAgent({host:localhost});
+  //TODO: When deploy Live remove the following line
+  agent.fetchRootKey();
+
+  let NFTActor;
 
   async function loadNFT() {
-    const NFTActor = await Actor.createActor(idlFactory,{
+    NFTActor = await Actor.createActor(idlFactory,{
       agent,
       canisterId: id,
     });
@@ -32,11 +40,39 @@ function Item(props) {
     //Alternatively use:
     setOwner(owner.toText());
     setImage(image);
+    setButton(<Button handleClick={handleSale} text={"Sell"}/>)
   }
 
   useEffect(()=> {
     loadNFT();
   }, [])
+
+  let price;
+  function handleSale() {
+    console.log("Sell Clicked");
+    setPriceInput(<input
+      placeholder="Price in DAN"
+      type="number"
+      className="price-input"
+      value={price}
+      onChange={e => (price = e.target.value)}
+    />)
+    
+    setButton(<Button handleClick={sellItem} text={"Confirm"}/>)
+  }
+
+  async function sellItem() {
+    console.log("Set Price = " + price);
+    console.log(props.id);
+    const listingResult = await opend.listItem(Principal.fromText(props.id), Number(price));
+    console.log("Listing: " + listingResult)
+    if (listingResult == "Success") {
+      //call the transfer function:
+      const openDId = await opend.getOpenDCanisterID();
+      const transferResult = await NFTActor.transferOwnership(openDId);
+      console.log("Transfer: " + transferResult);
+    }
+  }
 
   return (
     <div className="disGrid-item">
@@ -52,6 +88,8 @@ function Item(props) {
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
             Owner: {owner}
           </p>
+          {priceInput}
+          {button}
         </div>
       </div>
     </div>
