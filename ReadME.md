@@ -10230,6 +10230,1728 @@ SECTION 41: CREATE YOUR OWN CRYPTO TOKEN
 
     Used mostly by people in the web3 communicty. The starting files include the various needful components for the implementation.
 
+    Run the commands npm install to install the predefined packages. In case of an error user --force flag to force the installation
+
+    Then run the dfx start, dfx deploy and npm start commands so to access the web portal.
+
+    You can then access the site via localhost:8080.
+
+213. Using Motoko Hashmaps to store Token Balances.
+    The application will allow as to assign an amount to a user and at an point in time be in a position to query the balance. We therefore will be writing some code in motoko.
+
+    We first need to identify who it is that we are assigning the tokens. In ICP these are called principals which is a way to identify the users and conisters in internet computers.
+
+    The principle type has a number of functions associated to it. Read more below:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/Principal/
+
+    To get the principle id of the default user, use the command:
+
+        dfx identity get-principal
+
+    For our case it is:
+
+        sfz6a-n45nk-ntaie-rpwz4-xczrn-zblee-wkci6-2njcy-m36le-kdgrl-xae
+    
+    This will be unique to you as the owner.
+
+    We can then create a new actor in our main.mo, with a variable owner using data type principal.
+
+    Once created we then assign the personal identity as the value.
+
+    We can the assign the total supply of say 1b and assign a symbol to our token.
+
+    As will notice, various coins use different symbol, with Etherium using ETH. This borrows from the currencies where  US Dollars is USD, Great British pound is GBP etc. When creating your own token, you can also assign it whichever symbol.
+
+    A good structure for this would be a dictionary which has a key and value. However in motoko we use HashMap which is commonly know as Hasgtable in other language.
+
+    The beauty with HashMaps is that you don't have to specify the datatype or explicit required datatype. It is an efficient way of indexing items and store them in the memory of a computer.
+
+    To get hold of a value you need to provide the key:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/HashMap/
+    
+    With this we can know who owns how much of our custom token.
+    To use the hashmap we have to import it. The balance will therefore be initialized as:
+
+        var balances = HashMap.HashMap<Principal, Nat>(1, Principal.equal, Principal.hash);
+
+    Where Principal refers to the token holder as the key and the Value will be the amount owned by the principalwhich is of data type Nat. Then we will initialize the number to 1, specify the equals and specify the hash.
+
+    We will the use theput method to assign a balance to the balance. In this case add our owner principle to the ledger balances:
+
+        import Principal "mo:base/Principal";
+        import HashMap "mo:base/HashMap";
+
+        actor Token {
+            var owner: Principal = Principal.fromText("sfz6a-n45nk-ntaie-rpwz4-xczrn-zblee-wkci6-2njcy-m36le-kdgrl-xae");
+            var totalSupply : Nat = 1000000000;
+            var symbol: Text = "DAN";
+
+            var balances = HashMap.HashMap<Principal, Nat>(1, Principal.equal, Principal.hash);
+            balances.put(owner, totalSupply);
+        }
+
+    We then need to query who own how much of our total supply. We can then query how much balance someone owns in our ledger. This will be an async function returning a natural number:
+
+        public query func balanceOf(who: Principal) : async Nat {
+        
+        }
+
+    We can then use the HashMap get(k:k) : ?v to pass in the key and get the value as a response. But if the key does not exist it is to return null. We can therefore set our code to check if the who is null then return zero else return the actual balance.
+
+        public query func balanceOf(who: Principal) : async Nat {
+            if (balances.get(who) == null) {
+                return 0;
+            } else {
+                return balances.get(who);
+            }
+        }
+
+    However a get on a hashmap return a ?Nat datatype which is an option data type. This means it retains the datatype of a particular value but can either be null or have a value:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/Option/
+
+    The approach basically checks the result of the get call by passing the principal and check how much of the currency they own within a ledger and if null return zero else return the balance. Therefore this eliminates the need for the if statement. Hence:
+
+        public query func balanceOf(who: Principal) : async Nat {
+            let balance : Nat = switch (balances.get(who)) {
+                case null 0;
+                case (?result) result;
+            };
+
+            return balance;
+        }
+
+    We can then run dfx deploy so to put your principal as the owner of 1b of your currency.
+
+    In order to call the balanceOf() method, we will need to know our id. This involves some bit of formatting.
+
+    You can use the <dfx identity get-principal> command to get our id as the owners. With the command we will also create a variable that will help us get a principal data type expected by the balanceOf method.
+
+    We do this using the terminal by creating the below variable as:
+
+        OWNER_PUBLIC_KEY="principal \"$( \dfx identity get-principal )\""
+
+    Paste is in the terminal and enter.
+
+    If successfully executed, run the echo command to print out command:
+
+        echo $OWNER_PUBLIC_KEY
+
+    When executed it returns:
+
+        principal "sfz6a-n45nk-ntaie-rpwz4-xczrn-zblee-wkci6-2njcy-m36le-kdgrl-xae"
+
+    Which is the argument to be passed to the function. On the Terminal, you can then execute the command below to check the balance:
+
+        dfx canister call token balanceOf "( $OWNER_PUBLIC_KEY )"
+
+    This will return:
+
+        (1_000_000_000 : nat)
+
+    as the balance.
+
+214. Showing the User's Token Balance on the Frontend
+    To show the balance on the frontend, there is need for us to connect it to the main.motoko file.
+    In the Balance.jsx, we need to implement the handleClick() function which is to be called everytime the button is clicked.
+
+    We then need to capture the value as submitted bu the user using the value property. We also must include the onChange trigger in our text field.
+
+    This will be achieved using the useState hook that will allow initialize the inputValue as well as the setValue function.
+
+    We then need to find a way to send the value to the motoko backend.
+
+    To pass the principle variable, we must first import the Principal from the dfinity module as:
+
+        import { Principal } from '@dfinity/principal';
+
+    This imports it in JS. The @symbol shows several packages have been grouped together. We then will convert it to a principal type using the method:
+
+        const principal = Principal.fromText(inputValue);
+
+    We then will pass the resulting principal value to our function. for which we must import from the declarations folder/token bridge file.
+
+    To pass the balance to the frontend, we will introduce another const for balanceResult using useState. The initial value is set to an empty string as:
+
+        const [balanceResult, setBalance] = useState("");
+
+    The returned string will then need to be reformatted/set properly.
+
+    JS has a method i.e., toLocaleString() that can be used to convert it to a formatted number as:
+
+        setBalance(balance.toLocaleString());
+
+    Everytime you make changes to the motoko.main file always remember to deploy.
+
+    The balance can then be shown depending on whether the button for balance has been checked or not. We can therefore use the isHidden variable to achieve this.
+
+    Can set the hidden paragraph of the <p> as:
+
+        <p hidden = {isHidden}>This account has a balance of {balanceResult} {symbolResult}.</p>
+    
+    The balance.jsx code becomes:
+
+        import React, { useState } from "react";
+        import { Principal } from '@dfinity/principal';
+        import { token } from '../../../declarations/token';
+
+        function Balance() {
+        
+            const [inputValue, setInput] = useState("");
+            const [balanceResult, setBalance] = useState("");
+            const [symbolResult, setSymbol] = useState("");
+            const [isHidden, setHidden] = useState(true);
+
+            async function handleClick() {
+                //console.log(inputValue);
+                const principal = Principal.fromText(inputValue);
+                const balance = await token.balanceOf(principal);
+                setBalance(balance.toLocaleString());
+
+                const symbol = await token.getSymbol();
+                setSymbol(symbol);
+                setHidden(false);
+            }
+
+
+            return (
+                <div className="window white">
+                <label>Check account token balance:</label>
+                <p>
+                    <input
+                    id="balance-principal-id"
+                    type="text"
+                    placeholder="Enter a Principal ID"
+                    value={inputValue}
+                    onChange={(e) => setInput(e.target.value)}
+                    />
+                </p>
+                <p className="trade-buttons">
+                    <button
+                    id="btn-request-balance"
+                    onClick={handleClick}
+                    >
+                    Check Balance
+                    </button>
+                </p>
+                <p hidden = {isHidden}>This account has a balance of {balanceResult} {symbolResult}.</p>
+                </div>
+            );
+        }
+
+215. Creating the Faucet Functionality Using the Shared Keyword
+    The goal of this module is to allow a user to claim some free tokens from the principal user/from the central pool.
+
+    We can achieve this using a new function payOut().
+
+    We also need to figure out to whom exactly it is that we are assigning the tokens. In motoko, there is a shared function/method which has a feature that allows identify the principal id of the entity that called a particular function.
+
+    We do it by using the method:
+
+        shared(msg);
+
+    Read more:
+
+        https://internetcomputer.org/docs/current/motoko/main/writing-motoko/sharing#the-shared-keyword
+
+    We can use to get hold of the entity that called the function. so our function method should be formatted as:
+
+        public shared(msg) func payOut() : async Text {
+            Debug.print(debug_show(msg.caller));
+            return "Success";
+        }
+
+    Then call the function to see the result:
+
+        dfx canister call token payout;
+
+    Notice: That the command return success, whereas under the dfx start command, the msg.caller will return the user id which in this case is:
+
+        sfz6a-n45nk-ntaie-rpwz4-xczrn-zblee-wkci6-2njcy-m36le-kdgrl-xae
+    
+    This can be exposed to the Faucet.jsx frontend. So if it were to be implemented as:
+
+        import { token } from "../../../declarations/token";
+
+        function Faucet() {
+
+            async function handleClick(event) {
+                await token.payOut();
+            }
+        }
+
+    On clicking the button, the id returned is a bit different from the one returned on the command line. In this case it returns:
+
+        2vxsx-fae
+
+    We can use this fact to transfer some tokens to the requesting user as per their request id. So we are to give everyone calling 10,000 DANs as:
+
+        public shared(msg) func payOut() : async Text {
+            //Debug.print(debug_show(msg.caller));
+            let amount = 10000;
+            balances.put(msg.caller, amount);
+            return "Success";
+        }
+
+    If the code is deployed and Gimme gimme button clicked, the new user will be assigned 10,000 free tokens. We then need to disable the button once the user has been assigned the 10,000 tokens.
+
+    We also need to ensure that they can only use upto 10,000 tokens and should not come back for more once theirs is spent unless they pay for it. To do this we will use the get method to validate. Check if the callers balance is null then assign them tokens else show them that they have already claimed their tokens.
+
+        public shared(msg) func payOut() : async Text {
+            //Debug.print(debug_show(msg.caller));
+            if (balances.get(msg.caller) == null) {
+                let amount = 10000;
+                balances.put(msg.caller, amount);
+                return "Success";
+            } else {
+                return "Already Claimed";
+            }
+        }
+
+216. Creating the Transfer Functionality
+    We will create a transfer function within motoko. Remember msg.caller returns the caller but who is the caller when a function is being called from another function?
+    Say the payout function is:
+
+        public shared(msg) func payOut() : async Text {
+            Debug.print(debug_show(msg.caller));
+            return "Success";
+        }
+
+    and the transfer function:
+
+        public func transfer() {
+            let result = await payout();
+        }
+
+    The two ways so far to get the caller is either by the terminal which return the principal user id, or from the frontend which return a different caller. We can also call a function from another function say:
+
+        dfx canister call token transfer
+
+    This call returns the canister ID. Therefore, when you call a method from another method, it is the canister that is actually calling the other method.
+
+    This is key inorder to make our transfer to work.
+
+    When we transfers tokens from one account to another, we want to subtract from one and add to the other. Our transfer method should therefore have the transfer to, and amount to be transfered.
+
+    Our function will not have the from, since the one trasnfering will be the caller, the one using the website:
+
+        public shared(msg) func transfer(to: Principal, amount: Nat) : async Text {
+        
+        }
+
+    We first need to get the balance of the caller then check whether the balance is greater that the transfer request if so then return success else Insufficient Funds. In the math the balances ledger for both the one doing the transfer and the one receiving should be updated accordingly using the balances.put() method:
+
+        public shared(msg) func transfer(to: Principal, amount: Nat) : async Text {
+            let fromBalance = await balanceOf(msg.caller);
+
+            if (fromBalance > amount) {
+                let newFromBalance: Nat = fromBalance - amount;
+                balances.put(msg.caller, newFromBalance);
+
+                let toBalance = await balanceOf(to);
+                let newToBalance = toBalance + amount;
+                balances.put(to, newToBalance);
+
+                return "Success"
+            } else {
+                return "Insufficient Fund";
+            }
+        }
+
+
+    The next step is to update the frontend i.e., the Transfer.jsx file with the key variables and setters being:
+
+        const [receipientId, setId] = useState("");
+        const [amount, setAmount] = useState("");
+        
+        async function handleClick() {
+            await token.transfer(receipientId, amount);
+        }
+
+    Remember that the receipientId should be passed in as Principal user. The Principal datatype should therefore be imported from the respective library. The major additions to our code will be:
+
+        import React, {useState} from "react";
+        import {Principal} from "@dfinity/principal";
+        import { token } from "../../../declarations/token";
+
+        function Transfer() {
+            const [recipientId, setId] = useState("");
+            const [amount, setAmount] = useState("");
+            const [feedback, setFeedback] = useState("");
+            const [isDisabled, setDisabled] = useState(false);
+            const [isHidden, setHidden] = useState(true);
+
+            
+            async function handleClick() {      
+                setHidden(true);
+                setDisabled(true);  
+                const recipient = Principal.fromText(recipientId);
+                const amountToTransfer = Number(amount);
+                const result = await token.transfer(recipient, amountToTransfer);
+                setFeedback(result);
+                setDisabled(false);
+                setHidden(false);
+            }
+        }
+
+    With addition of the values and onchange triggers to the respective fields the code should be ready for dfx deploy and testing.
+
+217. Using the Transfer Functionality in the Faucet
+    If we have a total supply of 1b tokens and 10k are added to every and anybody's account then the total supply is likely to grow and can get out of control. We then need to have the canister to control the available balances when assigning free tokens. The payout function should therefore be updated as:
+
+        public shared(msg) func payOut() : async Text {
+            Debug.print(debug_show(msg.caller));
+            if (balances.get(msg.caller) == null) {
+                let amount = 10000;
+                //balances.put(msg.caller, amount); // Do a transfer as oppossed to adding:
+                let result = await transfer(msg.caller, amount);
+                return result;
+            } else {
+                return "Already Claimed";
+            }
+        };
+
+    If you deploy this, you will see one problem of insufficient fund, which is usually when the balance is less than the amount. Since the caller is the function, and the canister currently has a balance of zero. We therefore shoudl transfer some funds to the canister. We gonna do this from the cammand line as per the steps in the attached README.md file.
+
+    First get the canister id:
+
+        dfx canister id token
+
+    Then save it in a format that can be recognized as principal using the command:
+
+        CANISTER_PUBLIC_KEY="principal \"$( \dfx canister id token )\""
+
+    This will save it to the variable above. We can the use echo to print it out:
+
+        echo $CANISTER_PUBLIC_KEY
+
+    Then we can transfer 500,000,000 to the canister:
+
+        dfx canister call token transfer "($CANISTER_PUBLIC_KEY, 500_000_000)"
+
+    The owner of the tokens will transfer half to the canister. So if you check the balance of your canister it will show the amount.
+    
+218. Persisting Non-stable Types Using the Pre-and Postupgrade Methods
+    Currently, if you upgrade the application, the balances of the canister and the various users get reset to the default values.
+
+    Changing the code will force the code to change. Say even with a print, the amount of the canister which had been set to 500,000,000 will be reset to 0. This is because our balances hadhmap is not stable across the upgrades. When the code is created the canister is created, if it hasnot been, gets installed if there are changes in code. Variables not stable will be reset to their initial values.
+
+    If we want them to be stable we can add the stable keyword but we can not use this wish hashmaps. It will throw an error.
+
+    We can however achieve this through a temporary variable by transfering the data into the temporary variable and after the upgrade transfer it back. The stable value to use is an array that we can call. The array will be a stuple which is an array that can contain different values: [()].
+
+        stable var balanceEntries: [(Principal, Nat)]  = [];
+
+    The question in this case is why can't we just use an array as oppossed to using the hashmap, so balances can be a stable array that contains Principal and Natural number types and the tuples go into the array and saved inbtn upgrades? 
+
+    The reason is arrays are serialized numbertypes which are supper expensive, in terms of time and internet computer that will be money in ICP. Because ordered in an array it will be easier to know which one you want to pull. It will be inefficient to use and convinent to store it in array during upgrades.
+
+    The methods to use are system functions and are marked by the system keyword.
+
+    First we create the preUpgrade and postUpgrade methods and within then we shall write code to do the transfers. We then need to reassign values to the balancesEntries variable.
+
+    In order to turn the hashmap into an array, we would need to borrow a method from the Iter datatype:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/Iter/
+    
+    Which has the method fromArray and toArray that allows us iterate through a hashmap and collect each element to an array. First we should import it then use it in our preupgrade.
+
+        system func preupgrade() {
+            balanceEntries := Iter.toArray(balance)
+        };
+    
+    However, the hashmap itself is not iteratable but checking through the docs, there is an entries method which is going to take what is in the hashmap and turn it to something that can be iterated over as:
+
+        system func preupgrade() {
+            balanceEntries := Iter.toArray(balances.entries());
+        };
+    
+    The above will iterate through each of the modules so to create an array.
+    
+        See more:
+
+            https://internetcomputer.org/docs/current/motoko/main/base/HashMap/
+
+    With the above and balance entries already marked as stable, the values will be kept through the upgrades. We then need a way them to write the balances back to the hashmaps post upgrade. To do that we will tap into the balances hashmap, then use the hashmap fromIter then define the datatypes of the key and value pairs then call the method assing an iterable array which can allow iter data as per the docs:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/Array/
+    
+    The final postUpgrade code is:
+
+        system func postupgrade() {
+            balances := HashMap.fromIter<Principal, Nat>(balanceEntries.vals(), 1, Principal.equal, Principal.hash);
+        };
+
+    This completes the pre and postupgrade codes.
+
+    We then have to fix the balances.put method. So everytime an upgrade is done the balances.put will be run, Instead, we should have it in the postupgrade method. IN the postupgrade, we should only add/assign a value if the current balances balance is less than 1. We can achieve this using an if condition:
+
+        system func postupgrade() {
+            balances := HashMap.fromIter<Principal, Nat>(balanceEntries.vals(), 1, Principal.equal, Principal.hash);
+
+            if (balances.size() < 1) {
+                balances.put(owner, totalSupply);
+            }
+        };
+
+    This means the only way our balances is modified is going to be through the transfer method we can therefore turn our balances to a private variable which means we can onlyu modify the hashmaps from within the token actor. This also applies to the balanceEntries variable.
+
+    With this configuration our code should be persistent.
+
+    We however need to address the intial stages of create canister deploy canister since when run for the first time it does not do an upgrade. We want to have an initial balance and an owner if running it for the first time. The condition below then needs to be added to the token actor:
+
+        if (balances.size() < 1) {
+            balances.put(owner, totalSupply);
+        };
+
+
+    Can readmore:
+
+        https://internetcomputer.org/docs/current/motoko/main/canister-maintenance/upgrades
+
+219. What is the internet identity?
+    It is an anonymous blockchain authentication framework supported by ICP similar to Login with facebook/google. Authentication and keeping password secure is an expensive task technologically. A better solution is to ofload this task to a company good with tech that has already invested in securing passwords using OAuth.
+
+    With internet identity we can create as many anchors as we want. The anchors give us a pseudo identity. When u create internet identity it is secured using chain key cryptography the same framework that powers the internet computer.This makes the signup easier and much convinient by using your face or fingerprint which then makes the passwords much easier.
+
+    When you add a device to an anchor and generate a new internet identity, a private public key is generated. For more checkout:
+
+        https://www.youtube.com/watch?v=oxEr8UzGeBo
+
+220. Authentication with the internet identity
+    For this we will use a package from the internet computer called the Auth package.
+    The packages:
+        @dfinity/auth-client
+        @dfinity/authentication
+
+    come in handy. With this we don't have to code the front end but just to import it on the index.js file as:
+
+        import { AuthClient } from '@dfinity/auth-client';
+
+    We can then create a new constant assigned to the AuthCLient class to create a new object using the Create() method. The method is a syncronous and we have to use await on it. We will pass a JS class that specifies who the identity user is. We will also provide a value for the onsuccess status and can open curly braces and if successful then we can render the application. 
+
+    With the enhancements below, refreshing the page will redirect you so you can login using the internet computer account. The idnex.js file should be:
+
+        import ReactDOM from 'react-dom'
+        import React from 'react'
+        import App from "./components/App";
+        import { AuthClient } from '@dfinity/auth-client';
+
+
+        const init = async () => { 
+            //ReactDOM.render(<App />, document.getElementById("root"));
+
+            const authClient = await AuthClient.create();
+
+            await authClient.login({
+                identityPrvider: "https://identity.ic0.app/#authorize",
+                onSuccess: () => {
+                ReactDOM.render(<App />, document.getElementById("root"));
+                }
+            });
+        }
+
+        init();
+
+    On the page if you click authenticate, it will redirect you to the device and use the touch id to authenticate it. Then it will show the website that is requesting the authentication and  who you are authenticating with. Clicking proceed wil then take you to the initial website.
+
+    To bypass the login process, we can wait and check if the authclient is authenticated. This allows to only prompt for login if no one is currently logged in. Hence the code will be updated as below:
+
+        import ReactDOM from 'react-dom'
+        import React from 'react'
+        import App from "./components/App";
+        import { AuthClient } from '@dfinity/auth-client';
+
+
+        const init = async () => { 
+            //ReactDOM.render(<App />, document.getElementById("root"));
+
+            const authClient = await AuthClient.create();
+
+            if(await authClient.isAuthenticated()){
+                handleAuthenticated(authClient)
+            } else {
+                await authClient.login({
+                identityPrvider: "https://identity.ic0.app/#authorize",
+                onSuccess: () => {
+                    ReactDOM.render(<App />, document.getElementById("root"));
+                }
+                });
+            }
+        }
+
+        async function handleAuthenticated(authClient) {
+            ReactDOM.render(<App />, document.getElementById("root"));
+        }
+
+        init();
+
+    We then have to update our code so we can tap to the authenticated user as oppossed to using the anonymous browser user which is currently being picked by shared(msg).
+
+221. Live Deployment to Test Internet Identity Authentication
+    Upon authentication, we need to make the authentication account the msg.caller so the token.payOut() in faucet.jsx can call the authenticated canister and call the payout method on that canister.
+
+    We will have to write a little more code in Faucet and import AuthClient and a few other methods from declarations/token as:
+
+        import { token, canisterId, createActor } from "../../../declarations/token";
+        import { AuthClient } from "@dfinity/auth-client";
+    
+    The first imported come from the token/index.js, in which the canisterId and createActor method are automatically created for us. The createActor method basically creates the actor, while the CanisterId is just a variable replaced at runtime.
+
+
+    After the import, and within the handleClick, right below the setDisable, we need to then call the authClient in the same way we did in the index.jsx.
+
+        const authClient = await AuthClient.create();
+        const identity = await authClient.getIdentity();
+
+    We can then use the returned identity to create a actor. refer to the declarations/token/createActor method. It takes the canisterId which is an environment variable and takes agent option where we can supply the identity of the authenticated user.
+
+    We can create a variable to hold the authenticatedCanister then using the createActor method pass in the canisterId and options as:
+
+       const authenticatedCanister = createActor(canisterId, {
+            agentOptions: {
+                identity,
+            },
+        }); 
+
+    We will then call the payout method using the authenticated canister as;
+
+        const result = await authenticatedCanister.payOut();
+
+    The handleClick method becomes:
+
+        async function handleClick(event) {
+            setDisabled(true);
+
+            const authClient = await AuthClient.create();
+            const identity = await authClient.getIdentity();
+
+            const authenticatedCanister = createActor(canisterId, {
+            agentOptions: {
+                identity,
+            },
+            });
+
+            const result = await authenticatedCanister.payOut();
+            //const result = await token.payOut();
+            setText(result);
+        }
+
+    What this means is that when it gets to the payOut() method the msg.caller will be the authenticated canister. Unfortunately, we cannot test it at the moment. It will return a 403 since we are running a local version of dfx which is a simulation. To have the signoff and have the authenticated version we must deploy to the live ICP block chain. A caveat is that you must have enough tokens/icp cycles. See deployment process covered earlier.
+
+    On deploying, the live canisters will be different from the local canisters. Remember to call the commands and run transfers on the live canisters and not the local one. See the commands as outlined in the README.md file.
+
+    Following the steps, the authentication will go through and if you click the Gimme gimme, it will take a while to respond with the success message. If successful, then it means the authentication code worked and we are using the authenticated canister to payout to that ID account.
+
+    If running onlive our debug print doesnot come out on the terminal, we can instead access it on the terminal, we can instead access it on the front end using console.log(autheClient.getIdentity()) on index.jsx. This identity contains 4 important things but the key is the property _principal. With this we can get hold of the users through the identity. We can then use it to get the user principal and convert it to a string so to make it readable.
+
+        async function handleAuthenticated(authClient) {
+            const identity = await authClient.getIdentity();
+            const userPrincipal = identity._principal.toString();
+            console.log(userPrincipal);
+            ReactDOM.render(<App />, document.getElementById("root"));
+        }
+
+    With this you can redeploy the changes then refresh and now we can view the principal id in the console and with it we can check the balance and now possible to see the balance of the authenticated user. 
+
+    So we don't have to console.log it everytime, we can use the React feature props so to log it to the Faucet.
+
+    We then have to repeat the same thing for the Transfer.jsx so we can use the authenticated canister.
+    
+SECTION 42: MINTING NFTs AND BUILDING AN NFT MARKETPLACE LIKE OPENSEA.
+222. What You'll Build - A Website to Mint, Buy and Sell NFTs
+    NFTs are Non-Fungible Tokens because one NFT is unique and can be exchanged for another. The concept is similar to if one had two 1,000 KSH notes and one is scratched on tone into half and repaired with duct tape, the two are identical and have the same value.
+
+    This is similar to the Etherium, Bitcoin tokens etc. They are all interchangeable. What if we created tokens on the blockchain that were unique with unique identifiers and features and we have this files that artists have created that are completely unique e.g., the Mona Lisa.
+
+    If you are a good artist, you may think of creating an NFT yourself. As devs we can create market places where people can MINT, Lease and Sell their NFTs. One of the largest market places is the OpenSea here you can lease and sell the NFTs:
+
+        https://opensea.io/
+    
+    And for each piece of art sold on OpenSea, OpenSea will charge a 2.5% transaction fees.
+
+    While the current NFTs are bought and sold for large amounts of money, when you look at the actual items the original files are stored on third party servers.
+
+    On the NFTs if you click the details, you can be redirected to Etherscan where you can read the original contract which includes the token URI that shows the original:
+
+        https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
+
+    Another key site is IPFS which stores alot of NFTs that are currently in circulation. The NFTs can be accessed by anyone in its original format and size, you don't have to own it. But while creating our version, all NFTs minted on it will be on ICP. 
+    
+        https://ipfs.tech/
+
+    The actual bits and bytes will be stored on block chain. We will create one inpired by cryptopunks see:
+
+        https://opensea.io/collection/cryptopunks
+    
+    Where each cryptopunks have unique features with varying prices.
+
+    You can create some of this pixel characters inspired by original cryptopunks:
+
+        https://www.pixilart.com/
+    
+    In our site, there is a section where we can view the NFTs that the logged in user owns and we can sell them by clicking the sell button and setting the value. We can then view them under the Discover page where others can pay for them. You can also Mint NFTs and this will create a unique canister on ICP blockchain that contains all the data of your image file that you have minted and can see them in your callection for you to keep.
+
+223. Minting NFTs
+    We will use the opend project to implement this project. The start project includes the components that make the frontend of the project and a main.mo file which will be the backend of our project.
+
+    The first thing would be to create a new canister file. Normally we have been working in the main.mo, but since working on NFT, but in this case since every NFT is a new instantiated canister we actually won't be creating it in the main file since it is the backend of our marketplace.
+
+    We will create a new folder called NFT and within it create the nft.mo file. We then need to update the dfx.json file so it can also include the newly added motoko file. Notice that all the canisters must be added to the dfx.json and can checkout the default opend for this case as an example of the info that should be captured. For opend, it includes both the main file and the opend_assets. The same should be done for the added canisters. The update in dfx.json should be:
+
+        "nft": {
+            "main": "src/NFT/nft.mo",
+            "type": "motoko"
+        },
+
+    In our nft.mo, we will then create our new canister which in this case will be NFT and add a simple debug to confirm it works:
+
+        actor NFT {
+            Debug.print("It Works!");
+        }
+
+    The run the follwwing commands to initialize:
+        1. npm start
+    Before NPM start, if a new project, then the following commands must be executed first:
+        - dfx start 
+        - dfx deploy
+
+    Once the respective folders and files have been created, we can now run:
+        - npm start
+    
+    Then re-run:
+
+        - dfx deploy 
+    
+    This will printout "It Works" in the dfx start terminal. With this we can now proceed and create a new contract for the NFT canister. It will include the itemName, nftOwner, and imageBytes.
+
+    Instead of creating actors as before, we will create an actor class:
+
+        https://internetcomputer.org/docs/current/motoko/main/writing-motoko/actor-classes
+
+    The class will allow create canisters programmatically which is key when creating a site that will allow mint their nfts where they can upload their images etc. To change an actor to an actor class then it should be formatted as below:
+
+        actor class NFT (name: Text, owner: Principal, content: [Nat8]) {
+            Debug.print("It Works!");
+        }
+
+    The numbers are a bit wild as you can see in the Readme.md file but it is encoding the bits and bytes of our image.
+
+    When initializing we will use all the values and use them to set the propoerties of our nft.
+
+    Each of the NFTs will have unique features such as the principal id. Everytime we create a new id it will be assigned a uniw=que principal id that is not equitable to anything else.
+
+    We then need some way of getting hold of the created nfts and each of their properties:
+
+        import Debug "mo:base/Debug";
+        import Principal "mo:base/Principal";
+
+        actor class NFT (name: Text, owner: Principal, content: [Nat8]) {
+            
+            let itemName = name;
+            let nftOwner = owner;
+            let imageBytes = content;
+
+            public query func getName() : async Text {
+                return itemName;
+            };
+
+            public query func getOwner() : async Principal {
+                return nftOwner;
+            };
+
+            public query func getAsset() : async [Nat8] {
+                return imageBytes;
+            };
+        }
+
+    However, after adding the methods, running <dfx deploy> will return an error since it expects arguments which a normal actor does not expect. We therefor have to pass the 3 arguments as per the class parameters. An example should be as outlined in the ReadMe.msd file but ensure to change the owner to your principal:.
+
+    Can get the principal by running the command:
+
+        dfx identity get-principal
+
+    Replace it in the argument section then copy the entire thing and execute the command:
+
+        dfx deploy --argument='("CryptoDunks #123", principal "sfz6a-n45nk-ntaie-rpwz4-xczrn-zblee-wkci6-2njcy-m36le-kdgrl-xae", (vec {137; 80; 78; 71; 13; 10; 26; 10; 0; 0; 0; 13; 73; 72; 68; 82; 0; 0; 0; 10; 0; 0; 0; 10; 8; 6; 0; 0; 0; 141; 50; 207; 189; 0; 0; 0; 1; 115; 82; 71; 66; 0; 174; 206; 28; 233; 0; 0; 0; 68; 101; 88; 73; 102; 77; 77; 0; 42; 0; 0; 0; 8; 0; 1; 135; 105; 0; 4; 0; 0; 0; 1; 0; 0; 0; 26; 0; 0; 0; 0; 0; 3; 160; 1; 0; 3; 0; 0; 0; 1; 0; 1; 0; 0; 160; 2; 0; 4; 0; 0; 0; 1; 0; 0; 0; 10; 160; 3; 0; 4; 0; 0; 0; 1; 0; 0; 0; 10; 0; 0; 0; 0; 59; 120; 184; 245; 0; 0; 0; 113; 73; 68; 65; 84; 24; 25; 133; 143; 203; 13; 128; 48; 12; 67; 147; 94; 97; 30; 24; 0; 198; 134; 1; 96; 30; 56; 151; 56; 212; 85; 68; 17; 88; 106; 243; 241; 235; 39; 42; 183; 114; 137; 12; 106; 73; 236; 105; 98; 227; 152; 6; 193; 42; 114; 40; 214; 126; 50; 52; 8; 74; 183; 108; 158; 159; 243; 40; 253; 186; 75; 122; 131; 64; 0; 160; 192; 168; 109; 241; 47; 244; 154; 152; 112; 237; 159; 252; 105; 64; 95; 48; 61; 12; 3; 61; 167; 244; 38; 33; 43; 148; 96; 3; 71; 8; 102; 4; 43; 140; 164; 168; 250; 23; 219; 242; 38; 84; 91; 18; 112; 63; 0; 0; 0; 0; 73; 69; 78; 68; 174; 66; 96; 130;}))'
+
+    This should retirn success upon completion. Use the query functions to confirm whether working as expected:
+
+        dfx canister call nft getName
+
+224. Viewing the NFT on the Frontend
+    As implemented the name and owner are easier to read but the image is not. We therefore need to figure out the best way to render the asset in our frontend and displayed on the website. We first need to run our npm server so to see what our frontend looks like.
+
+    To visualize our image, we will update the App.jsx. First we should comment out the current homeImage component and instead replace it with the Item component.
+
+    We also need to pass the id of our canister as a prop to the item component. Can get the canister id by:
+
+        dfx canister id nft
+    
+    Then pass it as a prop to the Item component:
+
+        <div className="App">
+            <Header />
+            <Item id={NFTID} />
+            <Footer />
+        </div>
+
+    We can get hold of the props in the Item.jsx using props.
+
+    In order to access the canister, we have to run http command to fetch the canister on ICP block chain. Locally we can use the local dfx.
+    Then use the agent that we installed in npm then use the agent to fetch the name and image. 
+    
+        const localhost = "http://localhost:8080";
+        const agent = HttpAgent({host:localhost});
+
+    To call the methods on the canisters and because they return asyncronously, the method calls should be in an async file as well that will call the createActor() method whose first input is an Interface Description Language (IDL) factory that lives within the declaration folder for the nft canistor. The details can be found in the declaration/nft/nft.did.js. It gives the frontend a translated format of our backend. Basically a translator btn our motoko code and JS code.
+
+    The second input will be any options i.e the agent options and the actor options. The agent will be the one constructed earlier and the canister id as the prop passed down.
+
+    The created function should then be called only once when the component gets rendered. We will then use the useEffect hook to achieve this.
+
+    We then need to get hold of the pieces of infor that we want from the canister using the created NFTActor. Then use it to update the html code so to eliminate the hard coded sections.
+
+    The image is a little bit tricky to display. We have to convert the image byte into something that can be read as a url in the source.
+
+    We first get the imageData using the NFTActor then convert it to Uint8Array() so it can be read by JS. We then will turn the content to an image url using the URL.createObjectURL(object) to create an object url that can be used in the frontend:
+
+        https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static
+    
+    And the object will be passed in as a blob. Blobs are easy datatypes that can be converted from many different formats into something that can be read in JS. To create a Blob, you can simply pass in an array or simply pass in the datatype that is stored in the blob:
+
+        https://developer.mozilla.org/en-US/docs/Web/API/Blob/Blob
+    
+    The complete Item.jsx code is:
+
+        import React, { useEffect, useState } from "react";
+        import logo from "../../assets/logo.png";
+        import { Actor, HttpAgent } from "@dfinity/agent";
+        import { idlFactory } from "../../../declarations/nft";
+        import { Principal } from "@dfinity/principal";
+
+        function Item(props) {
+            const [name, setName] = useState();
+            const [owner, setOwner] = useState();
+            const [image, setImage] = useState();
+
+            const id = Principal.fromText(props.id);
+
+            const localhost = "http://localhost:8080";
+            const agent = new HttpAgent({host:localhost});
+
+            async function loadNFT() {
+                const NFTActor = await Actor.createActor(idlFactory,{
+                agent,
+                canisterId: id,
+                });
+
+                const name = await NFTActor.getName()
+                const owner = await NFTActor.getOwner()
+                const imageData = await NFTActor.getAsset();
+                const imageContent = new Uint8Array(imageData);
+                const image = URL.createObjectURL(new Blob([imageContent.buffer], {type:"image/png"}));
+
+
+                setName(name);
+                // setOwner(Principal.toText(owner))
+                //Alternatively use:
+                setOwner(owner.toText());
+                setImage(image);
+            }
+
+            useEffect(()=> {
+                loadNFT();
+            }, [])
+
+            return (
+                <div className="disGrid-item">
+                <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
+                    <img
+                    className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
+                    src={image}
+                    />
+                    <div className="disCardContent-root">
+                    <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
+                        {name}<span className="purple-text"></span>
+                    </h2>
+                    <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
+                        Owner: {owner}
+                    </p>
+                    </div>
+                </div>
+                </div>
+            );
+        }
+
+225. Enabling the Minting Functionality on the Frontend
+    We want to allow the users to mint their own images as oppossed to submitting them through the command line as in the previous module.
+
+    Here we will be working on Minter.jsx file in the opend project components which is a very basic form with two fields one to choose the file and an input field for the name. 
+
+    It also includes a button to allow form submission. Normally, we use the value and onchange properties to keep track of the information being typed into the form input field. We will instead use the useForm which is a good way to track information being uploaded into the form.
+
+    UseForm is similar to how we'd use the useState hook as:
+
+        
+        import { useForm } from "react-hook-form";
+
+        const {register, handleSubmit} = useForm();
+
+    See:
+
+        https://react-hook-form.com/
+
+    It is not one of the default react hook and therefore it must be imported manually. Also make sure it is included in your package.json file as "react-hook-form". You can also used <npm i> to install it.
+
+    We then have to register our inputs. Under the inputs, we will keep what has already been registered then using the spread operator we can call register and to it add name with the required option set to true to ensure users don't leave it blank:
+
+        <input
+            {...register("name", {required:true})}
+            placeholder="e.g. CryptoDunks"
+            type="text"
+            className="form-InputBase-input form-OutlinedInput-input"
+        />
+
+    To trigger the handleSubmit, we can use the onClick property on the Mint NFT button and inside the method pass in the name of the method that will actually handle the submitting such as:
+
+        async function onSubmit(data) {
+            console.log(data.name);
+        }
+
+    where data is the data being submitted from our form.
+
+    In terms of the flow of the data, first the user types something into the input which gets registered as an object into all the data and then when the button is clicked, it will trigger the handle submit that will trigger the onsubmit which will pass in the data.
+
+    The same also applies to the image. if you console log the image then it will show you a filelist. We can then use the data to Mint our data:
+
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
+
+    The ArrayBuffer object can be used to represent a generic, fixed length raw binary data buffer. The binary data is to be stored for the image being uploaded. It returns a promise hence the use of await as:
+
+        const imageByteData = [...new Uint8Array(await image.arrayBuffer())]
+
+    We then need to tap into our backend and Mint this NFT. You may think the code is to be written in the nft.mo file but it should instead be in the main.mo file because this is our main backend.
+
+    We then need to programmatically create our new canister. This is possible because we have created it as a class. So we can initialize and call it with all data there is. We then first have to import the file.
+
+    Currently there is no way of returning the principal from the nft.mo. We therefore will have to change it and equate it to this keyword then add a function getCanisterId() that can return the principal of the actor class that will take the actor and give you the principal of that actor. So our nft.mo becomes:
+
+        import Debug "mo:base/Debug";
+        import Principal "mo:base/Principal";
+
+        actor class NFT (name: Text, owner: Principal, content: [Nat8]) = this {
+            
+            let itemName = name;
+            let nftOwner = owner;
+            let imageBytes = content;
+
+            public query func getName() : async Text {
+                return itemName;
+            };
+
+            public query func getOwner() : async Principal {
+                return nftOwner;
+            };
+
+            public query func getAsset() : async [Nat8] {
+                return imageBytes;
+            };
+
+            public query func getCanisterId() : async Principal {
+                return Principal.fromActor(this);
+            }
+        }
+
+    With such, the nft class can return the Principal of the newly created canister which can now be accessed under the main.mo file:
+
+        import Principal "mo:base/Principal";
+        import NFTActorClass "../NFT/nft";
+
+        actor OpenD {
+
+            public shared(msg) func mint(imgData: [Nat8], name: Text) : async Principal {
+                let owner : Principal = msg.caller;
+
+                let newNFT = await NFTActorClass.NFT(name, owner, imgData);
+
+                let newNFTPrincipal = await newNFT.getCanisterId();
+
+                return newNFTPrincipal;
+            }
+        
+        };
+
+    However, everytime we create a new canister on the live ICP, we have to allocate it cycles. while creating them programmatically we have to do the same thing. The local version won't care but once deployed to live, we will need to make sure it gets some cycles to ensure it works. One way to add cycles is through the experimental Cycles module:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/ExperimentalCycles/
+    
+    And the only way to do it is by importing:
+
+        import Cycles "mo:nase/ExperimentalCycles";
+
+    Then adding them to your code as:
+
+        Cycles.add(100_500_000_000);
+
+    The final motoko function becomes:
+
+        public shared(msg) func mint(imgData: [Nat8], name: Text) : async Principal {
+            let owner : Principal = msg.caller;
+            
+            Debug.print(debug_show(Cycles.balance()));
+            Cycles.add(100_500_000_000);
+            let newNFT = await NFTActorClass.NFT(name, owner, imgData);
+            Debug.print(debug_show(Cycles.balance()));
+
+            let newNFTPrincipal = await newNFT.getCanisterId();
+
+            return newNFTPrincipal;
+        }
+
+    we can now call it from the Minter.jsx. Once everything is done, we will then execute the dfx deploy command and the respective arguments. Once done, we can try using the Mint page and confirm whether working as expected.
+
+    If successful it shows the balance that was in the canister and what happens to it after the transfer has been effected. We then need to figure out a way to show it to the user after a successful upload.
+
+    We will also need a loader to show the user when the user an indication when that minting process gets triggered. You can copy the loader html from the ReadMe file. The complete Minter.jsx file becomes:
+
+        import React, { useState } from "react";
+        import { useForm } from "react-hook-form";
+        import { opend } from "../../../declarations/opend";
+        import { Principal } from "@dfinity/principal";
+        import Item from "./Item";
+
+        function Minter() {
+
+            const {register, handleSubmit} = useForm();
+            const [nftPrincipal, setNFTPrincipal] = useState("")
+            const [loaderHidden, setLoaderHidden] = useState(true);
+
+            async function onSubmit(data) {
+                setLoaderHidden(false);
+                const name = data.name;
+                const image = data.image[0]; //since it is an array we want to pick the first item.
+                //We then need to convert the image to Uint9Array:
+                const imageByteData = [...new Uint8Array(await image.arrayBuffer())]
+
+                const newNFTID = await opend.mint(imageByteData, name);
+                console.log(newNFTID.toText())
+                setNFTPrincipal(newNFTID);
+                setLoaderHidden(true);
+            }
+
+            if (nftPrincipal == "") {
+                return (
+                    <div className="minter-container">
+                    <div hidden={loaderHidden} className="lds-ellipsis">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    </div>
+                    <h3 className="makeStyles-title-99 Typography-h3 form-Typography-gutterBottom">
+                    Create NFT
+                    </h3>
+                    <h6 className="form-Typography-root makeStyles-subhead-102 form-Typography-subtitle1 form-Typography-gutterBottom">
+                    Upload Image
+                    </h6>
+                    <form className="makeStyles-form-109" noValidate="" autoComplete="off">
+                    <div className="upload-container">
+                        <input
+                        {...register("image", {required:true})}
+                        className="upload"
+                        type="file"
+                        accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp"
+                        />
+                    </div>
+                    <h6 className="form-Typography-root makeStyles-subhead-102 form-Typography-subtitle1 form-Typography-gutterBottom">
+                        Collection Name
+                    </h6>
+                    <div className="form-FormControl-root form-TextField-root form-FormControl-marginNormal form-FormControl-fullWidth">
+                        <div className="form-InputBase-root form-OutlinedInput-root form-InputBase-fullWidth form-InputBase-formControl">
+                        <input
+                            {...register("name", {required:true})}
+                            placeholder="e.g. CryptoDunks"
+                            type="text"
+                            className="form-InputBase-input form-OutlinedInput-input"
+                        />
+                        <fieldset className="PrivateNotchedOutline-root-60 form-OutlinedInput-notchedOutline"></fieldset>
+                        </div>
+                    </div>
+                    <div className="form-ButtonBase-root form-Chip-root makeStyles-chipBlue-108 form-Chip-clickable">
+                        <span className="form-Chip-label" onClick={handleSubmit(onSubmit)}>Mint NFT</span>
+                    </div>
+                    </form>
+                </div>
+                );
+            } else {
+                return (
+                <div className="minter-container">
+                    <h3 className="Typography-root makeStyles-title-99 Typography-h3 form-Typography-gutterBottom">
+                    Minted!
+                    </h3>
+                    <div className="horizontal-center">
+                    <Item id={nftPrincipal.toText()}/>
+                    </div>
+                </div>
+                );
+            }
+        }
+
+        export default Minter;
+
+226. Displaying owned NFTs Using the React Router
+    We first need to make the path to MyNFTS to work. To do this, we will use the React Router to route us through to the different routes depending on what we want to see.
+
+    In the App.jsx we are rendering the header and on the header we need to enhance the code so it can redirect us accordingly. 
+    First, you need to confirm that the react-router-dom package has been installed. Can confirm from the package.json file. Together with the react-hook-form, they form part of the critical packages that are not part of the react module that include functionalities that you will need during implementation.
+
+    We then need to implement the BrowserRouter from the react-router-dom. We will then wrap our header component JSX code within the component. This will allow us define links and we can put them around some pieces of code and allow us to turn the code into specific links.
+
+    We can set the discover, minted and collections to the to property of the Link component also imported from the react-router-dom.
+
+    We will then implement a switch which will keep track of which of the links were triggered and render the appropriate component. Fo this, we will import the Switch component from react-router-dom so to have the switch functionality implemented. Within the Switch component we will use route which is another react-router-dom class and with it we can create the routes.
+
+    The route takes attribute path that allows us to match to one of the links. It will look at what the path is. So the route will redirect to the home page, and each respective route mapped appropriately.
+
+    When you use the route component and you have to map them in a way that it does not get confused. Whenever it gets the root in this case "/", it gets problematic. We can either have the root as the very last switch statement or add the exact property to the Route so it can only redirect if the path string is similar to the one being redirected to. The later being the best approach. So we only use it if the user clicks OpenD or when the page is loaded for the very first time.
+
+    With this you will notice that some components will be moved around from the starting App.jsx. which then becomes:
+
+        import React from "react";
+        import Header from "./Header";
+        import Footer from "./Footer";
+        import "bootstrap/dist/css/bootstrap.min.css";
+
+        function App() {
+            return (
+                <div className="App">
+                <Header />
+                {/* <Minter /> */}
+                {/* <Item id={NFTID} /> */}
+                <Footer />
+                </div>
+            );
+        }
+
+        export default App;
+
+    Also the Header.jsx will be reconfigured to:
+
+        import React from "react";
+        import logo from "../../assets/logo.png";
+        import { BrowserRouter, Link, Switch, Route } from "react-router-dom";
+        import homeImage from "../../assets/home-img.png";
+        import Minter from "./Minter";
+        import Gallery from "./Gallery";
+
+        function Header() {
+            return (
+                <BrowserRouter>
+                <div className="app-root-1">
+                    <header className="Paper-root AppBar-root AppBar-positionStatic AppBar-colorPrimary Paper-elevation4">
+                    <div className="Toolbar-root Toolbar-regular header-appBar-13 Toolbar-gutters">
+                        <div className="header-left-4"></div>
+                        <img className="header-logo-11" src={logo} />
+                        <div className="header-vertical-9"></div>
+                        <Link to="/">
+                        <h5 className="Typography-root header-logo-text">OpenD</h5>
+                        </Link>
+                        <div className="header-empty-6"></div>
+                        <div className="header-space-8"></div>
+                        <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
+                        <Link to="/discover">
+                            Discover
+                        </Link>              
+                        </button>
+                        <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
+                        <Link to="/minter">
+                            Minter
+                        </Link> 
+                        </button>
+                        <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
+                        <Link to="/collection">
+                            My NFTs
+                        </Link>
+                        </button>
+                    </div>
+                    </header>
+                </div>
+
+                <Switch>
+                    <Route path="/">          
+                    <img className="bottom-space" src={homeImage} />
+                    </Route>
+                    <Route path="/discover">
+                    <h1>Discover</h1>
+                    </Route>
+                    <Route path="/minter">
+                    <Minter/>
+                    </Route>
+                    <Route path="/collection">
+                    <Gallery />
+                    </Route>
+                </Switch>
+                </BrowserRouter>
+            );
+        }
+
+        export default Header;
+
+    With this we can navigate to the various paths which we can then work on.
+
+    Since the Item component expects an ID, it must be passed as a prop for the gallery component to load as expected.
+
+    However, we need to pass to the My NFTs page as many items as the user owns. We then need to update our main.mo file a little bit so we can keep track of which NFTs were minted and who the owners are. We will use hashmaps for this. The Principal passed to the NFT hashmap will be the principals of each new canister that gets created for the NFT and will be linked to the canisters stored in NFT/nft as:
+        
+        var mapOfNFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1,    Principal.equal, Principal.hash);
+
+    With this, after we get the new NFT Principal, we can use the put method to put a new item into the hashmap, where the key is the new NFTPrincipal and value being the newNFT.
+
+    We also need to create a map of owners. This way we can have a map of the principal IDs of principals of IDs and with this we can do the maping and be able to pull them when each clicks the My NFTs page.
+
+    The tricky part for this is that each principal will not be mapped to one NFT as is the case for the mapOfNFTs hashmap because one can own multiple. We therefore need to import the list type and specify data type as List which will be a list of principals and then specify the hash.
+
+    We then can't just use a put to add to owners, we first have to check the list for the owner then add the new item to it. So we can use a function to do this. Remember, there is a possibility of new owners who might not have created NFTs before. We therefore need to use the get method that returns a motoko option since one might return a nill. We can then use the switch statement so remove the uncertainty.
+
+    If null then return List.nil<Principal>()
+    else return optional result as:
+
+        private func addToOwnershipMap(owner: Principal, nftId: Principal) {
+            //Get owned NFTs from hashmap:
+            var ownedNFTs : List.List<Principal> = switch (mapOfOwners.get(owner)) {
+                case null List.nil<Principal>();
+                case (?result) result;
+            } 
+        }
+
+    We can then push our newly minted NFT to the above list using the List.push(nftId, ownedNFTs);
+    Afterwards we can update the mapOfOwners hashmap. Once the function is implemented, it can be called from the mint function.
+
+    Our complete main.mo code with changes becomes:
+
+        import Principal "mo:base/Principal";
+        import NFTActorClass "../NFT/nft";
+        import Cycles "mo:base/ExperimentalCycles";
+        import Debug "mo:base/Debug";
+        import HashMap "mo:base/HashMap";
+        import NFTActorClass "../NFT/nft";
+
+        actor OpenD {
+
+            var mapOfNFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1,    Principal.equal, Principal.hash);
+            var mapOfOwners = HashMap.HashMap<Principal, List.List<Principal>>(1,    Principal.equal, Principal.hash);
+
+            public shared(msg) func mint(imgData: [Nat8], name: Text) : async Principal {
+                let owner : Principal = msg.caller;
+                
+                Debug.print(debug_show(Cycles.balance()));
+                Cycles.add(100_500_000_000);
+                let newNFT = await NFTActorClass.NFT(name, owner, imgData);
+                Debug.print(debug_show(Cycles.balance()));
+
+                let newNFTPrincipal = await newNFT.getCanisterId();
+                addToOwnershipMap(owner, newNFTPrincipal);
+
+                return newNFTPrincipal;
+            };
+
+            private func addToOwnershipMap(owner: Principal, nftId: Principal) {
+                //Get owned NFTs from hashmap:
+                var ownedNFTs : List.List<Principal> = switch (mapOfOwners.get(owner)) {
+                    case null List.nil<Principal>();
+                    case (?result) result;
+                };
+
+                ownedNFTs := List.push(nftId, ownedNFTs);
+                mapOfOwners.put(owner, ownedNFTs);
+            }        
+        };
+
+    We then need to figure out how to bring it from the backend to the frontend. We need to create a method that will fetch the list of IDs and turn it into an array that can be used in the frontend. This should be public function that takes the principal id of the user and return the NFTS that the particular user owns.
+
+    It will return what is contained as the value of the key that we are matching with. Match the principal, get list of NFT canisters and return them as an array:
+
+        public query func getOwnedNFTs(user: Principal) : async [Principal] {
+            var userNFTs: List.List<Principal> = switch (mapOfOwners.get(user)) {
+                case null List.nil<Principal>();
+                case (?result) result;
+            };
+
+            return List.toArray(userNFTs);
+        }
+    
+    We then need to go to the header.jsx where we will import the canister with the main.mo then use it to access the public functions. Since we won't be using the authentication approach, we will use the anonymous user that has been mapped in the index.jsx file and exported as a constant CURRENT_USER_ID.
+
+    We need then to trigger it the first time our website loads. Below are the updates to our Header.jsx:
+
+        import { opend } from "../../../declarations/opend";
+        import CURRENT_USER_ID from "../index";
+
+        function Header() {
+        
+        async function getNFTs() {
+            const userNFTIds = await opend.getOwnedNFTs(CURRENT_USER_ID);
+            console.log(userNFTIds);
+        }
+
+        useEffect(() => {
+            getNFTs
+        }, []);
+
+    With this we can redeploy our canisters and check our changes on the frontend.
+
+    Once deployed, if you mint something new,  console.log will give us an array of items since we have been minting a few times with the current users. We then need to pass them to the Gallary component.
+
+    We can create a const to hold the user owned gallaries and pass them to the gallery as below:
+
+        const [userOwnedGallery, setOwnedGallery] = useState();
+
+        async function getNFTs() {
+            const userNFTIds = await opend.getOwnedNFTs(CURRENT_USER_ID);
+            console.log(userNFTIds);
+            setOwnedGallery(<Gallery title="My NFTs" ids={userNFTIds}/>)
+        }
+
+        useEffect(() => {
+            getNFTs
+        }, []);
+
+
+    In the Gallery component, instead of rendering each item individually, we can render them programmatically. We will create a function that will loop through our NFTs and make sure that props.ids is not undefined then call setItems to create the item components using the map function.  So our updated Gallery component is:
+
+        import React, { useEffect } from "react";
+        import Item from "./Item";
+        import {Principal} from "@dfinity/principal";
+
+        function Gallery(props) {
+
+            const [items, setItems] = useState();
+
+            function fetchNFTs() {
+                if (props.ids != undefined) {
+                setItems(
+                    props.ids.map((NFTId) => (
+                    <Item id={NFTId} key={NFTId.toText()}/>
+                    ))
+                )
+                }
+            }
+
+            useEffect (() => {
+                fetchNFTs();
+            }, [])
+
+            return (
+                <div className="gallery-view">
+                <h3 className="makeStyles-title-99 Typography-h3">{props.title}</h3>
+                <div className="disGrid-root disGrid-container disGrid-spacing-xs-2">
+                    <div className="disGrid-root disGrid-item disGrid-grid-xs-12">
+                    <div className="disGrid-root disGrid-container disGrid-spacing-xs-5 disGrid-justify-content-xs-center"></div>
+                    <Item id="rrkah-fqaaa-aaaaa-aaaaq-cai"/>
+                    </div>
+                </div>
+                </div>
+            );
+        }
+
+        export default Gallery;
+
+    
+    So we don't have to refresh manually, we can use the forceRefresh property in the BrowserRoute component as:
+
+        <BrowserRouter forceRefresh={true}>
+    
+227. Listing NFTs for Sale
+    At this point, we need to add the NFTs to the market place. For this, we will create a button under our NFT cards. We will therefore create a new component for this:
+
+        import React from "react";
+
+        function Button(props) {
+            return (
+                <div className="Chip-root makeStyles-chipBlue-108 Chip-clickable">
+                    <span
+                        onClick={props.handleClick}
+                        className="form-Chip-label"
+                    >
+                        Sell
+                    </span>
+                </div>
+            )
+        } 
+
+        export default Button;
+    
+    This will then be added to the Item.jsx component. We want to provide the one selling a way of specifying how much they want to sell the NFT for. So we need some sort of input. We will insert it above the button as a price input. The handle sell is to trigger the handleSell function which will allow the user to set the price for the Item.
+
+    Using a variable price, we can then set the value of the price to be set by the seller and also update the onChange so to update the price of the item.
+
+    Once the price is set, we should update our button so the label can be used to submit the set price.  We will use the same Button.jsx component to handle the sell and confirm functionality. We therefore will have to introduce the text prop while calling the button component.
+
+    With confirm, we will trigger a different function to sell the item. This is triggered when the second button click happens. The new functions in our item.jsx:
+
+        let price;
+        function handleSale() {
+            console.log("Sell Clicked");
+            setPriceInput(<input
+            placeholder="Price in DAN"
+            type="number"
+            className="price-input"
+            value={price}
+            onChange={e => (price = e.target.value)}
+            />)
+            
+            setButton(<Button handleClick={sellItem} text={"Confirm"}/>)
+        }
+
+        async function sellItem() {
+            console.log("Set Price = " + price);
+        }
+
+    We then need to find a way to store the set price in our main.mo and attach it to the owner. We will create a public shared function that will allow us get hold of the caller who owns that NFT. It will include an Id and Price:
+
+        public shared(msg) func listItem(id: Principal, price: Nat){
+
+        }
+    
+    We will create a hashmap to track all listings which will have Principal as the key and a custom type as the value. The Value will be custom type because it will hold a bunch of info like owner id, price, historic records of sales and likely to be updated over time:
+
+        private type Listing = {
+            itemOwner: Principal;
+            itemPrice: Nat;
+        };
+
+    So the hashmap becomes:
+
+        var mapOfListings = HashMap.HashMap<Principal, Listing>(1, Principal.equal, Principal.hash);
+
+    We will create a variable Item with datatype NFTActorClass.NFT as:
+
+        public shared(msg) func listItem(id: Principal, price: Nat) : async Text{
+            var item : NFTActorClass.NFT = switch(mapOfOwners.get(id)) {
+                case null return "NFT does not exist";
+                case (?result) result;
+            };
+
+            //Get hold of the owner of the NFT to confirm the caller is same to owner of item:
+            let owner = await item.getOwner();
+            if (Principal.equal(owner, msg.caller)) {
+                //Create new listing
+                let newListing : Listing = {
+                    itemOwner = owner;
+                    itemPrice = price;
+                };
+
+                //Then put the map of listing:
+                mapOfListings.put(id, newListing);
+
+                //The return success.
+                return "Success"
+            } else {
+                return "You don't own the NFT";
+            }
+        }
+    
+    The code will confirm that the one calling is the actual owner. It then creates a new listing. We can now call that function in the Item.jsx sellItem function. In the Item.jsx, the props.id is by default text. It should be converted to principal before passing it to the opend.listItem():
+
+         async function sellItem() {
+            console.log("Set Price = " + price);
+            console.log(props.id);
+            const listingResult = await opend.listItem(Principal.fromText(props.id), Number(price));
+            console.log("Listing: " + listingResult)
+        }
+    
+    When you sell an item, you should transfer it over to the platform. The platform needs to hold it. We also want to make sure that the transfer can only be done by the owner of the NFT. This will be done on the nft.mo file. With the transfer, then the nftowner variable in nft.mo will be changed to var so it can allow mutation. The nft variables should also be made private so they can only be changed within the nft.mo class.
+
+    With the transfer, the opend canister becomes the new owner so it'd be great if we get hold of its id. We can use a function for this. we can use the Principal.fromActor() method for this:
+
+        https://internetcomputer.org/docs/current/motoko/main/base/Principal/
+
+        public shared(msg) func transferOwnership(newOwner: Principal) : async Text {
+            //We need to confirm that it is being called by the owner of the nft:
+            if (msg.caller == nftOwner) {
+                nftOwner := newOwner;
+                return "Success";
+            } else {
+                return "Error: Not initiated by NFT Owner."
+            }
+        }
+    
+        public query func getOpenDCanisterID() : async Principal {
+            return Principal.fromActor(OpenD);
+        }
+
+    Once all is implemented, trying to sell throws the error Fail to verify certificate. By default the agent is configured to talk to the main block chain but it is not going to work when working locally. We can do it locally using the agent.fetchRootKey. This is a local work around:
+
+        https://erxue-5aaaa-aaaab-qaagq-cai.raw.ic0.app/agent/interfaces/Agent.html#rootKey
+    
+    The code has been added to the Item.jsx component:
+
+        const localhost = "http://localhost:8080";
+        const agent = new HttpAgent({host:localhost});
+        //TODO: When deploy Live remove the following line
+        agent.fetchRootKey();
+        let NFTActor;
+
+228. Styling the Listed NFTs
+    We neeed the loader to show up when we are selling our NFT. You can directly copy it form the Minter.
+
+    After the sell, we should remove the button and the sell button as well as update the owner so it reads the canister name.
+
+    We then need to blur the image by adding a style to our image and set it equal to blur. By using CSS as below, we can know that we no longer own the NFT:
+
+        setBlur({filter: "blur(4px)"});
+    
+    The blur is to kick in on clicking the sell button. However with this changes, the styling will not obey what we told it to do. This is because it goes to loadNFT. We therefore need a way to check whether our NFT is listed for sale. We can do this in our main.mo and create a new function:
+
+        public query func isListed(id: Principal) : async Bool {
+            if (mapOfListings.get(id) == null) {
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+    We can then call the function from the Item.jsx file. 
+    We can also mark the NFT as Listed. 
+    We then need to take all the Listed Items and show them in the Discover page.
+
+229. Creating the "Discover" page
+    The discover is to show the Listed NFTS. We will be reusing the gallery component and passing it different ids as props. We will have to relook at our header and look as the user owned gallery which is showing the current user owned.
+
+    We will pass the listingGallery to our discover route in the header component.
+    We will then create a function in the main.mo file that returns a list of the listed NFTs. 
+    We wil be looking as the mapOfListings then use the keys function that returns an Iter of all keys in the hashmap:
+
+        public query func getListedNFTs() : async [Principal] {
+            let ids = Iter.toArray(mapOfListings.keys());
+            return ids;
+        };
+
+    Then redeploy the canister.
+
+    We then need to change the styling on the Discover page so the image is not blurred and also to it add a buy button. So we need to differentiate when the discover page is being rendered and when the collection page is being rendered.
+
+    We can do this by passing a role prop to the gallery component.
+
+    We also need to make sure that the Buy button is not visible to the one selling the item. hence some checks and balances on the discover section. For this, we will create another method in main.mo that will return the original owner of the NFT.
+
+        public query func getOriginalOwner(id: Principal) : async Principal {
+            //Get actual listing
+            var listing : Listing = switch (mapOfListings.get(id)) {
+                case null return Principal.fromText("");
+                case (?result) result;
+            };
+
+            return listing.itemOwner;
+        }
+
+    In the Item.jsx:
+
+        const originalOwner = await opend.getOriginalOwner(props.id);
+
+        if (originalOwner.toText() != CURRENT_USER_ID.toText()) {
+            setButton(<Button handleClick={handleBuy} text={"Buy"}/>)
+        }
+
+    Then redeploy the canister to reflect the updates.
+
+    Since the Buy button won't be available to the owners, we can use the command line to create an NFT for testing purposes. Check out the steps in the readme file.
+
+    We then need to show the prices of the items being sold. We will create a new component <PriceLabel.jsx> for this:
+
+        import React from "react";
+
+        function PriceLabel(props) {
+            return (
+                <div className="disButtonBase-root disChip-root makeStyles-price-23 disChip-outlined">
+                    <span className="disChip-label">23 DANG</span>
+                </div>
+            );
+        }
+
+        export default PriceLabel;
+
+    We will then plug it into the Item.jsx file. Then within our discover section we can update the PriceLabel stateful constant to update the price. There is need to get the price item by calling a motoko function:
+
+        public query func getListedNFTPrice(id: Principal) : async Nat {
+            var listing : Listing = switch (mapOfListings.get(id)) {
+                case null return 0;
+                case (?result) result;
+            };
+
+            return listing.itemPrice;
+        }
+
+    Then this can be rendered on the frontend as:
+
+        const price = await opend.getListedNFTPrice(props.id);
+        setPriceLabel(<PriceLabel sellPrice={price.toString()}/>)
+
+    Must convert it to string since this is what the PriceLabel.jsx component expects.
+
+230. Buying NFTs.
+    The token-local starting code makes it easier to follow through.
+    For this we need to take the amount that the NFT will cost from the buyer's wallet and transfer it to the original owner of the NFT and finally transfer ownership to the buyer.
+
+    To do this we will tie it back to the canister we created earlier on. Ensure the canister for testing steps in the README.md file are followed so to create one.
+
+    To make this work, we need to get our token canister up and running. We will trigger the transfer method from the token project. This will help learn how to make our canisters communicate with other canisters.
+
+    For the token project, get the principal by runnig the command in the README.md file and ensure it is the right one mapped in your main.mo in the token project.
+
+    We can then run <dfx deploy> and <npm start> and by default since the opend project is running on port 8080, the token project will run on port 8081.
+
+    We can then transfer 500B by using the transfer command. And once done, we can claim them using Gimme gimme we can then use the 10k to purchase.
+
+    We will use the transfered amount inorder to transfer the money from the buyer to the seller.
+
+    In order to access the types and functions in the backend, we must copy the declaration files. So we will copy the declaration files from the token canister to the opend canister. This will allow work with the canisters in the item.jsx.
+
+    We then have to import the idlFactory from declarations/token. So it doesn't conflict with tha nft idlFactory, we can give it an alias as:
+
+        import { idlFactory as tokenIdlFactory } from "../../../declarations/token";
+
+    In the handleBuyer method we will create a new token actor.
+
+    We also should pull the canister id of the token canister:
+
+        dfx canister id token
+
+    then pass it to the created actor in item.jsx:
+
+         async function handleBuy() {
+            console.log("Buy was triggered!");
+            const tokenActor = await Actor.createActor(tokenIdlFactory,  {
+            agent,
+            canisterId: Principal.fromText("xbgkv-fyaaa-aaaaa-aaava-cai"),
+            })
+        }
+
+    Then we will get the seller id by using the getOriginalOwner opend method. The buy code is:
+
+        async function handleBuy() {
+            console.log("Buy was triggered!");
+            const tokenActor = await Actor.createActor(tokenIdlFactory,  {
+            agent,
+            canisterId: Principal.fromText("xbgkv-fyaaa-aaaaa-aaava-cai"),
+            })
+            
+            //Get the seller id
+            const sellerId = await opend.getOriginalOwner(props.id);
+
+            //Get the price at which the NFT is being sold.
+            const itemPrice = await opend.getListedNFTPrice(props.id);
+
+            //Then do the transfer by calling the token project transfer method which takes a to and amount to be transfered:
+            const result = await tokenActor.transfer(sellerId, itemPrice);
+            console.log(result);
+        }
+
+    If the result successful, we then need to transfer ownership. We then need to implement a function within  OpenD/ main.mo.
+
+    We will use the delete method to delete a hashmap entry with a particular key. On the list datatype, we will use the filter method to generate a new list without the one filtered out.
+
+        https://internetcomputer.org/docs/current/motoko/main/base/HashMap/
+
+        https://internetcomputer.org/docs/current/motoko/main/base/List/
+    
+    Our complete motoko function:
+
+        public shared(msg) func completePurchase(id: Principal, ownerId: Principal, newOwnerId: Principal) : async Text {
+            //Pull the purchase nft from the mapofnfts:
+            var purchasedNFT : NFTActorClass.NFT = switch (mapOfNFTs.get(id)) {
+                case null return "NFT does not exist";
+                case (?result) result
+            };
+
+            let transferResult = await purchasedNFT.transferOwnership(newOwnerId);
+            if (transferResult == "Success") {
+                //We should delete the nft from the map of Listings
+                mapOfListings.delete(id);
+                var ownedNFTs : List.List<principal> = switch (mapOfOwners.get(ownerId)) {
+                    case nulll List.nil<Principal>();
+                    case (?result) result;
+                };
+
+                ownedNFTs := List.filter(ownedNFTs, func (listItemId: Principal) : Bool {
+                    return listItemId != id; 
+                });
+
+                //We then add it to the ownership of the new owner using the add to ownership map method.
+                addToOwnershipMap(newOwnerId, id);
+                return "Success";
+            } else {
+                return transferResult;
+            }
+        };
+
+    We can then call the function from the handleBuy method as:
+
+        async function handleBuy() {
+            console.log("Buy was triggered!");
+            const tokenActor = await Actor.createActor(tokenIdlFactory,  {
+            agent,
+            canisterId: Principal.fromText("xbgkv-fyaaa-aaaaa-aaava-cai"),
+            })
+            
+            //Get the seller id
+            const sellerId = await opend.getOriginalOwner(props.id);
+
+            //Get the price at which the NFT is being sold.
+            const itemPrice = await opend.getListedNFTPrice(props.id);
+
+            //Then do the transfer by calling the token project transfer method which takes a to and amount to be transfered:
+            const result = await tokenActor.transfer(sellerId, itemPrice);
+
+            if (result == "Success") {
+            const transferResult = await opend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
+            console.log("Purchase: " + transferResult);
+            }
+        }
+    
+    Deploy the test canister then proceed and click on the buy button. Notice that upon success and refreshing, the NFT disappears from the Discover page and it is now in the My NFT. We then need to do somebit of UI for a better experience.
+
+    We will use some of the things we had from before like the loader. So when the handleBuy is triggered set the loader property to false.
+
+    Also we need to set the loader to disappear from the page once it has been bought. We will add a new style on the top level div and we will use some bit of js so we can set the display. We will use a ternary operator so to either set the display to inline or none.
+
+    Redeploy the canisters and run the test to confirm that the loader and the display works as expected. Checkout Item.jsx and main.mo for the complete code.
+
+SECTION 43: Optional Module
+Some Exiting References for practicea and explaining different langugaes.
+1. https://projecteuler.net/
+2. https://codefight.in/
+3. https://hippocreative.com.au/if-programming-languages-were-weapons/
+4. https://toggl.com/blog/save-princess-8-programming-languages
+
+
+Freelance Sites:
+1. https://www.fiverr.com/
+2. https://www.upwork.com/
+3. https://www.odeskwork.com/
+
+Do walking meetings helps with productivity. Sitting meeting are usually very slow.
+
+Tools that make a Developer's life easier:
+1. Product hunt - for inspiration
+2. https://www.duetdisplay.com/ - Allows setup a separate screen using Ipad or phone and helps have dual screen
+3. https://www.alfredapp.com/ - Much faster at indexing. For mac
+4. https://momentoapp.com/ - Journaling app for Mac
+5. https://cheatsheet-mac.en.softonic.com/mac
+
+Ask Angela Anything Quotes:
+Competition is just a way of life.
+So good that they cannot ignore you.
+Whenever you want to achieve some sort of goal that involves other people is to think from the other persons point of view.
+It is much better to learn things as when you need to.
+Opportunities come to those who are prepared.
+Everytime you see someone as if they just had overnight success, it is never overnight. You never see the hours and days they poured into doing something successful or not until they got to the point where they are prepared enough to be hit by that opportunity.
+For startups there will be wins and loses. Try to always think about the wins and not the loses.
+Always start of simple.
+
     
 
 
