@@ -12,6 +12,10 @@ function Item(props) {
   const [image, setImage] = useState();
   const [button, setButton] = useState();
   const [priceInput, setPriceInput] = useState();
+  const [loaderHidden, setLoaderHidden] = useState(true);
+  const [blur, setBlur] = useState();
+  const [sellStatus, setSellStatus] = useState("");
+
 
   const id = props.id;
 
@@ -40,7 +44,16 @@ function Item(props) {
     //Alternatively use:
     setOwner(owner.toText());
     setImage(image);
-    setButton(<Button handleClick={handleSale} text={"Sell"}/>)
+    const nftIsListed = await opend.isListed(props.id);
+
+    //We can use the constant:
+    if (nftIsListed) {
+      setOwner("OpenD");
+      setBlur({filter: "blur(4px)"});
+      setSellStatus("Listed");
+    } else {
+      setButton(<Button handleClick={handleSale} text={"Sell"}/>)
+    }
   }
 
   useEffect(()=> {
@@ -62,6 +75,8 @@ function Item(props) {
   }
 
   async function sellItem() {
+    setBlur({filter: "blur(4px)"});
+    setLoaderHidden(false);
     console.log("Set Price = " + price);
     console.log(props.id);
     const listingResult = await opend.listItem(Principal.fromText(props.id), Number(price));
@@ -71,6 +86,13 @@ function Item(props) {
       const openDId = await opend.getOpenDCanisterID();
       const transferResult = await NFTActor.transferOwnership(openDId);
       console.log("Transfer: " + transferResult);
+      if (transferResult == "Success") {
+        setLoaderHidden(true);
+        setButton();
+        setPriceInput();
+        setOwner("OpenD");
+        setSellStatus("Listed");
+      }
     }
   }
 
@@ -79,11 +101,18 @@ function Item(props) {
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
-          src={image}
+          src={image} 
+          style={blur}
         />
+          <div hidden={loaderHidden} className="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         <div className="disCardContent-root">
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
-            {name}<span className="purple-text"></span>
+            {name}<span className="purple-text"> {sellStatus} </span>
           </h2>
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
             Owner: {owner}
