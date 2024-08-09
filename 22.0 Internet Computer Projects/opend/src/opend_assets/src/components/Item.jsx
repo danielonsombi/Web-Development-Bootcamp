@@ -5,6 +5,8 @@ import { idlFactory } from "../../../declarations/nft";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { opend } from "../../../declarations/opend";
+import CURRENT_USER_ID from "../index";
+import PriceLabel from "./PriceLabel";
 
 function Item(props) {
   const [name, setName] = useState();
@@ -15,7 +17,7 @@ function Item(props) {
   const [loaderHidden, setLoaderHidden] = useState(true);
   const [blur, setBlur] = useState();
   const [sellStatus, setSellStatus] = useState("");
-
+  const [priceLabel, setPriceLabel] = useState();
 
   const id = props.id;
 
@@ -44,15 +46,28 @@ function Item(props) {
     //Alternatively use:
     setOwner(owner.toText());
     setImage(image);
-    const nftIsListed = await opend.isListed(props.id);
 
-    //We can use the constant:
-    if (nftIsListed) {
-      setOwner("OpenD");
-      setBlur({filter: "blur(4px)"});
-      setSellStatus("Listed");
-    } else {
-      setButton(<Button handleClick={handleSale} text={"Sell"}/>)
+    //Execute the below block in the collection page
+    if (props.role == "collection"){
+      const nftIsListed = await opend.isListed(props.id);
+
+      //We can use the constant:
+      if (nftIsListed) {
+        setOwner("OpenD");
+        setBlur({filter: "blur(4px)"});
+        setSellStatus("Listed");
+      } else {
+        setButton(<Button handleClick={handleSell} text={"Sell"}/>)
+      }
+    } else if (props.role == "discover") {
+      const originalOwner = await opend.getOriginalOwner(props.id);
+
+      if (originalOwner.toText() != CURRENT_USER_ID.toText()) {
+        setButton(<Button handleClick={handleBuy} text={"Buy"}/>)
+      }
+
+      const price = await opend.getListedNFTPrice(props.id);
+      setPriceLabel(<PriceLabel sellPrice={price.toString()}/>)
     }
   }
 
@@ -61,7 +76,7 @@ function Item(props) {
   }, [])
 
   let price;
-  function handleSale() {
+  function handleSell() {
     console.log("Sell Clicked");
     setPriceInput(<input
       placeholder="Price in DAN"
@@ -78,8 +93,7 @@ function Item(props) {
     setBlur({filter: "blur(4px)"});
     setLoaderHidden(false);
     console.log("Set Price = " + price);
-    console.log(props.id);
-    const listingResult = await opend.listItem(Principal.fromText(props.id), Number(price));
+    const listingResult = await opend.listItem(props.id, Number(price));
     console.log("Listing: " + listingResult)
     if (listingResult == "Success") {
       //call the transfer function:
@@ -94,6 +108,10 @@ function Item(props) {
         setSellStatus("Listed");
       }
     }
+  }
+
+  async function handleBuy() {
+    console.log("Buy was triggered!");
   }
 
   return (
@@ -111,6 +129,7 @@ function Item(props) {
             <div></div>
           </div>
         <div className="disCardContent-root">
+          {priceLabel}
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
             {name}<span className="purple-text"> {sellStatus} </span>
           </h2>
